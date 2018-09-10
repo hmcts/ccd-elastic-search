@@ -12,5 +12,4 @@ properties([
 productName = params.PRODUCT_NAME
 environment = params.ENVIRONMENT
 
-withInfrastructurePipeline(productName, environment, 'sandbox') {
-}
+withInfrastructurePipeline(productName, environment, 'sandbox')
