@@ -31,7 +31,7 @@ node {
                         withSubscription('sandbox') {
                                 packerBuild {
                                         bin = './packer' // optional location of packer install
-                                        template = 'packer_images/logstash.packer.json'
+                                        template = 'src/packer_images/logstash.packer.json'
                                         var = ["resource_group_name=ccd-logstash-saat"] // optional variable setting
                                 }
                         }
