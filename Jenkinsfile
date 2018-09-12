@@ -88,7 +88,7 @@ def packerBuild(body) {
         //fixme use groovy shortcut
         config.bin = config.bin == null ? 'packer' : config.bin
 
-        if (fileExists(config.template)) {
+//        if (fileExists(config.template)) {
                 // create artifact with packer
                 try {
                         cmd = "${config.bin} build -color=false"
@@ -118,8 +118,8 @@ def packerBuild(body) {
                         throw error
                 }
                 print 'Packer build artifact created successfully.'
-        }
-        else {
-                throw new Exception("The template file ${config.template} does not exist!")
-        }
+//        }
+//        else {
+//                throw new Exception("The template file ${config.template} does not exist!")
+//        }
 }
