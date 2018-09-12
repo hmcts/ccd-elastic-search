@@ -28,7 +28,7 @@ node {
                 }
                 //fixme remove hardcoded values
                 stage('Packer Build Image') {
-                        withSubscription('sandbox') {
+                        withSubscription(subscription) {
                                 packerBuild {
                                         bin = './packer' // optional location of packer install
                                         template = 'packer_images/logstash.packer.json'
