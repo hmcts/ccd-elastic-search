@@ -26,7 +26,7 @@ node {
                                 version = '1.1.3' // version of packer to install
                         }
                 }
-
+                //fixme remove hardcoded values
                 stage('Packer Build Image') {
                         withSubscription('sandbox') {
                                 packerBuild {
