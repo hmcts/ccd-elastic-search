@@ -10,11 +10,8 @@ properties([
         ])
 ])
 
-productName = params.PRODUCT_NAME
-environment = params.ENVIRONMENT
-
 if (params.BUILD_ES_CLUSTER == true) {
-        withInfrastructurePipeline(productName, environment, 'sandbox')
+        withInfrastructurePipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox')
 }
 node {
         env.PATH = "$env.PATH:/usr/local/bin"
@@ -32,41 +29,12 @@ node {
                                 packerBuild {
                                         bin = './packer' // optional location of packer install
                                         template = 'packer_images/logstash.packer.json'
-                                        var = ["resource_group_name=$productName-elastic-search-$environment"] // optional variable setting
+                                        var = ["resource_group_name=${params.PRODUCT_NAME}-elastic-search-${params.ENVIRONMENT}"] // optional variable setting
                                 }
                         }
                 }
         }
 }
-
-//node {
-//        env.PATH = "$env.PATH:/usr/local/bin"
-//        def az = { cmd -> return sh(script: "env AZURE_CONFIG_DIR=/opt/jenkins/.azure-$subscription az $cmd", returnStdout: true).trim() }
-//        stage('Checkout') {
-//                deleteDir()
-//                checkout scm
-//        }
-//
-//        if (params.BUILD_LOGSTASH_IMAGE == true) {
-//                stage('Packer Install') {
-//                        packerInstall {
-//                                install_path = '.' // optional location to install packer
-//                                platform = 'linux_amd64' // platform where packer will be installed
-//                                version = '1.1.3' // version of packer to install
-//                        }
-//                }
-//
-//                stage('Packer Build Image') {
-//                        withSubscription(subscription) {
-//                                packerBuild {
-//                                        bin = './packer' // optional location of packer install
-//                                        template = 'src/packer_images/logstash.packer.json'
-//                                        var = ["resource_group_name=ccd-elastic-search-sandbox"] // optional variable setting
-//                                }
-//                        }
-//                }
-//        }
-//}
 
 def packerInstall(body) {
         // evaluate the body block and collect configuration into the object
