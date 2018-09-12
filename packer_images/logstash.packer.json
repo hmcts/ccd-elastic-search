@@ -36,17 +36,17 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "src/packer_images/logstash.conf",
+      "source": "packer_images/logstash.conf",
       "destination": "logstash.conf"
     },
     {
       "type": "shell",
-      "script": "src/packer_images/install_java8.sh",
+      "script": "packer_images/install_java8.sh",
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     },
     {
       "type": "shell",
-      "script": "src/packer_images/install_logstash.sh",
+      "script": "packer_images/install_logstash.sh",
       "environment_vars": [ "LOGSTASH_VERSION={{user `logstash_version`}}" ],
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     }
