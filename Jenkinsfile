@@ -10,8 +10,11 @@ properties([
         ])
 ])
 
+productName = params.PRODUCT_NAME
+environment = params.ENVIRONMENT
+
 if (params.BUILD_ES_CLUSTER == true) {
-        withInfrastructurePipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox')
+        withInfrastructurePipeline(productName, environment, 'sandbox')
 }
 node {
         env.PATH = "$env.PATH:/usr/local/bin"
@@ -29,7 +32,7 @@ node {
                                 packerBuild {
                                         bin = './packer' // optional location of packer install
                                         template = 'packer_images/logstash.packer.json'
-                                        var = ["resource_group_name=${params.PRODUCT_NAME}-elastic-search-${params.ENVIRONMENT}"] // optional variable setting
+                                        var = ["resource_group_name=ccd-logstash-saat"] // optional variable setting
                                 }
                         }
                 }
