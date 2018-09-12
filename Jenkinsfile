@@ -5,15 +5,17 @@ properties([
         parameters([
                 string(name: 'PRODUCT_NAME', defaultValue: 'ccd', description: ''),
                 choice(name: 'ENVIRONMENT', choices: 'saat\nsprod\nsandbox', description: 'Environment where code should be build and deployed'),
-                booleanParam(name: 'BUILD_ES_CLUSTER', defaultValue: true, description: 'set to true to build a new ElasticSearch cluster'),
-                booleanParam(name: 'BUILD_LOGSTASH_IMAGE', defaultValue: false, description: 'set to true to build a new Logstash image')
+                booleanParam(name: 'DEPLOY_ES_CLUSTER', defaultValue: true, description: 'set to true to deploy a new ElasticSearch cluster'),
+                booleanParam(name: 'BUILD_LOGSTASH_IMAGE', defaultValue: false, description: 'set to true to build a new Logstash image'),
+                booleanParam(name: 'DEPLOY_LOGSTASH', defaultValue: false, description: 'set to true to deploy Logstash'),
         ])
 ])
 
 productName = params.PRODUCT_NAME
 environment = params.ENVIRONMENT
+env.TF_VAR_deploy_logstash=params.DEPLOY_LOGSTASH
 
-if (params.BUILD_ES_CLUSTER == true) {
+if (params.DEPLOY_ES_CLUSTER == true) {
         withInfrastructurePipeline(productName, environment, 'sandbox')
 }
 node {

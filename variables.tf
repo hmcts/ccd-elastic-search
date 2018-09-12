@@ -22,3 +22,7 @@ variable "capacity" {
 variable "common_tags" {
   type = "map"
 }
+
+variable "deploy_logstash" {
+  type = "string"
+}
