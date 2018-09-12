@@ -32,7 +32,7 @@ node {
                                 packerBuild {
                                         bin = './packer' // optional location of packer install
                                         template = 'packer_images/logstash.packer.json'
-                                        var = ["resource_group_name=ccd-logstash-saat"] // optional variable setting
+                                        var = ["resource_group_name=" + productName + "-logstash-" + environment] // optional variable setting
                                 }
                         }
                 }
@@ -85,15 +85,9 @@ def packerBuild(body) {
         if (config.template == null) {
                 throw new Exception('The required template parameter was not set.')
         }
-        //fixme use groovy shortcut
         config.bin = config.bin == null ? 'packer' : config.bin
-
-//        if (fileExists(config.template)) {
-                // create artifact with packer
                 try {
                         cmd = "${config.bin} build -color=false"
-
-                        // check for optional inputs
                         if (config.var_file != null) {
                                 if (fileExists(config.var_file)) {
                                         cmd += " -var_file=${config.var_file}"
@@ -118,8 +112,5 @@ def packerBuild(body) {
                         throw error
                 }
                 print 'Packer build artifact created successfully.'
-//        }
-//        else {
-//                throw new Exception("The template file ${config.template} does not exist!")
-//        }
+
 }
