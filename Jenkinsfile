@@ -19,7 +19,7 @@ if (params.BUILD_ES_CLUSTER == true) {
 node {
         env.PATH = "$env.PATH:/usr/local/bin"
         if (params.BUILD_LOGSTASH_IMAGE == true) {
-                stage('Packer Install') {
+                stage("Packer Install - ${environment} - ${params?.ENVIRONMENT}") {
                         packerInstall {
                                 install_path = '.' // optional location to install packer
                                 platform = 'linux_amd64' // platform where packer will be installed
@@ -27,7 +27,7 @@ node {
                         }
                 }
                 //fixme remove hardcoded values
-                stage('Packer Build Image') {
+                stage("Packer Build Image - ${environment}") {
                         withSubscription('sandbox') {
                                 packerBuild {
                                         bin = './packer' // optional location of packer install
