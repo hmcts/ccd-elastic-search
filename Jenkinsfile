@@ -16,23 +16,24 @@ environment = params.ENVIRONMENT
 if (params.BUILD_ES_CLUSTER == true) {
         withInfrastructurePipeline(productName, environment, 'sandbox')
 }
-
-if (params.BUILD_LOGSTASH_IMAGE == true) {
+node {
         env.PATH = "$env.PATH:/usr/local/bin"
-        stage('Packer Install') {
-                packerInstall {
-                        install_path = '.' // optional location to install packer
-                        platform = 'linux_amd64' // platform where packer will be installed
-                        version = '1.1.3' // version of packer to install
+        if (params.BUILD_LOGSTASH_IMAGE == true) {
+                stage('Packer Install') {
+                        packerInstall {
+                                install_path = '.' // optional location to install packer
+                                platform = 'linux_amd64' // platform where packer will be installed
+                                version = '1.1.3' // version of packer to install
+                        }
                 }
-        }
 
-        stage('Packer Build Image') {
-                withSubscription('sandbox') {
-                        packerBuild {
-                                bin = './packer' // optional location of packer install
-                                template = 'src/packer/logstash.packer.json'
-                                var = ["resource_group_name=$productName-elastic-search-$environment"] // optional variable setting
+                stage('Packer Build Image') {
+                        withSubscription('sandbox') {
+                                packerBuild {
+                                        bin = './packer' // optional location of packer install
+                                        template = 'src/packer/logstash.packer.json'
+                                        var = ["resource_group_name=$productName-elastic-search-$environment"] // optional variable setting
+                                }
                         }
                 }
         }
