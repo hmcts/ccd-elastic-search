@@ -1,12 +1,3 @@
-resource "azurerm_resource_group" "elastic-resourcegroup" {
-  name     = "${var.product}-elastic-search-${var.env}"
-  location = "${var.location}"
-
-  tags = "${merge(var.common_tags,
-    map("lastUpdated", "${timestamp()}")
-    )}"
-}
-
 locals {
   artifactsBaseUrl = "https://raw.githubusercontent.com/elastic/azure-marketplace/6.3.0/src"
   templateUrl = "${local.artifactsBaseUrl}/mainTemplate.json"
