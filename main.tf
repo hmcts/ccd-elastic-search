@@ -23,8 +23,8 @@ data "azurerm_key_vault" "ccd_shared_key_vault" {
   resource_group_name = "${local.sharedResourceGroup}"
 }
 
-resource "azurerm_key_vault_secret" "ELASTIC_SEARCH_URL" {
-  name = "${var.product}_ELASTIC_SEARCH_URL"
+resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
+  name = "${var.product}-ELASTIC-SEARCH-URL"
   value = "${module.elastic.loadbalancerManual}"
   vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
 }
