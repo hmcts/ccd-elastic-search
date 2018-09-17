@@ -1,3 +1,3 @@
 # ccd-elastic-search-cluster
 
-This repository contains the deployment configuration for the CCD ElasticSearch cluster.
+This repository contains a pipeline that allows build an ElasticSearch cluster for CCD.
