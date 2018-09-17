@@ -24,7 +24,7 @@ data "azurerm_key_vault" "ccd_shared_key_vault" {
 }
 
 resource "azurerm_key_vault_secret" "ELASTIC_SEARCH_URL" {
-  name = "${var.product}-ELASTIC_SEARCH_URL"
+  name = "${var.product}_ELASTIC_SEARCH_URL"
   value = "${module.elastic.loadbalancerManual}"
   vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
 }
