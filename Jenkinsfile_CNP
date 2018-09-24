@@ -1,0 +1,21 @@
+#!groovy
+@Library("Infrastructure") _
+
+import uk.gov.hmcts.contino.Environment
+
+properties([
+        parameters([
+                string(name: 'PRODUCT_NAME', defaultValue: 'ccd', description: '')
+        ])
+])
+
+Environment environment = new Environment(env)
+
+onMaster {
+//        withInfrastructurePipeline(params.PRODUCT_NAME, environment.nonProdName, 'nonprod')
+//        withInfrastructurePipeline(params.PRODUCT_NAME, environment.prodName, 'prod')
+}
+
+onDemo {
+//        withInfrastructurePipeline(params.PRODUCT_NAME, environment.demoName, 'nonprod')
+}
