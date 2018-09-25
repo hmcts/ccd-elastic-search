@@ -12,7 +12,7 @@ properties([
 Environment environment = new Environment(env)
 
 onMaster {
-//        withInfrastructurePipeline(params.PRODUCT_NAME, environment.nonProdName, 'nonprod')
+        withInfrastructurePipeline(params.PRODUCT_NAME, environment.nonProdName, 'nonprod')
 //        withInfrastructurePipeline(params.PRODUCT_NAME, environment.prodName, 'prod')
 }
 
