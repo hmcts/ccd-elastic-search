@@ -4,6 +4,8 @@ module "elastic" {
   location = "${var.location}"
   env = "${var.env}"
   common_tags = "${var.common_tags}"
+  dataNodesAreMasterEligible = "${var.dataNodesAreMasterEligible}"
+  vmDataNodeCount = "${var.vmDataNodeCount}"
 }
 
 locals {

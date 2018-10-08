@@ -22,3 +22,14 @@ variable "capacity" {
 variable "common_tags" {
   type = "map"
 }
+
+variable "dataNodesAreMasterEligible" {
+  type = "string"
+  default = "Yes"
+}
+
+variable "vmDataNodeCount" {
+  description = "number of data nodes"
+  type = "string"
+  default = "1"
+}
