@@ -30,3 +30,9 @@ resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
   value = "${module.elastic.loadbalancerManual}"
   vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
 }
+
+resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
+  name = "${var.product}-ELASTIC-SEARCH-PASSWORD"
+  value = "${module.elastic.elasticsearch_admin_password}"
+  vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
+}
