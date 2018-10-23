@@ -3,6 +3,7 @@ module "elastic" {
   product = "${var.product}"
   location = "${var.location}"
   env = "${var.env}"
+  subscription = "${var.subscription}"
   common_tags = "${var.common_tags}"
   dataNodesAreMasterEligible = "${var.dataNodesAreMasterEligible}"
   vmDataNodeCount = "${var.vmDataNodeCount}"
