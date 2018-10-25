@@ -1,8 +1,3 @@
-
-output "base64encode_output" {
-  value = "${base64encode(var.base64encode)}"
-}
-
 module "elastic" {
   source = "git@github.com:hmcts/cnp-module-elk.git?ref=deploy_logstash"
   product = "${var.product}"
