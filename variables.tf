@@ -33,3 +33,21 @@ variable "vmDataNodeCount" {
   type = "string"
   default = "1"
 }
+
+variable "vmSizeAllNodes" {
+  description = "vm size for all the cluster nodes"
+  type = "string"
+  default = "Standard_A2"
+}
+
+variable "storageAccountType" {
+  description = "disk storage account type"
+  type = "string"
+  default = "Standard"
+}
+
+variable "vmDataDiskCount" {
+  description = "number of data node's disks"
+  type = "string"
+  default = "1"
+}
