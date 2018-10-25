@@ -7,6 +7,9 @@ module "elastic" {
   common_tags = "${var.common_tags}"
   dataNodesAreMasterEligible = "${var.dataNodesAreMasterEligible}"
   vmDataNodeCount = "${var.vmDataNodeCount}"
+  vmSizeAllNodes = "${var.vmSizeAllNodes}"
+  storageAccountType = "${var.storageAccountType}"
+  vmDataDiskCount = "${var.vmDataDiskCount}"
 }
 
 locals {
