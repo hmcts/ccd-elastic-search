@@ -4,7 +4,7 @@ output "base64encode_output" {
 }
 
 module "elastic" {
-  source = "git@github.com:hmcts/cnp-module-elk.git?ref=master"
+  source = "git@github.com:hmcts/cnp-module-elk.git?ref=deploy_logstash"
   product = "${var.product}"
   location = "${var.location}"
   env = "${var.env}"
