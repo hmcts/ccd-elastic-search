@@ -8,4 +8,45 @@ properties([
         ])
 ])
 
-withInfrastructurePipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox')
+productName = params.PRODUCT_NAME
+environment = params.ENVIRONMENT
+
+node {
+        stage('Checkout') {
+                deleteDir()
+                checkout scm
+        }
+
+        env.PATH = "$env.PATH:/usr/local/bin"
+
+        stage("Prepare Logstash conf - ${productName} ${environment}") {
+                withSubscription('sandbox') {
+
+                        KeyVault keyVault = new KeyVault(this, 'sandbox', "ccd-${environment}")
+                        initialiseLogstashConfFile(keyVault)
+                }
+        }
+
+        withInfrastructurePipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox')
+}
+
+def initialiseLogstashConfFile(KeyVault keyVault) {
+
+        db_host = keyVault.find("ccd-data-store-api-POSTGRES-HOST").trim()
+        echo "retrieved db host: ${db_host}"
+        db_port = keyVault.find("ccd-data-store-api-POSTGRES-PORT").trim()
+        echo "retrieved db port: ${db_port}"
+        db_pass = keyVault.find("ccd-data-store-api-POSTGRES-PASS").trim()
+        db_user = keyVault.find("ccd-data-store-api-POSTGRES-USER").trim()
+        echo "retrieved db user: ${db_user}"
+        db_name = keyVault.find("ccd-data-store-api-POSTGRES-DATABASE").trim()
+        echo "retrieved db name: ${db_name}"
+        db_url = "jdbc:postgresql://${db_host}:${db_port}/${db_name}?ssl=true"
+
+        sh "sed -i 's|DB_URL|${db_url}|' conf/${productName}_logstash.conf"
+        sh "sed -i 's|DB_USER|${db_user}|' conf/${productName}_logstash.conf"
+        sh "sed -i 's|DB_PWD|${db_pass}|' conf/${productName}_logstash.conf"
+        sh "sed -i 's|ES_URL|${es_url}|' conf/${productName}_logstash.conf"
+
+        sh "cat conf/${productName}_logstash.conf"
+}

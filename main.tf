@@ -1,3 +1,8 @@
+
+output "base64encode_output" {
+  value = "${base64encode(var.base64encode)}"
+}
+
 module "elastic" {
   source = "git@github.com:hmcts/cnp-module-elk.git?ref=master"
   product = "${var.product}"
@@ -7,6 +12,7 @@ module "elastic" {
   common_tags = "${var.common_tags}"
   dataNodesAreMasterEligible = "${var.dataNodesAreMasterEligible}"
   vmDataNodeCount = "${var.vmDataNodeCount}"
+  logstashConf = "${base64encode(local.logstashConf)}"
 }
 
 locals {
@@ -19,6 +25,7 @@ locals {
   previewResourceGroup = "${var.product}-shared-aat"
   nonPreviewResourceGroup = "${var.product}-shared-${var.env}"
   sharedResourceGroup = "${(var.env == "preview" || var.env == "spreview") ? local.previewResourceGroup : local.nonPreviewResourceGroup}"
+  logstashConf = "${file("${path.module}/conf/ccd_logstash.conf")}"
 }
 
 data "azurerm_key_vault" "ccd_shared_key_vault" {
