@@ -48,7 +48,6 @@ def initialiseLogstashConfFile(KeyVault keyVault) {
         sh "sed -i 's|DB_URL|${db_url}|' conf/${productName}_logstash.conf"
         sh "sed -i 's|DB_USER|${db_user}|' conf/${productName}_logstash.conf"
         sh "sed -i 's|DB_PWD|${db_pass}|' conf/${productName}_logstash.conf"
-        sh "sed -i 's|ES_URL|${es_url}|' conf/${productName}_logstash.conf"
 
         sh "cat conf/${productName}_logstash.conf"
 }
