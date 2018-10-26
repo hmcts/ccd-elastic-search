@@ -17,5 +17,5 @@ onMaster {
 }
 
 onDemo {
-//        withInfrastructurePipeline(params.PRODUCT_NAME, environment.demoName, 'nonprod')
+        withInfrastructurePipeline(params.PRODUCT_NAME, environment.demoName, 'nonprod')
 }
