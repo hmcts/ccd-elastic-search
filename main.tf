@@ -1,5 +1,5 @@
 module "elastic" {
-  source = "git@github.com:hmcts/cnp-module-elk.git?ref=master"
+  source = "git@github.com:hmcts/cnp-module-elk.git?ref=allow_kibana_to_create_indexes"
   product = "${var.product}"
   location = "${var.location}"
   env = "${var.env}"
