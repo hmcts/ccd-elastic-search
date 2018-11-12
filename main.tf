@@ -10,6 +10,7 @@ module "elastic" {
   vmSizeAllNodes = "${var.vmSizeAllNodes}"
   storageAccountType = "${var.storageAccountType}"
   vmDataDiskCount = "${var.vmDataDiskCount}"
+  kibanaAdditionalYaml = "${var.kibanaAdditionalYaml}"
 }
 
 locals {
