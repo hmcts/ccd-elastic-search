@@ -51,3 +51,9 @@ variable "vmDataDiskCount" {
   type = "string"
   default = "1"
 }
+
+variable "kibanaAdditionalYaml" {
+  description = "Additional configuration for Kibana yaml configuration file. Each line must be separated by a \n"
+  type = "string"
+  default = ""
+}
