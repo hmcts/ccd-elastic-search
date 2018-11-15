@@ -11,6 +11,7 @@ module "elastic" {
   storageAccountType = "${var.storageAccountType}"
   vmDataDiskCount = "${var.vmDataDiskCount}"
   kibanaAdditionalYaml = "${var.kibanaAdditionalYaml}"
+  ssh_elastic_search_public_key = "${data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value}"
 }
 
 locals {
@@ -28,6 +29,11 @@ locals {
 data "azurerm_key_vault" "ccd_shared_key_vault" {
   name = "${local.vaultName}"
   resource_group_name = "${local.sharedResourceGroup}"
+}
+
+data "azurerm_key_vault_secret" "ccd_elastic_search_public_key" {
+  name = "ccd-ELASTIC-SEARCH-PUB-KEY"
+  vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
