@@ -16,13 +16,13 @@ module "elastic" {
 
 locals {
   // Vault name
-  previewVaultName = "${var.product}-aat"
-  nonPreviewVaultName = "${var.product}-${var.env}"
+  previewVaultName = "${var.raw_product}-aat"
+  nonPreviewVaultName = "${var.raw_product}-${var.env}"
   vaultName = "${(var.env == "preview" || var.env == "spreview") ? local.previewVaultName : local.nonPreviewVaultName}"
 
   // Shared Resource Group
-  previewResourceGroup = "${var.product}-shared-aat"
-  nonPreviewResourceGroup = "${var.product}-shared-${var.env}"
+  previewResourceGroup = "${var.raw_product}-shared-aat"
+  nonPreviewResourceGroup = "${var.raw_product}-shared-${var.env}"
   sharedResourceGroup = "${(var.env == "preview" || var.env == "spreview") ? local.previewResourceGroup : local.nonPreviewResourceGroup}"
 }
 
