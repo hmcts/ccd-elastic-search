@@ -5,17 +5,20 @@ import uk.gov.hmcts.contino.Environment
 
 properties([
         parameters([
-                string(name: 'PRODUCT_NAME', defaultValue: 'ccd', description: '')
+                string(name: 'PRODUCT_NAME', defaultValue: 'ccd', description: ''),
+                booleanParam(name: 'DEPLOY_ES_CLUSTER', defaultValue: false, description: 'Select to deploy ElasticSearch'),
         ])
 ])
 
 Environment environment = new Environment(env)
 
-onMaster {
-        withInfrastructurePipeline(params.PRODUCT_NAME, environment.nonProdName, 'nonprod')
-//        withInfrastructurePipeline(params.PRODUCT_NAME, environment.prodName, 'prod')
-}
+if (params.DEPLOY_ES_CLUSTER == true) {
+    onMaster {
+            withInfrastructurePipeline(params.PRODUCT_NAME, environment.nonProdName, 'nonprod')
+    //        withInfrastructurePipeline(params.PRODUCT_NAME, environment.prodName, 'prod')
+    }
 
-onDemo {
-        withInfrastructurePipeline(params.PRODUCT_NAME, environment.demoName, 'nonprod')
+    onDemo {
+            withInfrastructurePipeline(params.PRODUCT_NAME, environment.demoName, 'nonprod')
+    }
 }
