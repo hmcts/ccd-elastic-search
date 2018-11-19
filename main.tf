@@ -32,7 +32,7 @@ data "azurerm_key_vault" "ccd_shared_key_vault" {
 }
 
 data "azurerm_key_vault_secret" "ccd_elastic_search_public_key" {
-  name = "ccd-ELASTIC-SEARCH-PUB-KEY"
+  name = "${var.product}-ELASTIC-SEARCH-PUB-KEY"
   vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
 }
 
@@ -45,5 +45,11 @@ resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
 resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
   name = "${var.product}-ELASTIC-SEARCH-PASSWORD"
   value = "${module.elastic.elasticsearch_admin_password}"
+  vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
+}
+
+resource "azurerm_key_vault_secret" "elastic_search_data_nodes_count" {
+  name = "${var.product}-ELASTIC-SEARCH-DATA-NODES-COUNT"
+  value = "${var.vmDataNodeCount}"
   vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
 }
