@@ -24,6 +24,9 @@ locals {
   previewResourceGroup = "${var.raw_product}-shared-aat"
   nonPreviewResourceGroup = "${var.raw_product}-shared-${var.env}"
   sharedResourceGroup = "${(var.env == "preview" || var.env == "spreview") ? local.previewResourceGroup : local.nonPreviewResourceGroup}"
+
+  // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200","http://ccd-data-2:9200"
+  es_data_nodes_url = "${join(",", data.template_file.es_data_nodes_url_template.*.rendered)}"
 }
 
 data "azurerm_key_vault" "ccd_shared_key_vault" {
@@ -51,5 +54,21 @@ resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
 resource "azurerm_key_vault_secret" "elastic_search_data_nodes_count" {
   name = "${var.product}-ELASTIC-SEARCH-DATA-NODES-COUNT"
   value = "${var.vmDataNodeCount}"
+  vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
+}
+
+// generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200","http://ccd-data-2:9200"
+data "template_file" "es_data_nodes_url_template" {
+  template = "\"http://ccd-data-$${index}:9200\""
+  count    = "${var.vmDataNodeCount}"
+
+  vars = {
+    index   = "${count.index + 1}"
+  }
+}
+
+resource "azurerm_key_vault_secret" "es_data_nodes_url" {
+  name = "${var.product}-ELASTIC-SEARCH-DATA-NODES-URL"
+  value = "${local.es_data_nodes_url}"
   vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
 }
