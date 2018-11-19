@@ -47,3 +47,9 @@ resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
   value = "${module.elastic.elasticsearch_admin_password}"
   vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
 }
+
+resource "azurerm_key_vault_secret" "elastic_search_data_nodes_count" {
+  name = "${var.product}-ELASTIC-SEARCH-DATA-NODES-COUNT"
+  value = "${var.vmDataNodeCount}"
+  vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
+}
