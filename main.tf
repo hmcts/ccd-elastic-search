@@ -63,7 +63,7 @@ data "template_file" "es_data_nodes_url_template" {
   count    = "${var.vmDataNodeCount}"
 
   vars = {
-    index   = "${count.index + 1}"
+    index   = "${count.index}"
   }
 }
 
