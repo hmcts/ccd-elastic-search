@@ -2,6 +2,8 @@
 @Library("Infrastructure") _
 
 import uk.gov.hmcts.contino.Environment
+import uk.gov.hmcts.contino.HealthChecker
+import uk.gov.hmcts.contino.azure.KeyVault
 
 properties([
         parameters([
@@ -12,13 +14,38 @@ properties([
 
 Environment environment = new Environment(env)
 
-if (params.DEPLOY_ES_CLUSTER == true) {
-    onMaster {
-            withInfrastructurePipeline(params.PRODUCT_NAME, environment.nonProdName, 'nonprod')
-    //        withInfrastructurePipeline(params.PRODUCT_NAME, environment.prodName, 'prod')
-    }
+node {
+    if (params.DEPLOY_ES_CLUSTER == true) {
 
-    onDemo {
+        onMaster {
+            withInfrastructurePipeline(params.PRODUCT_NAME, environment.nonProdName, 'nonprod')
+            healthCheckStage('nonprod', environment.nonProdName)
+
+//            withInfrastructurePipeline(params.PRODUCT_NAME, environment.prodName, 'prod')
+//            healthCheckStage('prod', environment.prodName)
+        }
+
+        onDemo {
             withInfrastructurePipeline(params.PRODUCT_NAME, environment.demoName, 'nonprod')
+            healthCheckStage('nonprod', environment.demoName)
+        }
     }
+}
+
+def healthCheckStage(subscription, environmentName) {
+    stage('HealthCheck') {
+        def healthChecker = new HealthChecker(this)
+        healthChecker.check(healthCheckUrl(subscription, environmentName), 10, 40) { response ->
+            if (response.content.contains("yellow")) {
+                currentBuild.result = "UNSTABLE"
+            }
+            !response.content.contains("red")
+        }
+    }
+}
+
+def healthCheckUrl(subscription, environmentName) {
+    KeyVault keyVault = new KeyVault(this, subscription, "ccd-$environmentName")
+    es_url = keyVault.find("ccd-ELASTIC-SEARCH-URL").trim()
+    "http://" + es_url + ":9200/_cluster/health"
 }
