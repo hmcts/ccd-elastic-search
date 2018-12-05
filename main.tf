@@ -14,6 +14,8 @@ module "elastic" {
   esAdditionalYaml = "${var.esAdditionalYaml}"
   ssh_elastic_search_public_key = "${data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value}"
   mgmt_subscription_id = "${var.mgmt_subscription_id}"
+  logAnalyticsId = "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
+  logAnalyticsKey = "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
 }
 
 locals {
@@ -29,6 +31,11 @@ locals {
 
   // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200","http://ccd-data-2:9200"
   es_data_nodes_url = "${join(",", data.template_file.es_data_nodes_url_template.*.rendered)}"
+}
+
+data "azurerm_log_analytics_workspace" "log_analytics" {
+  name                = "hmcts-${var.subscription}"
+  resource_group_name = "oms-automation"
 }
 
 data "azurerm_key_vault" "ccd_shared_key_vault" {
