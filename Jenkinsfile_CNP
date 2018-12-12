@@ -47,5 +47,6 @@ def healthCheckStage(subscription, environmentName) {
 def healthCheckUrl(subscription, environmentName) {
     KeyVault keyVault = new KeyVault(this, subscription, "ccd-$environmentName")
     es_url = keyVault.find("ccd-ELASTIC-SEARCH-URL").trim()
+    echo "retrieved ES URL: ${es_url}"
     "http://" + es_url + ":9200/_cluster/health"
 }
