@@ -21,8 +21,8 @@ node {
             withInfrastructurePipeline(params.PRODUCT_NAME, environment.nonProdName, 'nonprod')
             healthCheckStage('nonprod', environment.nonProdName)
 
-//            withInfrastructurePipeline(params.PRODUCT_NAME, environment.prodName, 'prod')
-//            healthCheckStage('prod', environment.prodName)
+            withInfrastructurePipeline(params.PRODUCT_NAME, environment.prodName, 'prod')
+            healthCheckStage('prod', environment.prodName)
         }
 
         onDemo {
