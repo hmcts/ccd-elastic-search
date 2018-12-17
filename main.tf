@@ -1,3 +1,7 @@
+provider "azurerm" {
+  version = "1.19.0"
+}
+
 module "elastic" {
   source = "git@github.com:hmcts/cnp-module-elk.git?ref=master"
   product = "${var.product}"
