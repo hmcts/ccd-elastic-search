@@ -12,22 +12,30 @@ properties([
         ])
 ])
 
-Environment environment = new Environment(env)
+if (params.DEPLOY_ES_CLUSTER == true) {
+    withInfraPipeline(params.PRODUCT_NAME) {
+        enableSlackNotifications('#ccd-master-builds')
 
-node {
-    if (params.DEPLOY_ES_CLUSTER == true) {
-
-        onMaster {
-            withInfrastructurePipeline(params.PRODUCT_NAME, environment.nonProdName, 'nonprod')
-            healthCheckStage('nonprod', environment.nonProdName)
-
-            withInfrastructurePipeline(params.PRODUCT_NAME, environment.prodName, 'prod')
-            healthCheckStage('prod', environment.prodName)
+        // Healthcheck per env
+        after('buildinfra:aat') {
+            echo 'Healthcheck in AAT'
+            healthCheckStage('nonprod', 'aat')
         }
-
-        onDemo {
-            withInfrastructurePipeline(params.PRODUCT_NAME, environment.demoName, 'nonprod')
-            healthCheckStage('nonprod', environment.demoName)
+        after('buildinfra:prod') {
+            echo 'Healthcheck in PROD'
+            healthCheckStage('prod', 'prod')
+        }
+        after('buildinfra:perftest') {
+            echo 'Healthcheck in Perftest'
+            healthCheckStage('qa', 'perftest')
+        }
+        after('buildinfra:demo') {
+            echo 'Healthcheck in Perftest'
+            healthCheckStage('nonprod', 'demo')
+        }
+        after('buildinfra:ithc') {
+            echo 'Healthcheck in Perftest'
+            healthCheckStage('qa', 'ithc')
         }
     }
 }
