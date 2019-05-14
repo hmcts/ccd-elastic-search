@@ -14,7 +14,12 @@ properties([
 
 if (params.DEPLOY_ES_CLUSTER == true) {
     withInfraPipeline(params.PRODUCT_NAME) {
-        enableSlackNotifications('#ccd-master-builds')
+        onMaster {
+            enableSlackNotifications('#ccd-master-builds')
+        }
+        onDemo {
+            enableSlackNotifications('#ccd-demo-builds')
+        }
 
         // Healthcheck per env
         after('buildinfra:aat') {
