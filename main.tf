@@ -1,5 +1,5 @@
 provider "azurerm" {
-  version = "1.19.0"
+  version = "1.22.1"
 }
 
 module "elastic" {
@@ -49,25 +49,25 @@ data "azurerm_key_vault" "ccd_shared_key_vault" {
 
 data "azurerm_key_vault_secret" "ccd_elastic_search_public_key" {
   name = "${var.product}-ELASTIC-SEARCH-PUB-KEY"
-  vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
+  key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
   name = "${var.product}-ELASTIC-SEARCH-URL"
   value = "${module.elastic.loadbalancerManual}"
-  vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
+  key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
   name = "${var.product}-ELASTIC-SEARCH-PASSWORD"
   value = "${module.elastic.elasticsearch_admin_password}"
-  vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
+  key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_data_nodes_count" {
   name = "${var.product}-ELASTIC-SEARCH-DATA-NODES-COUNT"
   value = "${var.vmDataNodeCount}"
-  vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
+  key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
 // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200.service.core-compute-${var.env}.internal","http://ccd-data-2.service.core-compute-${var.env}.internal:9200"
@@ -84,5 +84,5 @@ data "template_file" "es_data_nodes_url_template" {
 resource "azurerm_key_vault_secret" "es_data_nodes_url" {
   name = "${var.product}-ELASTIC-SEARCH-DATA-NODES-URL"
   value = "${local.es_data_nodes_url}"
-  vault_uri = "${data.azurerm_key_vault.ccd_shared_key_vault.vault_uri}"
+  key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }

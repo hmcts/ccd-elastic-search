@@ -41,7 +41,7 @@ variable "vmDataNodeCount" {
 variable "vmSizeAllNodes" {
   description = "vm size for all the cluster nodes"
   type = "string"
-  default = "Standard_A2"
+  default = "Standard_A2_v2"
 }
 
 variable "storageAccountType" {
