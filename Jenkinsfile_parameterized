@@ -12,9 +12,19 @@ properties([
 ])
 
 
-node {
-        withInfrastructurePipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox')
-        healthCheckStage('sandbox', params.ENVIRONMENT)
+withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
+    after('buildinfra:sandbox') {
+        echo 'Healthcheck in Sandbox'
+        healthCheckStage('sandbox', 'sandbox')
+    }
+    after('buildinfra:saat') {
+        echo 'Healthcheck in SAAT'
+        healthCheckStage('sandbox', 'saat')
+    }
+    after('buildinfra:sandbox') {
+        echo 'Healthcheck in sprod'
+        healthCheckStage('sandbox', 'sprod')
+    }
 }
 
 def healthCheckStage(subscription, environmentName) {
