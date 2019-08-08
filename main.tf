@@ -17,7 +17,7 @@ module "elastic" {
   kibanaAdditionalYaml = "${var.kibanaAdditionalYaml}"
   esAdditionalYaml = "${var.esAdditionalYaml}"
   ssh_elastic_search_public_key = "${data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value}"
-  mgmt_subscription_id = "${var.mgmt_subscription_id}"
+  mgmt_subscription_id = "8999dec3-0104-4a27-94ee-6588559729d1"
   logAnalyticsId = "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
   logAnalyticsKey = "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
 }
