@@ -42,6 +42,10 @@ if (params.DEPLOY_ES_CLUSTER == true) {
             echo 'Healthcheck in Perftest'
             healthCheckStage('qa', 'ithc')
         }
+        after('buildinfra:ethosldata') {
+            echo 'Healthcheck in ethosldata'
+            healthCheckStage('ethosldata', 'ethosldata')
+        }
     }
 }
 
