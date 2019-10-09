@@ -3,7 +3,7 @@ provider "azurerm" {
 }
 
 module "elastic" {
-  source = "git@github.com:hmcts/cnp-module-elk.git?ref=master"
+  source = "git@github.com:hmcts/cnp-module-elk.git?ref=RDM-6000"
   product = "${var.product}"
   location = "${var.location}"
   env = "${var.env}"
@@ -18,6 +18,7 @@ module "elastic" {
   esAdditionalYaml = "${var.esAdditionalYaml}"
   ssh_elastic_search_public_key = "${data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value}"
   mgmt_subscription_id = "${var.mgmt_subscription_id}"
+  aks_infra_subscription_id = "${var.aks_infra_subscription_id}"
   logAnalyticsId = "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
   logAnalyticsKey = "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
 }

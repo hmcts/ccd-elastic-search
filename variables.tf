@@ -69,3 +69,5 @@ variable "kibanaAdditionalYaml" {
 }
 
 variable "mgmt_subscription_id" {}
+
+variable "aks_infra_subscription_id" {}
