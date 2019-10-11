@@ -29,9 +29,9 @@ module "elastic" {
   esAdditionalYaml = "${var.esAdditionalYaml}"
   ssh_elastic_search_public_key = "${data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value}"
   providers = {
-    azurerm = azurerm
-    azurerm.mgmt = azurerm.mgmt
-    azurerm.aks-infra = azurerm.aks-infra
+    azurerm = "azurerm"
+    azurerm.mgmt = "azurerm.mgmt"
+    azurerm.aks-infra = "azurerm.aks-infra"
   }
   logAnalyticsId = "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
   logAnalyticsKey = "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
