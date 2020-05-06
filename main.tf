@@ -19,7 +19,7 @@ module "elastic" {
   location = "${var.location}"
   env = "${var.env}"
   subscription = "${var.subscription}"
-  mgmt_subscription_id = "${var.mgmt_subscription_id}"
+  #mgmt_subscription_id = "${var.mgmt_subscription_id}"
   common_tags = "${var.common_tags}"
   dataNodesAreMasterEligible = "${var.dataNodesAreMasterEligible}"
   vmDataNodeCount = "${var.vmDataNodeCount}"
