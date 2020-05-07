@@ -34,7 +34,7 @@ variable "dataNodesAreMasterEligible" {
 
 variable "vmDataNodeCount" {
   description = "number of data nodes"
-  type = "string"
+  type = "number"
   default = "1"
 }
 
@@ -52,7 +52,7 @@ variable "storageAccountType" {
 
 variable "vmDataDiskCount" {
   description = "number of data node's disks"
-  type = "string"
+  type = "number"
   default = "1"
 }
 
