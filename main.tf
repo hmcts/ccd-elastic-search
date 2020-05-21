@@ -22,7 +22,7 @@ module "elastic" {
   # mgmt_subscription_id = "${var.mgmt_subscription_id}"
   common_tags = "${var.common_tags}"
   dataNodesAreMasterEligible = "${var.dataNodesAreMasterEligible}"
-  vmDataNodeCount = "${var.vmDataNodeCount}"
+  # vmDataNodeCount = "${var.vmDataNodeCount}"
   vmSizeAllNodes = "${var.vmSizeAllNodes}"
   storageAccountType = "${var.storageAccountType}"
   vmDataDiskCount = "${var.vmDataDiskCount}"
