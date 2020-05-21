@@ -34,8 +34,7 @@ variable "dataNodesAreMasterEligible" {
 
 variable "vmDataNodeCount" {
   description = "number of data nodes"
-  type = "int"
-  default = "1"
+  default = 1
 }
 
 variable "vmSizeAllNodes" {
@@ -52,8 +51,7 @@ variable "storageAccountType" {
 
 variable "vmDataDiskCount" {
   description = "number of data node's disks"
-  type = "int"
-  default = "1"
+  default = 1
 }
 
 variable "esAdditionalYaml" {
