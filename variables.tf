@@ -50,7 +50,7 @@ variable "storageAccountType" {
 }
 
 variable "vmDataDiskCount" {
-  description = "number of data node's disks"
+  description = "number of data node disks"
   default = 1
 }
 
