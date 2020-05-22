@@ -32,11 +32,11 @@ variable "dataNodesAreMasterEligible" {
   default = "Yes"
 }
 
-# variable "vmDataNodeCount" {
-#   description = "number of data nodes"
-#   default = "1"
-#   type = "string"
-# }
+variable "vmDataNodeCount" {
+  description = "number of data nodes"
+  default = "1"
+  type = "string"
+}
 
 variable "vmSizeAllNodes" {
   description = "vm size for all the cluster nodes"

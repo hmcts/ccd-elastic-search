@@ -22,7 +22,7 @@ module "elastic" {
   # mgmt_subscription_id = "${var.mgmt_subscription_id}"
   common_tags = "${var.common_tags}"
   dataNodesAreMasterEligible = "${var.dataNodesAreMasterEligible}"
-  # vmDataNodeCount = "${var.vmDataNodeCount}"
+  vmDataNodeCount = "${var.vmDataNodeCount}"
   vmSizeAllNodes = "${var.vmSizeAllNodes}"
   storageAccountType = "${var.storageAccountType}"
   vmDataDiskCount = "${var.vmDataDiskCount}"
@@ -80,22 +80,22 @@ resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
-# resource "azurerm_key_vault_secret" "elastic_search_data_nodes_count" {
-#   name = "${var.product}-ELASTIC-SEARCH-DATA-NODES-COUNT"
-#   value = "${var.vmDataNodeCount}"
-#   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
-# }
+resource "azurerm_key_vault_secret" "elastic_search_data_nodes_count" {
+  name = "${var.product}-ELASTIC-SEARCH-DATA-NODES-COUNT"
+  value = "${var.vmDataNodeCount}"
+  key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
+}
 
 // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200.service.core-compute-${var.env}.internal","http://ccd-data-2.service.core-compute-${var.env}.internal:9200"
-# data "template_file" "es_data_nodes_url_template" {
-#   template = "\"http://ccd-data-$${index}.service.core-compute-$${env}.internal:9200\""
-#   count    = "${var.vmDataNodeCount}"
+data "template_file" "es_data_nodes_url_template" {
+  template = "\"http://ccd-data-$${index}.service.core-compute-$${env}.internal:9200\""
+  count    = "${var.vmDataNodeCount}"
 
-#   vars = {
-#     index   = "${count.index}"
-#     env = "${var.env}"
-#   }
-# }
+  vars = {
+    index   = "${count.index}"
+    env = "${var.env}"
+  }
+}
 
 resource "azurerm_key_vault_secret" "es_data_nodes_url" {
   name = "${var.product}-ELASTIC-SEARCH-DATA-NODES-URL"
