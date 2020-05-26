@@ -8,10 +8,10 @@ provider "azurerm" {
   skip_provider_registration = true
 }
 
-provider "azurerm" {
-  alias           = "mgmt"
-  subscription_id = "${var.mgmt_subscription_id}"
-}
+# provider "azurerm" {
+#   alias           = "mgmt"
+#   subscription_id = "${var.mgmt_subscription_id}"
+# }
 
 module "elastic" {
   source = "git@github.com:hmcts/cnp-module-elk.git?ref=v7upgrade"
@@ -30,7 +30,7 @@ module "elastic" {
   ssh_elastic_search_public_key = "${data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value}"
   providers = {
     azurerm = "azurerm"
-    azurerm.mgmt = "azurerm.mgmt"
+    # azurerm.mgmt = "azurerm.mgmt"
     azurerm.aks-infra = "azurerm.aks-infra"
   }
   logAnalyticsId = "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
