@@ -2,6 +2,17 @@ provider "azurerm" {
   version = "1.22.1"
 }
 
+provider "azurerm" {
+  alias           = "aks-infra"
+  subscription_id = "${var.aks_infra_subscription_id}"
+  skip_provider_registration = true
+}
+
+provider "azurerm" {
+  alias           = "mgmt"
+  subscription_id = "${var.mgmt_subscription_id}"
+}
+
 module "elastic" {
   source = "git@github.com:hmcts/cnp-module-elk.git?ref=Ethosldata"
   product = "${var.product}"
@@ -17,7 +28,11 @@ module "elastic" {
   kibanaAdditionalYaml = "${var.kibanaAdditionalYaml}"
   esAdditionalYaml = "${var.esAdditionalYaml}"
   ssh_elastic_search_public_key = "${data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value}"
-  mgmt_subscription_id = "8999dec3-0104-4a27-94ee-6588559729d1"
+  providers = {
+    azurerm = "azurerm"
+    azurerm.mgmt = "azurerm.mgmt"
+    azurerm.aks-infra = "azurerm.aks-infra"
+  }
   logAnalyticsId = "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
   logAnalyticsKey = "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
 }
