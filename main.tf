@@ -10,7 +10,7 @@ provider "azurerm" {
 
 provider "azurerm" {
   alias           = "mgmt"
-  subscription_id = "${var.mgmt_subscription_id}"
+  subscription_id = "${var.mgmtprod_subscription_id}"
 }
 
 module "elastic" {
