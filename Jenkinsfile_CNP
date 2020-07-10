@@ -26,10 +26,10 @@ if (params.DEPLOY_ES_CLUSTER == true) {
             echo 'Healthcheck in AAT'
             healthCheckStage('nonprod', 'aat')
         }
-        after('buildinfra:prod') {
-            echo 'Healthcheck in PROD'
-            healthCheckStage('prod', 'prod')
-        }
+//        after('buildinfra:prod') {
+//            echo 'Healthcheck in PROD'
+//            healthCheckStage('prod', 'prod')
+//        }
         after('buildinfra:perftest') {
             echo 'Healthcheck in Perftest'
             healthCheckStage('qa', 'perftest')
