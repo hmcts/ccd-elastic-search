@@ -68,6 +68,12 @@ variable "kibanaAdditionalYaml" {
   default = "console.enabled: false\n"
 }
 
+variable "dynatrace_instance" {}
+
+variable "dynatrace_token" {}
+
+variable "dynatrace_hostgroup" {}
+
 variable "mgmt_subscription_id" {}
 
 variable "aks_infra_subscription_id" {}
