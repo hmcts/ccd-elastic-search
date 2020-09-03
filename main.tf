@@ -10,7 +10,7 @@ provider "azurerm" {
 
 provider "azurerm" {
   alias           = "mgmt"
-  subscription_id = "${var.mgmt_subscription_id}"
+  subscription_id = "${var.mgmtprod_subscription_id}"
 }
 
 module "elastic" {
@@ -35,6 +35,9 @@ module "elastic" {
   }
   logAnalyticsId = "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
   logAnalyticsKey = "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
+  dynatrace_instance = "${var.dynatrace_instance}"
+  dynatrace_hostgroup = "${var.dynatrace_hostgroup}"
+  dynatrace_token = "${data.azurerm_key_vault_secret.dynatrace_token.value}"
 }
 
 locals {
@@ -64,6 +67,11 @@ data "azurerm_key_vault" "ccd_shared_key_vault" {
 
 data "azurerm_key_vault_secret" "ccd_elastic_search_public_key" {
   name = "${var.product}-ELASTIC-SEARCH-PUB-KEY"
+  key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
+}
+
+data "azurerm_key_vault_secret" "dynatrace_token" {
+  name         = "dynatrace-token"
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
