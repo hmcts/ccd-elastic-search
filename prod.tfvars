@@ -8,4 +8,3 @@ dynatrace_hostgroup        = "PROD_CFT"
 dynatrace_token            = "${data.azurerm_key_vault_secret.dynatrace_token.value}"
 
 aks_infra_subscription_id = "8cbc6f36-7c56-4963-9d36-739db5d00b27"
-mgmt_subscription_id      = "8999dec3-0104-4a27-94ee-6588559729d1"
