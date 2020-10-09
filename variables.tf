@@ -70,8 +70,6 @@ variable "kibanaAdditionalYaml" {
 
 variable "dynatrace_instance" {}
 
-variable "dynatrace_token" {}
-
 variable "dynatrace_hostgroup" {}
 
 variable "mgmt_subscription_id" {
