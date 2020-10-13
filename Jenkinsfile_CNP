@@ -7,43 +7,43 @@ import uk.gov.hmcts.contino.azure.KeyVault
 
 properties([
         parameters([
-                string(name: 'PRODUCT_NAME', defaultValue: 'ccd', description: ''),
+                string(name: 'PRODUCT_NAME', defaultValue: 'ccd-elastic-search', description: ''),
                 booleanParam(name: 'DEPLOY_ES_CLUSTER', defaultValue: false, description: 'Select to deploy ElasticSearch'),
         ])
 ])
 
-//if (params.DEPLOY_ES_CLUSTER == true) {
-//    withInfraPipeline(params.PRODUCT_NAME) {
-//        onMaster {
-//            enableSlackNotifications('#ccd-master-builds')
-//        }
-//        onDemo {
-//            enableSlackNotifications('#ccd-demo-builds')
-//        }
-//
-//        // Healthcheck per env
-//        after('buildinfra:aat') {
-//            echo 'Healthcheck in AAT'
-//            healthCheckStage('nonprod', 'aat')
-//        }
-//        after('buildinfra:prod') {
-//            echo 'Healthcheck in PROD'
-//            healthCheckStage('prod', 'prod')
-//        }
-//        after('buildinfra:perftest') {
-//            echo 'Healthcheck in Perftest'
-//            healthCheckStage('qa', 'perftest')
-//        }
-//        after('buildinfra:demo') {
-//            echo 'Healthcheck in Perftest'
-//            healthCheckStage('nonprod', 'demo')
-//        }
-//        after('buildinfra:ithc') {
-//            echo 'Healthcheck in Perftest'
-//            healthCheckStage('qa', 'ithc')
-//        }
-//    }
-//}
+if (params.DEPLOY_ES_CLUSTER == true) {
+   withInfraPipeline(params.PRODUCT_NAME) {
+       onMaster {
+           enableSlackNotifications('#ccd-master-builds')
+       }
+       onDemo {
+           enableSlackNotifications('#ccd-demo-builds')
+       }
+
+       // Healthcheck per env
+       after('buildinfra:aat') {
+           echo 'Healthcheck in AAT'
+           healthCheckStage('nonprod', 'aat')
+       }
+       after('buildinfra:prod') {
+           echo 'Healthcheck in PROD'
+           healthCheckStage('prod', 'prod')
+       }
+       after('buildinfra:perftest') {
+           echo 'Healthcheck in Perftest'
+           healthCheckStage('qa', 'perftest')
+       }
+       after('buildinfra:demo') {
+           echo 'Healthcheck in Perftest'
+           healthCheckStage('nonprod', 'demo')
+       }
+       after('buildinfra:ithc') {
+           echo 'Healthcheck in Perftest'
+           healthCheckStage('qa', 'ithc')
+       }
+   }
+}
 
 def healthCheckStage(subscription, environmentName) {
     stage('HealthCheck') {
