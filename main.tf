@@ -17,7 +17,7 @@ provider "azurerm" {
 }
 
 module "elastic" {
-  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=master"
+  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=es-port-change"
   product                       = "${var.product}"
   location                      = "${var.location}"
   env                           = "${var.env}"
@@ -54,7 +54,7 @@ locals {
   nonPreviewResourceGroup = "${var.raw_product}-shared-${var.env}"
   sharedResourceGroup     = "${(var.env == "preview" || var.env == "spreview") ? local.previewResourceGroup : local.nonPreviewResourceGroup}"
 
-  // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200","http://ccd-data-2:9200"
+  // generate an url consisting of the data nodes e.g. "http://ccd-data-1:7400","http://ccd-data-2:7400"
   es_data_nodes_url = "${join(",", data.template_file.es_data_nodes_url_template.*.rendered)}"
 }
 
@@ -96,9 +96,9 @@ resource "azurerm_key_vault_secret" "elastic_search_data_nodes_count" {
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
-// generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200.service.core-compute-${var.env}.internal","http://ccd-data-2.service.core-compute-${var.env}.internal:9200"
+// generate an url consisting of the data nodes e.g. "http://ccd-data-1:7400.service.core-compute-${var.env}.internal","http://ccd-data-2.service.core-compute-${var.env}.internal:7400"
 data "template_file" "es_data_nodes_url_template" {
-  template = "\"http://ccd-data-$${index}.service.core-compute-$${env}.internal:9200\""
+  template = "\"http://ccd-data-$${index}.service.core-compute-$${env}.internal:7400\""
   count    = "${var.vmDataNodeCount}"
 
   vars = {
