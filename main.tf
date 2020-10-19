@@ -18,7 +18,7 @@ provider "azurerm" {
 
 module "elastic" {
   source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=master"
-  product                       = "${var.product}"
+  product                       = "${var.raw_product}"
   location                      = "${var.location}"
   env                           = "${var.env}"
   subscription                  = "${var.subscription}"
@@ -69,7 +69,7 @@ data "azurerm_key_vault" "ccd_shared_key_vault" {
 }
 
 data "azurerm_key_vault_secret" "ccd_elastic_search_public_key" {
-  name         = "${var.product}-ELASTIC-SEARCH-PUB-KEY"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-PUB-KEY"
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
@@ -79,19 +79,19 @@ data "azurerm_key_vault_secret" "dynatrace_token" {
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
-  name         = "${var.product}-ELASTIC-SEARCH-URL"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-URL"
   value        = "${module.elastic.loadbalancerManual}"
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
-  name         = "${var.product}-ELASTIC-SEARCH-PASSWORD"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-PASSWORD"
   value        = "${module.elastic.elasticsearch_admin_password}"
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_data_nodes_count" {
-  name         = "${var.product}-ELASTIC-SEARCH-DATA-NODES-COUNT"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-DATA-NODES-COUNT"
   value        = "${var.vmDataNodeCount}"
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
@@ -108,7 +108,7 @@ data "template_file" "es_data_nodes_url_template" {
 }
 
 resource "azurerm_key_vault_secret" "es_data_nodes_url" {
-  name         = "${var.product}-ELASTIC-SEARCH-DATA-NODES-URL"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-DATA-NODES-URL"
   value        = "${local.es_data_nodes_url}"
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
