@@ -1,16 +1,19 @@
 provider "azurerm" {
   version = "2.38.0"
+  features {}
 }
 
 provider "azurerm" {
   alias                      = "aks-infra"
   subscription_id            = "${var.aks_infra_subscription_id}"
   skip_provider_registration = true
+  features {}
 }
 
 provider "azurerm" {
   alias           = "mgmt"
   subscription_id = "${var.mgmt_subscription_id}"
+  features {}
 }
 
 module "elastic" {
