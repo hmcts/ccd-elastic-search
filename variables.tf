@@ -73,7 +73,7 @@ variable "dynatrace_instance" {}
 variable "dynatrace_hostgroup" {}
 
 variable "mgmt_subscription_id" {
-  default = "8999dec3-0104-4a27-94ee-6588559729d1"
+  default = "1baf5470-1c3e-40d3-a6f7-74bfbce4b348"
 }
 
 variable "aks_infra_subscription_id" {}
