@@ -20,7 +20,10 @@ if (params.DEPLOY_ES_CLUSTER == true) {
        onDemo {
            enableSlackNotifications('#ccd-demo-builds')
        }
-
+       onEthosldata {
+        env.TF_STATE_STORAGE_TEMPLATE = 'statestore'
+        env.TF_STATE_CONTAINER_TEMPLATE = 'statectr'
+       }
         // Healthcheck per env
         after('buildinfra:aat') {
             echo 'Healthcheck in AAT'
