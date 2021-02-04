@@ -6,4 +6,4 @@ vmDataDiskCount = "2"
 dynatrace_instance = "yrk32651"
 dynatrace_hostgroup = "LDATA_CFT"
 
-aks_infra_subscription_id = "1baf5470-1c3e-40d3-a6f7-74bfbce4b348"
+aks_infra_subscription_id = "4da0ce99-35c5-491f-8a0b-56c39f7278fa"
