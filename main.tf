@@ -1,55 +1,58 @@
 provider "azurerm" {
-  version = "1.22.1"
+  version = "2.29.0"
+  features {}
 }
 
 provider "azurerm" {
-  alias           = "aks-infra"
-  subscription_id = "${var.aks_infra_subscription_id}"
+  alias                      = "aks-infra"
+  subscription_id            = "${var.aks_infra_subscription_id}"
   skip_provider_registration = true
+  features {}
 }
 
 provider "azurerm" {
   alias           = "mgmt"
-  subscription_id = "${var.mgmtprod_subscription_id}"
+  subscription_id = "${var.mgmt_subscription_id}"
+  features {}
 }
 
 module "elastic" {
-  source = "git@github.com:hmcts/cnp-module-elk.git?ref=master"
-  product = "${var.product}"
-  location = "${var.location}"
-  env = "${var.env}"
-  subscription = "${var.subscription}"
-  common_tags = "${var.common_tags}"
-  dataNodesAreMasterEligible = "${var.dataNodesAreMasterEligible}"
-  vmDataNodeCount = "${var.vmDataNodeCount}"
-  vmSizeAllNodes = "${var.vmSizeAllNodes}"
-  storageAccountType = "${var.storageAccountType}"
-  vmDataDiskCount = "${var.vmDataDiskCount}"
-  kibanaAdditionalYaml = "${var.kibanaAdditionalYaml}"
-  esAdditionalYaml = "${var.esAdditionalYaml}"
+  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=master"
+  product                       = "${var.raw_product}"
+  location                      = "${var.location}"
+  env                           = "${var.env}"
+  subscription                  = "${var.subscription}"
+  common_tags                   = "${var.common_tags}"
+  dataNodesAreMasterEligible    = "${var.dataNodesAreMasterEligible}"
+  vmDataNodeCount               = "${var.vmDataNodeCount}"
+  vmSizeAllNodes                = "${var.vmSizeAllNodes}"
+  storageAccountType            = "${var.storageAccountType}"
+  vmDataDiskCount               = "${var.vmDataDiskCount}"
+  kibanaAdditionalYaml          = "${var.kibanaAdditionalYaml}"
+  esAdditionalYaml              = "${var.esAdditionalYaml}"
   ssh_elastic_search_public_key = "${data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value}"
   providers = {
-    azurerm = "azurerm"
-    azurerm.mgmt = "azurerm.mgmt"
+    azurerm           = "azurerm"
+    azurerm.mgmt      = "azurerm.mgmt"
     azurerm.aks-infra = "azurerm.aks-infra"
   }
-  logAnalyticsId = "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
-  logAnalyticsKey = "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
-  dynatrace_instance = "${var.dynatrace_instance}"
+  logAnalyticsId      = "${data.azurerm_log_analytics_workspace.log_analytics.workspace_id}"
+  logAnalyticsKey     = "${data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key}"
+  dynatrace_instance  = "${var.dynatrace_instance}"
   dynatrace_hostgroup = "${var.dynatrace_hostgroup}"
-  dynatrace_token = "${data.azurerm_key_vault_secret.dynatrace_token.value}"
+  dynatrace_token     = "${data.azurerm_key_vault_secret.dynatrace_token.value}"
 }
 
 locals {
   // Vault name
-  previewVaultName = "${var.raw_product}-aat"
+  previewVaultName    = "${var.raw_product}-aat"
   nonPreviewVaultName = "${var.raw_product}-${var.env}"
-  vaultName = "${(var.env == "preview" || var.env == "spreview") ? local.previewVaultName : local.nonPreviewVaultName}"
+  vaultName           = "${(var.env == "preview" || var.env == "spreview") ? local.previewVaultName : local.nonPreviewVaultName}"
 
   // Shared Resource Group
-  previewResourceGroup = "${var.raw_product}-shared-aat"
+  previewResourceGroup    = "${var.raw_product}-shared-aat"
   nonPreviewResourceGroup = "${var.raw_product}-shared-${var.env}"
-  sharedResourceGroup = "${(var.env == "preview" || var.env == "spreview") ? local.previewResourceGroup : local.nonPreviewResourceGroup}"
+  sharedResourceGroup     = "${(var.env == "preview" || var.env == "spreview") ? local.previewResourceGroup : local.nonPreviewResourceGroup}"
 
   // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200","http://ccd-data-2:9200"
   es_data_nodes_url = "${join(",", data.template_file.es_data_nodes_url_template.*.rendered)}"
@@ -61,12 +64,17 @@ data "azurerm_log_analytics_workspace" "log_analytics" {
 }
 
 data "azurerm_key_vault" "ccd_shared_key_vault" {
-  name = "${local.vaultName}"
+  name                = "${local.vaultName}"
   resource_group_name = "${local.sharedResourceGroup}"
 }
 
 data "azurerm_key_vault_secret" "ccd_elastic_search_public_key" {
-  name = "${var.product}-ELASTIC-SEARCH-PUB-KEY"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-PUB-KEY"
+  key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
+}
+
+data "azurerm_key_vault_secret" "dynatrace_token" {
+  name         = "dynatrace-token"
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
@@ -76,20 +84,20 @@ data "azurerm_key_vault_secret" "dynatrace_token" {
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
-  name = "${var.product}-ELASTIC-SEARCH-URL"
-  value = "${module.elastic.loadbalancerManual}"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-URL"
+  value        = "${module.elastic.loadbalancerManual}"
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
-  name = "${var.product}-ELASTIC-SEARCH-PASSWORD"
-  value = "${module.elastic.elasticsearch_admin_password}"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-PASSWORD"
+  value        = "${module.elastic.elasticsearch_admin_password}"
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_data_nodes_count" {
-  name = "${var.product}-ELASTIC-SEARCH-DATA-NODES-COUNT"
-  value = "${var.vmDataNodeCount}"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-DATA-NODES-COUNT"
+  value        = "${var.vmDataNodeCount}"
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
@@ -99,13 +107,13 @@ data "template_file" "es_data_nodes_url_template" {
   count    = "${var.vmDataNodeCount}"
 
   vars = {
-    index   = "${count.index}"
-    env = "${var.env}"
+    index = "${count.index}"
+    env   = "${var.env}"
   }
 }
 
 resource "azurerm_key_vault_secret" "es_data_nodes_url" {
-  name = "${var.product}-ELASTIC-SEARCH-DATA-NODES-URL"
-  value = "${local.es_data_nodes_url}"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-DATA-NODES-URL"
+  value        = "${local.es_data_nodes_url}"
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }

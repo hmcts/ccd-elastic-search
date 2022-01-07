@@ -1,2 +1,2 @@
 dataNodesAreMasterEligible = "Yes"
-vmDataNodeCount = "1"
+vmDataNodeCount            = "1"
