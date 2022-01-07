@@ -78,11 +78,6 @@ data "azurerm_key_vault_secret" "dynatrace_token" {
   key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
 
-data "azurerm_key_vault_secret" "dynatrace_token" {
-  name         = "dynatrace-token"
-  key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
-}
-
 resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
   name         = "${var.raw_product}-ELASTIC-SEARCH-URL"
   value        = "${module.elastic.loadbalancerManual}"
