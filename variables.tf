@@ -1,5 +1,5 @@
 variable "product" {
-  type    = "string"
+  type = "string"
 }
 
 variable "raw_product" {
@@ -28,7 +28,7 @@ variable "common_tags" {
 }
 
 variable "dataNodesAreMasterEligible" {
-  type = "string"
+  type    = "string"
   default = "Yes"
 }
 
@@ -40,14 +40,14 @@ variable "vmDataNodeCount" {
 
 variable "vmSizeAllNodes" {
   description = "vm size for all the cluster nodes"
-  type = "string"
-  default = "Standard_D2_v2"
+  type        = "string"
+  default     = "Standard_D2_v2"
 }
 
 variable "storageAccountType" {
   description = "disk storage account type"
-  type = "string"
-  default = "Standard"
+  type        = "string"
+  default     = "Standard"
 }
 
 variable "vmDataDiskCount" {
@@ -58,16 +58,22 @@ variable "vmDataDiskCount" {
 
 variable "esAdditionalYaml" {
   description = "Additional configuration for Elasticsearch yaml configuration file. Each line must be separated by a \n"
-  type = "string"
-  default = "action.auto_create_index: .security*,.monitoring*,.watches,.triggered_watches,.watcher-history*,.logstash_dead_letter,.ml*\nxpack.monitoring.collection.enabled: true\nscript.allowed_types: inline\nscript.allowed_contexts: template, ingest\n"
+  type        = "string"
+  default     = "action.auto_create_index: .security*,.monitoring*,.watches,.triggered_watches,.watcher-history*,.logstash_dead_letter,.ml*\nxpack.monitoring.collection.enabled: true\nscript.allowed_types: inline\nscript.allowed_contexts: template, ingest\n"
 }
 
 variable "kibanaAdditionalYaml" {
   description = "Additional configuration for Kibana yaml configuration file. Each line must be separated by a \n"
-  type = "string"
-  default = "console.enabled: false\n"
+  type        = "string"
+  default     = "console.enabled: false\n"
 }
 
-variable "mgmt_subscription_id" {}
+variable "dynatrace_instance" {}
+
+variable "dynatrace_hostgroup" {}
+
+variable "mgmt_subscription_id" {
+  default = "8999dec3-0104-4a27-94ee-6588559729d1"
+}
 
 variable "aks_infra_subscription_id" {}
