@@ -95,13 +95,13 @@ data "azurerm_key_vault_secret" "dynatrace_token" {
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
-  name         = "${var.product}-ELASTIC-SEARCH-URL"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-URL"
   value        = local.vNetLoadBalancerIp
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
 resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
-  name         = "${var.product}-ELASTIC-SEARCH-PASSWORD"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-PASSWORD"
   value        = module.elastic.elasticsearch_admin_password
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
