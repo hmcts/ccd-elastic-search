@@ -125,5 +125,5 @@ data "template_file" "es_data_nodes_url_template" {
 resource "azurerm_key_vault_secret" "es_data_nodes_url" {
   name         = "${var.raw_product}-ELASTIC-SEARCH-DATA-NODES-URL"
   value        = "${local.es_data_nodes_url}"
-  key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
+  key_vault_id = "${data.azurerm_key_vault.key_vault.id}"
 }
