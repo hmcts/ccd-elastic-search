@@ -85,7 +85,7 @@ data "azurerm_log_analytics_workspace" "log_analytics" {
 }
 
 data "azurerm_key_vault_secret" "ccd_elastic_search_public_key" {
-  name         = "${var.product}-ELASTIC-SEARCH-PUB-KEY"
+  name         = "${var.raw_product}-ELASTIC-SEARCH-PUB-KEY"
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
@@ -107,7 +107,7 @@ resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
 }
 
 data "azurerm_key_vault_secret" "alerts_email" {
-  name         = "alerts-email"
+  name         = "elk-alerts-email"
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
