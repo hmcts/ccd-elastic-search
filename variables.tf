@@ -34,7 +34,6 @@ variable "dataNodesAreMasterEligible" {
 
 variable "vmDataNodeCount" {
   description = "number of data nodes"
-  # default = "1"
   type = string
 }
 
@@ -72,8 +71,6 @@ variable "dynatrace_instance" {}
 
 variable "dynatrace_hostgroup" {}
 
-variable "mgmt_subscription_id" {
-  default = "1baf5470-1c3e-40d3-a6f7-74bfbce4b348"
-}
+variable "mgmt_subscription_id" {}
 
-variable "aks_infra_subscription_id" {}
+variable "aks_subscription_id" {}
