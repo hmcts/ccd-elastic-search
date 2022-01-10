@@ -11,6 +11,21 @@ provider "azurerm" {
   features {}
 }
 
+locals {
+  // Vault name
+  previewVaultName    = "${var.raw_product}-aat"
+  nonPreviewVaultName = "${var.raw_product}-${var.env}"
+  vaultName           = "${(var.env == "preview" || var.env == "spreview") ? local.previewVaultName : local.nonPreviewVaultName}"
+
+  // Shared Resource Group
+  previewResourceGroup    = "${var.raw_product}-shared-aat"
+  nonPreviewResourceGroup = "${var.raw_product}-shared-${var.env}"
+  sharedResourceGroup     = "${(var.env == "preview" || var.env == "spreview") ? local.previewResourceGroup : local.nonPreviewResourceGroup}"
+  
+  // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200","http://ccd-data-2:9200"
+  es_data_nodes_url = "${join(",", data.template_file.es_data_nodes_url_template.*.rendered)}"
+}
+
 module "elastic" {
   source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=RDM-13038"
   vmHostNamePrefix              = "ccd-"
@@ -60,8 +75,8 @@ data "azurerm_subnet" "elastic-subnet" {
 }
 
 data "azurerm_key_vault" "key_vault" {
-  name                = "${var.product}-${var.env}"
-  resource_group_name = "${var.product}-${var.env}"
+  name                = "${local.vaultName}"
+  resource_group_name = "${local.sharedResourceGroup}"
 }
 
 data "azurerm_log_analytics_workspace" "log_analytics" {
@@ -94,4 +109,21 @@ resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
 data "azurerm_key_vault_secret" "alerts_email" {
   name         = "alerts-email"
   key_vault_id = data.azurerm_key_vault.key_vault.id
+}
+
+// generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200.service.core-compute-${var.env}.internal","http://ccd-data-2.service.core-compute-${var.env}.internal:9200"
+data "template_file" "es_data_nodes_url_template" {
+  template = "\"http://ccd-data-$${index}.service.core-compute-$${env}.internal:9200\""
+  count    = "${var.vmDataNodeCount}"
+
+  vars = {
+    index = "${count.index}"
+    env   = "${var.env}"
+  }
+}
+
+resource "azurerm_key_vault_secret" "es_data_nodes_url" {
+  name         = "${var.raw_product}-ELASTIC-SEARCH-DATA-NODES-URL"
+  value        = "${local.es_data_nodes_url}"
+  key_vault_id = "${data.azurerm_key_vault.ccd_shared_key_vault.id}"
 }
