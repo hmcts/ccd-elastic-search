@@ -1,5 +1,8 @@
 dataNodesAreMasterEligible = "Yes"
-vmDataNodeCount            = "1"
+vmDataNodeCount            = "3"
+vmSizeAllNodes = "Standard_D2_v2"
+storageAccountType = "Default"
+vmDataDiskCount = "2"
 dynatrace_instance         = "yrk32651"
 dynatrace_hostgroup        = "Sbox_CFT"
 

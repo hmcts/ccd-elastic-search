@@ -17,11 +17,12 @@ provider "azurerm" {
 }
 
 module "elastic" {
-  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=master"
+  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=ES-7x-Upgrade"
   product                       = "${var.raw_product}"
   location                      = "${var.location}"
   env                           = "${var.env}"
   subscription                  = "${var.subscription}"
+  # mgmt_subscription_id = "${var.mgmt_subscription_id}"
   common_tags                   = "${var.common_tags}"
   dataNodesAreMasterEligible    = "${var.dataNodesAreMasterEligible}"
   vmDataNodeCount               = "${var.vmDataNodeCount}"
