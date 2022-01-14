@@ -1,5 +1,5 @@
 variable "product" {
-  type = "string"
+  type = string
 }
 
 variable "raw_product" {
@@ -7,16 +7,16 @@ variable "raw_product" {
 }
 
 variable "location" {
-  type    = "string"
+  type    = string
   default = "UK South"
 }
 
 variable "env" {
-  type = "string"
+  type = string
 }
 
 variable "subscription" {
-  type = "string"
+  type = string
 }
 
 variable "capacity" {
@@ -24,58 +24,53 @@ variable "capacity" {
 }
 
 variable "common_tags" {
-  type = "map"
+  type = map
 }
 
 variable "dataNodesAreMasterEligible" {
-  type    = "string"
+  type    = string
   default = "Yes"
 }
 
 variable "vmDataNodeCount" {
   description = "number of data nodes"
-  type        = "string"
-  default     = "1"
+  type = string
 }
 
 variable "vmSizeAllNodes" {
   description = "vm size for all the cluster nodes"
-  type        = "string"
+  type        = string
   default     = "Standard_D2_v2"
 }
 
 variable "storageAccountType" {
   description = "disk storage account type"
-  type        = "string"
+  type        = string
   default     = "Standard"
 }
 
 variable "vmDataDiskCount" {
-  description = "number of data node's disks"
-  type        = "string"
-  default     = "1"
+  description = "number of data node disks"
+  default = "1"
+  type = string
 }
 
 variable "esAdditionalYaml" {
   description = "Additional configuration for Elasticsearch yaml configuration file. Each line must be separated by a \n"
-  type        = "string"
-  default     = "action.auto_create_index: .security*,.monitoring*,.watches,.triggered_watches,.watcher-history*,.*_dead_letter,.ml*\nxpack.monitoring.collection.enabled: true\nscript.allowed_types: inline\nscript.allowed_contexts: template, ingest\n"
+  type        = string
+  default     = "action.auto_create_index: .security*,.monitoring*,.watches,.triggered_watches,.watcher-history*,.logstash_dead_letter,.ml*\nxpack.monitoring.collection.enabled: true\nscript.allowed_types: inline\nscript.allowed_contexts: template, ingest\n"
 }
 
 variable "kibanaAdditionalYaml" {
   description = "Additional configuration for Kibana yaml configuration file. Each line must be separated by a \n"
-  type        = "string"
+  type        = string
   default     = "console.enabled: false\n"
 }
 
 variable "dynatrace_instance" {}
 
-#variable "dynatrace_token" {}
-
 variable "dynatrace_hostgroup" {}
-  
-variable "mgmt_subscription_id" {
-  default = "8999dec3-0104-4a27-94ee-6588559729d1"
-}
 
-variable "aks_infra_subscription_id" {}
+variable "mgmt_subscription_id" {}
+
+variable "aks_subscription_id" {}

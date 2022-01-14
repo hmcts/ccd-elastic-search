@@ -1,10 +1,7 @@
 dataNodesAreMasterEligible = "Yes"
-vmDataNodeCount            = "3"
+vmDataNodeCount            = "4"
 vmSizeAllNodes             = "Standard_D2_v2"
 storageAccountType         = "Default"
 vmDataDiskCount            = "2"
 dynatrace_instance         = "yrk32651"
 dynatrace_hostgroup        = "AAT_CFT"
-dynatrace_token            = "${data.azurerm_key_vault_secret.dynatrace_token.value}"
-
-aks_infra_subscription_id = "96c274ce-846d-4e48-89a7-d528432298a7"
