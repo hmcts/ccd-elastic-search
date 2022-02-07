@@ -49,6 +49,7 @@ module "elastic" {
   location                      = var.location
   env                           = var.env
   subscription                  = var.subscription
+  esVersion                     = var.esVersion
   common_tags                   = var.common_tags
   vNetLoadBalancerIp            = local.vNetLoadBalancerIp
   dataNodesAreMasterEligible    = true
