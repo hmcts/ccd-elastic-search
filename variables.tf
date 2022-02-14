@@ -72,6 +72,11 @@ variable "kibanaAdditionalYaml" {
   type        = string
   default     = "console.enabled: false\n"
 }
+  
+variable "esHeapSize" {
+  description  = "The size, in megabytes, of memory to allocate on each Elasticsearch node for the JVM heap.",
+  defaultValue = 0
+}
 
 variable "dynatrace_instance" {
   default     = ""
