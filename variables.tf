@@ -64,7 +64,7 @@ variable "vmDataDiskCount" {
 variable "esAdditionalYaml" {
   description = "Additional configuration for Elasticsearch yaml configuration file. Each line must be separated by a \n"
   type        = string
-  default     = "action.auto_create_index: .security*,.monitoring*,.kibana*,.watches,.triggered_watches,.watcher-history*,.logstash_dead_letter,.ml*\nxpack.monitoring.collection.enabled: true\nscript.allowed_types: inline\nscript.allowed_contexts: template, ingest\n"
+  default     = "action.auto_create_index: .security*,.monitoring*,.kibana*,.watches,.triggered_watches,.watcher-history*,.logstash_dead_letter,.ml*\nxpack.monitoring.collection.enabled: true\nscript.allowed_types: inline\nscript.allowed_contexts: template, ingest\ningest.geoip.downloader.enabled: false\n"
 }
 
 variable "kibanaAdditionalYaml" {
