@@ -51,6 +51,7 @@ module "elastic" {
   subscription                  = var.subscription
   esVersion                     = var.esVersion
   common_tags                   = var.common_tags
+  esHeapSize                    = var.esHeapSize
   vNetLoadBalancerIp            = local.vNetLoadBalancerIp
   dataNodesAreMasterEligible    = true
   vmDataNodeCount               = var.vmDataNodeCount
