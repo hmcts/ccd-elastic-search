@@ -75,6 +75,7 @@ variable "kibanaAdditionalYaml" {
   
 variable "esHeapSize" {
   description  = "The size, in megabytes, of memory to allocate on each Elasticsearch node for the JVM heap."
+  type         = number 
   default      = 0
 }
 
