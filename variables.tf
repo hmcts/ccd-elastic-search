@@ -35,12 +35,19 @@ variable "dataNodesAreMasterEligible" {
 variable "vmDataNodeCount" {
   description = "number of data nodes"
   type = string
+  default = "4"
 }
 
 variable "vmSizeAllNodes" {
   description = "vm size for all the cluster nodes"
   type        = string
-  default     = "Standard_D2_v2"
+  default     = "Standard_D4s_v3"
+}
+  
+variable "esVersion" {
+  description = "ES version"
+  type        = string
+  default     = "7.17.0"
 }
 
 variable "esVersion" {
@@ -64,13 +71,19 @@ variable "vmDataDiskCount" {
 variable "esAdditionalYaml" {
   description = "Additional configuration for Elasticsearch yaml configuration file. Each line must be separated by a \n"
   type        = string
-  default     = "action.auto_create_index: .security*,.monitoring*,.watches,.triggered_watches,.watcher-history*,.logstash_dead_letter,.ml*\nxpack.monitoring.collection.enabled: true\nscript.allowed_types: inline\nscript.allowed_contexts: template, ingest\n"
+  default     = "action.auto_create_index: .security*,.monitoring*,.kibana*,.watches,.triggered_watches,.watcher-history*,.logstash_dead_letter,.ml*\nxpack.monitoring.collection.enabled: true\nscript.allowed_types: inline\nscript.allowed_contexts: template, ingest\ningest.geoip.downloader.enabled: false\n"
 }
 
 variable "kibanaAdditionalYaml" {
   description = "Additional configuration for Kibana yaml configuration file. Each line must be separated by a \n"
   type        = string
   default     = "console.enabled: false\n"
+}
+  
+variable "esHeapSize" {
+  description  = "The size, in megabytes, of memory to allocate on each Elasticsearch node for the JVM heap."
+  type         = number 
+  default      = 0
 }
 
 variable "dynatrace_instance" {
