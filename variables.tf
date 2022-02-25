@@ -50,12 +50,6 @@ variable "esVersion" {
   default     = "7.17.0"
 }
 
-variable "esVersion" {
-  description = "ES version"
-  type        = string
-  default     = "7.11.1"
-}
-
 variable "storageAccountType" {
   description = "disk storage account type"
   type        = string
