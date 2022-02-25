@@ -1,6 +1,3 @@
-dataNodesAreMasterEligible = "Yes"
-vmDataNodeCount            = "4"
-vmSizeAllNodes             = "Standard_D2_v2"
 storageAccountType         = "Default"
 vmDataDiskCount            = "2"
 dynatrace_instance         = "yrk32651"

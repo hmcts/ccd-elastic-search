@@ -35,12 +35,13 @@ variable "dataNodesAreMasterEligible" {
 variable "vmDataNodeCount" {
   description = "number of data nodes"
   type = string
+  default = "4"
 }
 
 variable "vmSizeAllNodes" {
   description = "vm size for all the cluster nodes"
   type        = string
-  default     = "Standard_D2_v2"
+  default     = "Standard_D4s_v3"
 }
   
 variable "esVersion" {
