@@ -21,27 +21,27 @@ if (params.DEPLOY_ES_CLUSTER == true) {
            enableSlackNotifications('#ccd-demo-builds')
        }
 
-       // Healthcheck per env
-       after('buildinfra:aat') {
-           echo 'Healthcheck in AAT'
-           healthCheckStage('nonprod', 'aat')
-       }
-       after('buildinfra:prod') {
-           echo 'Healthcheck in PROD'
-           healthCheckStage('prod', 'prod')
-       }
-       after('buildinfra:perftest') {
-           echo 'Healthcheck in Perftest'
-           healthCheckStage('qa', 'perftest')
-       }
-       after('buildinfra:demo') {
-           echo 'Healthcheck in Perftest'
-           healthCheckStage('nonprod', 'demo')
-       }
-       after('buildinfra:ithc') {
-           echo 'Healthcheck in Perftest'
-           healthCheckStage('qa', 'ithc')
-       }
+       // TODO: Healthcheck per env
+//        after('buildinfra:aat') {
+//            echo 'Healthcheck in AAT'
+//            healthCheckStage('nonprod', 'aat')
+//        }
+//        after('buildinfra:prod') {
+//            echo 'Healthcheck in PROD'
+//            healthCheckStage('prod', 'prod')
+//        }
+//        after('buildinfra:perftest') {
+//            echo 'Healthcheck in Perftest'
+//            healthCheckStage('qa', 'perftest')
+//        }
+//        after('buildinfra:demo') {
+//            echo 'Healthcheck in Perftest'
+//            healthCheckStage('nonprod', 'demo')
+//        }
+//        after('buildinfra:ithc') {
+//            echo 'Healthcheck in Perftest'
+//            healthCheckStage('qa', 'ithc')
+//        }
    }
 }
 
