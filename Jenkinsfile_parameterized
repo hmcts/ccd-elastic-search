@@ -7,7 +7,7 @@ import uk.gov.hmcts.contino.azure.KeyVault
 properties([
         parameters([
                 string(name: 'PRODUCT_NAME', defaultValue: 'ccd-elastic-search', description: ''),
-                choice(name: 'ENVIRONMENT', choices: 'demo', description: 'Environment where code should be build and deployed')
+                choice(name: 'ENVIRONMENT', choices: 'sandbox\nsaat\nsprod', description: 'Environment where code should be build and deployed')
         ])
 ])
 
