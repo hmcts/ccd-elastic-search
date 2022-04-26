@@ -61,7 +61,7 @@ module "elastic" {
   providers = {
     azurerm           = azurerm
     # azurerm.mgmt      = azurerm.mgmt
-    azurerm.aks-infra = azurerm.aks-infra
+    # azurerm.aks-infra = azurerm.aks-infra
   }
   logAnalyticsId      = data.azurerm_log_analytics_workspace.log_analytics.workspace_id
   logAnalyticsKey     = data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key
