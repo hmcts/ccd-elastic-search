@@ -1,2 +1,2 @@
 storageAccountType         = "Default"
-vmDataDiskCount            = "3"
+vmDataDiskCount            = "2"
