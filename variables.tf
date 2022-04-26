@@ -12,7 +12,7 @@ variable "location" {
 }
 
 variable "env" {
-  type = string
+  default = "demo"
 }
 
 variable "subscription" {
