@@ -4,7 +4,6 @@ terraform {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "= 2.58.0"
-      configuration_aliases = [ azurerm.mgmt, azurerm.aks-infra ]
     }
   }
 }
