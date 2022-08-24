@@ -7,7 +7,7 @@ metadata:
     jenkins.io/job-full-name: cft:HMCTS_a_to_c/ccd-elastic-search
     github.com/project-slug: hmcts/ccd-elastic-search
   tags:
-    - nodejs
+    - terraform
   links:
     - url: https://hmcts-reform.slack.com/app_redirect?channel=ccd-questions-answers
       title: "#ccd-questions-answers on Slack"
