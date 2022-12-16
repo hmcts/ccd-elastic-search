@@ -22,23 +22,23 @@ if (params.DEPLOY_ES_CLUSTER == true) {
        }
 
        // TODO: Healthcheck per env
-//        after('buildinfra:aat') {
+//        afterAlways('buildinfra:aat') {
 //            echo 'Healthcheck in AAT'
 //            healthCheckStage('nonprod', 'aat')
 //        }
-//        after('buildinfra:prod') {
+//        afterAlways('buildinfra:prod') {
 //            echo 'Healthcheck in PROD'
 //            healthCheckStage('prod', 'prod')
 //        }
-//        after('buildinfra:perftest') {
+//        afterAlways('buildinfra:perftest') {
 //            echo 'Healthcheck in Perftest'
 //            healthCheckStage('qa', 'perftest')
 //        }
-//        after('buildinfra:demo') {
+//        afterAlways('buildinfra:demo') {
 //            echo 'Healthcheck in Perftest'
 //            healthCheckStage('nonprod', 'demo')
 //        }
-//        after('buildinfra:ithc') {
+//        afterAlways('buildinfra:ithc') {
 //            echo 'Healthcheck in Perftest'
 //            healthCheckStage('qa', 'ithc')
 //        }
