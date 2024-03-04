@@ -50,7 +50,7 @@ module "elastic" {
   env                           = var.env
   subscription                  = var.subscription
   esVersion                     = var.esVersion
-  common_tags                   = merge(module.ctags.common_tags, { "AUM_Reboot" = "Yes", "AUM_Service" = "ELK_CCD" })
+  common_tags                   = var.common_tags
   vNetLoadBalancerIp            = local.vNetLoadBalancerIp
   dataNodesAreMasterEligible    = true
   vmDataNodeCount               = var.vmDataNodeCount
