@@ -30,6 +30,7 @@ locals {
   previewVaultName    = "${var.raw_product}-aat"
   nonPreviewVaultName = "${var.raw_product}-${var.env}"
   vaultName           = "${(var.env == "preview" || var.env == "spreview") ? local.previewVaultName : local.nonPreviewVaultName}"
+  dummy_local         = ""
 
   // Shared Resource Group
   previewResourceGroup    = "${var.raw_product}-shared-aat"
