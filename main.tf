@@ -44,7 +44,7 @@ locals {
 }
 
 module "elastic" {
-  source                        = "https://github.com/hmcts/cnp-module-elk.git?ref=RDM-13038"
+  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=RDM-13038"
   vmHostNamePrefix              = "ccd-"
   product                       = var.raw_product
   location                      = var.location
