@@ -78,7 +78,7 @@ module "elastic" {
 
 module "elastic2" {
   count                         = var.env == "aat" ? 1 : 0
-  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=RDM-13038-ek"
+  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=DTSPO-17635/datadisk-sku"
   vmHostNamePrefix              = "ccd-dtspo-17635-"
   product                       = "${var.raw_product}-ccd-dtspo-17635"
   location                      = var.location
