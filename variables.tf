@@ -51,7 +51,13 @@ variable "esVersion" {
 }
 
 variable "storageAccountType" {
-  description = "disk storage account type"
+  description = "os disk storage account type"
+  type        = string
+  default     = "Standard"
+}
+
+variable "dataStorageAccountType" {
+  description = "data disk storage account type"
   type        = string
   default     = "Standard"
 }
