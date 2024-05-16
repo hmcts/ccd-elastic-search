@@ -1,5 +1,5 @@
 terraform {
-  backend "azurerm" {}
+  # backend "azurerm" {}
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -29,21 +29,55 @@ locals {
   // Vault name
   previewVaultName    = "${var.raw_product}-aat"
   nonPreviewVaultName = "${var.raw_product}-${var.env}"
-  vaultName           = "${(var.env == "preview" || var.env == "spreview") ? local.previewVaultName : local.nonPreviewVaultName}"
+  vaultName           = (var.env == "preview" || var.env == "spreview") ? local.previewVaultName : local.nonPreviewVaultName
   dummy_local         = ""
 
   // Shared Resource Group
   previewResourceGroup    = "${var.raw_product}-shared-aat"
   nonPreviewResourceGroup = "${var.raw_product}-shared-${var.env}"
-  sharedResourceGroup     = "${(var.env == "preview" || var.env == "spreview") ? local.previewResourceGroup : local.nonPreviewResourceGroup}"
-  
+  sharedResourceGroup     = (var.env == "preview" || var.env == "spreview") ? local.previewResourceGroup : local.nonPreviewResourceGroup
+
   // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200","http://ccd-data-2:9200"
-  es_data_nodes_url = "${join(",", data.template_file.es_data_nodes_url_template.*.rendered)}"
+  es_data_nodes_url = join(",", data.template_file.es_data_nodes_url_template.*.rendered)
 
   vNetLoadBalancerIp = cidrhost(data.azurerm_subnet.elastic-subnet.address_prefix, -2)
 }
 
 module "elastic" {
+  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=RDM-13038-ek"
+  vmHostNamePrefix              = "ccd-"
+  product                       = var.raw_product
+  location                      = var.location
+  env                           = var.env
+  subscription                  = var.subscription
+  esVersion                     = var.esVersion
+  common_tags                   = var.common_tags
+  vNetLoadBalancerIp            = local.vNetLoadBalancerIp
+  dataNodesAreMasterEligible    = true
+  vmDataNodeCount               = var.vmDataNodeCount
+  vmSizeAllNodes                = var.vmSizeAllNodes
+  storageAccountType            = var.storageAccountType
+  vmDataDiskCount               = var.vmDataDiskCount
+  ssh_elastic_search_public_key = data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value
+  providers = {
+    azurerm           = azurerm
+    azurerm.mgmt      = azurerm.mgmt
+    azurerm.aks-infra = azurerm.aks-infra
+  }
+  logAnalyticsId       = data.azurerm_log_analytics_workspace.log_analytics.workspace_id
+  logAnalyticsKey      = data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key
+  dynatrace_instance   = var.dynatrace_instance
+  dynatrace_hostgroup  = var.dynatrace_hostgroup
+  dynatrace_token      = data.azurerm_key_vault_secret.dynatrace_token.value
+  enable_logstash      = false
+  enable_kibana        = true
+  alerts_email         = data.azurerm_key_vault_secret.alerts_email.value
+  esAdditionalYaml     = var.esAdditionalYaml
+  kibanaAdditionalYaml = var.kibanaAdditionalYaml
+}
+
+module "elastic2" {
+  count                         = var.env == "aat" ? 1 : 0
   source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=DTSPO-17635/datadisk-sku"
   vmHostNamePrefix              = "ccd-"
   product                       = var.raw_product
@@ -64,14 +98,14 @@ module "elastic" {
     azurerm.mgmt      = azurerm.mgmt
     azurerm.aks-infra = azurerm.aks-infra
   }
-  logAnalyticsId      = data.azurerm_log_analytics_workspace.log_analytics.workspace_id
-  logAnalyticsKey     = data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key
-  dynatrace_instance  = var.dynatrace_instance
-  dynatrace_hostgroup = var.dynatrace_hostgroup
-  dynatrace_token     = data.azurerm_key_vault_secret.dynatrace_token.value
-  enable_logstash     = false
-  enable_kibana       = true
-  alerts_email        = data.azurerm_key_vault_secret.alerts_email.value
+  logAnalyticsId       = data.azurerm_log_analytics_workspace.log_analytics.workspace_id
+  logAnalyticsKey      = data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key
+  dynatrace_instance   = var.dynatrace_instance
+  dynatrace_hostgroup  = var.dynatrace_hostgroup
+  dynatrace_token      = data.azurerm_key_vault_secret.dynatrace_token.value
+  enable_logstash      = false
+  enable_kibana        = true
+  alerts_email         = data.azurerm_key_vault_secret.alerts_email.value
   esAdditionalYaml     = var.esAdditionalYaml
   kibanaAdditionalYaml = var.kibanaAdditionalYaml
 }
@@ -88,8 +122,8 @@ data "azurerm_subnet" "elastic-subnet" {
 }
 
 data "azurerm_key_vault" "key_vault" {
-  name                = "${local.vaultName}"
-  resource_group_name = "${local.sharedResourceGroup}"
+  name                = local.vaultName
+  resource_group_name = local.sharedResourceGroup
 }
 
 data "azurerm_log_analytics_workspace" "log_analytics" {
@@ -127,7 +161,7 @@ data "azurerm_key_vault_secret" "alerts_email" {
 // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200.service.core-compute-${var.env}.internal","http://ccd-data-2.service.core-compute-${var.env}.internal:9200"
 data "template_file" "es_data_nodes_url_template" {
   template = "\"http://ccd-data-$${index}.service.core-compute-$${env}.internal:9200\""
-  count    = "${var.vmDataNodeCount}"
+  count    = var.vmDataNodeCount
 
   vars = {
     index = "${count.index}"
@@ -137,6 +171,6 @@ data "template_file" "es_data_nodes_url_template" {
 
 resource "azurerm_key_vault_secret" "es_data_nodes_url" {
   name         = "${var.raw_product}-ELASTIC-SEARCH-DATA-NODES-URL"
-  value        = "${local.es_data_nodes_url}"
-  key_vault_id = "${data.azurerm_key_vault.key_vault.id}"
+  value        = local.es_data_nodes_url
+  key_vault_id = data.azurerm_key_vault.key_vault.id
 }

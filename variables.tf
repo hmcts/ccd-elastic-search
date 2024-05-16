@@ -24,7 +24,7 @@ variable "capacity" {
 }
 
 variable "common_tags" {
-  type = map
+  type = map(any)
 }
 
 variable "dataNodesAreMasterEligible" {
@@ -34,8 +34,8 @@ variable "dataNodesAreMasterEligible" {
 
 variable "vmDataNodeCount" {
   description = "number of data nodes"
-  type = string
-  default = "4"
+  type        = string
+  default     = "4"
 }
 
 variable "vmSizeAllNodes" {
@@ -43,7 +43,7 @@ variable "vmSizeAllNodes" {
   type        = string
   default     = "Standard_D4s_v3"
 }
-  
+
 variable "esVersion" {
   description = "ES version"
   type        = string
@@ -64,8 +64,8 @@ variable "dataStorageAccountType" {
 
 variable "vmDataDiskCount" {
   description = "number of data node disks"
-  default = "1"
-  type = string
+  default     = "1"
+  type        = string
 }
 
 variable "esAdditionalYaml" {
@@ -79,19 +79,19 @@ variable "kibanaAdditionalYaml" {
   type        = string
   default     = "console.enabled: false\n"
 }
-  
+
 variable "esHeapSize" {
-  description  = "The size, in megabytes, of memory to allocate on each Elasticsearch node for the JVM heap."
-  type         = number 
-  default      = 0
+  description = "The size, in megabytes, of memory to allocate on each Elasticsearch node for the JVM heap."
+  type        = number
+  default     = 0
 }
 
 variable "dynatrace_instance" {
-  default     = ""
+  default = ""
 }
 
 variable "dynatrace_hostgroup" {
-  default     = ""
+  default = ""
 }
 
 variable "mgmt_subscription_id" {}
