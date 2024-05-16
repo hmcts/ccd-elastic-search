@@ -44,7 +44,7 @@ locals {
 }
 
 module "elastic" {
-  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=RDM-13038-ek"
+  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=DTSPO-17635/datadisk-sku"
   vmHostNamePrefix              = "ccd-"
   product                       = var.raw_product
   location                      = var.location
@@ -76,39 +76,39 @@ module "elastic" {
   kibanaAdditionalYaml = var.kibanaAdditionalYaml
 }
 
-module "elastic2" {
-  count                         = var.env == "aat" ? 1 : 0
-  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=DTSPO-17635/datadisk-sku"
-  vmHostNamePrefix              = "ccd-dtspo-17635-"
-  product                       = "${var.raw_product}-ccd-dtspo-17635"
-  location                      = var.location
-  env                           = var.env
-  subscription                  = var.subscription
-  esVersion                     = var.esVersion
-  common_tags                   = var.common_tags
-  vNetLoadBalancerIp            = local.vNetLoadBalancerIp
-  dataNodesAreMasterEligible    = true
-  vmDataNodeCount               = var.vmDataNodeCount
-  vmSizeAllNodes                = var.vmSizeAllNodes
-  storageAccountType            = var.storageAccountType
-  vmDataDiskCount               = var.vmDataDiskCount
-  ssh_elastic_search_public_key = data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value
-  providers = {
-    azurerm           = azurerm
-    azurerm.mgmt      = azurerm.mgmt
-    azurerm.aks-infra = azurerm.aks-infra
-  }
-  logAnalyticsId       = data.azurerm_log_analytics_workspace.log_analytics.workspace_id
-  logAnalyticsKey      = data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key
-  dynatrace_instance   = var.dynatrace_instance
-  dynatrace_hostgroup  = var.dynatrace_hostgroup
-  dynatrace_token      = data.azurerm_key_vault_secret.dynatrace_token.value
-  enable_logstash      = false
-  enable_kibana        = true
-  alerts_email         = data.azurerm_key_vault_secret.alerts_email.value
-  esAdditionalYaml     = var.esAdditionalYaml
-  kibanaAdditionalYaml = var.kibanaAdditionalYaml
-}
+# module "elastic2" {
+#   count                         = var.env == "aat" ? 1 : 0
+#   source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=DTSPO-17635/datadisk-sku"
+#   vmHostNamePrefix              = "ccd-dtspo-17635-"
+#   product                       = "${var.raw_product}-ccd-dtspo-17635"
+#   location                      = var.location
+#   env                           = var.env
+#   subscription                  = var.subscription
+#   esVersion                     = var.esVersion
+#   common_tags                   = var.common_tags
+#   vNetLoadBalancerIp            = local.vNetLoadBalancerIp
+#   dataNodesAreMasterEligible    = true
+#   vmDataNodeCount               = var.vmDataNodeCount
+#   vmSizeAllNodes                = var.vmSizeAllNodes
+#   storageAccountType            = var.storageAccountType
+#   vmDataDiskCount               = var.vmDataDiskCount
+#   ssh_elastic_search_public_key = data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value
+#   providers = {
+#     azurerm           = azurerm
+#     azurerm.mgmt      = azurerm.mgmt
+#     azurerm.aks-infra = azurerm.aks-infra
+#   }
+#   logAnalyticsId       = data.azurerm_log_analytics_workspace.log_analytics.workspace_id
+#   logAnalyticsKey      = data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key
+#   dynatrace_instance   = var.dynatrace_instance
+#   dynatrace_hostgroup  = var.dynatrace_hostgroup
+#   dynatrace_token      = data.azurerm_key_vault_secret.dynatrace_token.value
+#   enable_logstash      = false
+#   enable_kibana        = true
+#   alerts_email         = data.azurerm_key_vault_secret.alerts_email.value
+#   esAdditionalYaml     = var.esAdditionalYaml
+#   kibanaAdditionalYaml = var.kibanaAdditionalYaml
+# }
 
 data "azurerm_virtual_network" "core_infra_vnet" {
   name                = "core-infra-vnet-${var.env}"
