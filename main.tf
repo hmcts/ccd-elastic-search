@@ -86,7 +86,7 @@ module "elastic2" {
   subscription                  = var.subscription
   esVersion                     = var.esVersion
   common_tags                   = var.common_tags
-  vNetLoadBalancerIp            = local.vNetLoadBalancerIp
+  vNetLoadBalancerIp            = "10.96.149.250"
   dataNodesAreMasterEligible    = true
   vmDataNodeCount               = var.vmDataNodeCount
   vmSizeAllNodes                = var.vmSizeAllNodes
