@@ -79,8 +79,8 @@ module "elastic" {
 module "elastic2" {
   count                         = var.env == "aat" ? 1 : 0
   source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=RDM-13038-ek"
-  vmHostNamePrefix              = "ccd-dtspo-17635-"
-  product                       = "${var.raw_product}-ccd-dtspo-17635"
+  vmHostNamePrefix              = "17635"
+  product                       = "${var.raw_product}-17635"
   location                      = var.location
   env                           = var.env
   subscription                  = var.subscription
