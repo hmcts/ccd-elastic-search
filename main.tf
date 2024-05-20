@@ -44,7 +44,7 @@ locals {
 }
 
 module "elastic" {
-  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=RDM-13038-ek"
+  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=DTSPO-17635/datadisk-sku"
   vmHostNamePrefix              = "ccd-"
   product                       = var.raw_product
   location                      = var.location
