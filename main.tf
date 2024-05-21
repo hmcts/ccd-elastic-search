@@ -57,6 +57,7 @@ module "elastic" {
   vmDataNodeCount               = var.vmDataNodeCount
   vmSizeAllNodes                = var.vmSizeAllNodes
   storageAccountType            = var.storageAccountType
+  dataStorageAccountType        = var.dataStorageAccountType
   vmDataDiskCount               = var.vmDataDiskCount
   ssh_elastic_search_public_key = data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value
   providers = {
