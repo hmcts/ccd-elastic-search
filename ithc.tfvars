@@ -1,3 +1,3 @@
-storageAccountType = "Default"
-dataStorageAccountType = "Default"
-vmDataDiskCount    = "2"
+storageAccountType     = "Default"
+dataStorageAccountType = "Standard"
+vmDataDiskCount        = "2"
