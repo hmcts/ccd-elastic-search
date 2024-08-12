@@ -44,7 +44,7 @@ locals {
 }
 
 module "elastic" {
-  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=DTSPO-17635/datadisk-sku"
+  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=test-ccd-autoshutdown"
   vmHostNamePrefix              = "ccd-"
   product                       = var.raw_product
   location                      = var.location
