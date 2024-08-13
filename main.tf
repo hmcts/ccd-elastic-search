@@ -41,15 +41,6 @@ locals {
   es_data_nodes_url = join(",", data.template_file.es_data_nodes_url_template.*.rendered)
 
   vNetLoadBalancerIp = cidrhost(data.azurerm_subnet.elastic-subnet.address_prefix, -2)
-
-  // AutoShutdown tag
-  # include_in_autoshutdown = var.env == "prod" ? "false" : "true"
-  auto_shutdown_tag = {
-    "autoShutdown" = "true"
-    "startupMode"  = "always"
-  } 
-  # merged_common_tags      = merge(var.common_tags, local.auto_shutdown_tag)
- 
 }
 
 module "elastic" {
@@ -60,7 +51,7 @@ module "elastic" {
   env                           = var.env
   subscription                  = var.subscription
   esVersion                     = var.esVersion
-  common_tags                   = local.auto_shutdown_tag
+  common_tags                   = var.common_tags
   vNetLoadBalancerIp            = local.vNetLoadBalancerIp
   dataNodesAreMasterEligible    = true
   vmDataNodeCount               = var.vmDataNodeCount
