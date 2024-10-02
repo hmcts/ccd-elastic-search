@@ -13,9 +13,8 @@ provider "azurerm" {
 }
 
 provider "azurerm" {
-  alias                      = "aks-infra"
-  subscription_id            = var.aks_subscription_id
-  skip_provider_registration = true
+  alias           = "aks-infra"
+  subscription_id = var.aks_subscription_id
   features {}
 }
 
@@ -23,6 +22,12 @@ provider "azurerm" {
   alias           = "mgmt"
   subscription_id = var.mgmt_subscription_id
   features {}
+}
+
+provider "azurerm" {
+  alias = "dcr"
+  features {}
+  subscription_id = var.env == "prod" || var.env == "production" ? "8999dec3-0104-4a27-94ee-6588559729d1" : var.env == "sbox" || var.env == "sandbox" ? "bf308a5c-0624-4334-8ff8-8dca9fd43783" : "1c4f0704-a29e-403d-b719-b90c34ef14c9"
 }
 
 locals {
@@ -140,4 +145,32 @@ resource "azurerm_key_vault_secret" "es_data_nodes_url" {
   name         = "${var.raw_product}-ELASTIC-SEARCH-DATA-NODES-URL"
   value        = local.es_data_nodes_url
   key_vault_id = data.azurerm_key_vault.key_vault.id
+}
+
+# AMA Data Collection Rule Association
+data "azurerm_resource_group" "la_rg" {
+  provider = azurerm.dcr
+  name     = "oms-automation"
+}
+
+data "azurerm_monitor_data_collection_rule" "linux_data_collection_rule" {
+  provider            = azurerm.dcr
+  name                = "ama-linux-vm-logs"
+  resource_group_name = data.azurerm_resource_group.la_rg.name
+}
+
+data "azurerm_virtual_machine" "elk_vms" {
+  for_each = toset(var.vm_names)
+
+  name                = each.value
+  resource_group_name = "ccd-elastic-search-${var.env}"
+}
+
+resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra" {
+  for_each = toset(var.vm_names)
+
+  name                    = "vm-${each.value}-dcra"
+  target_resource_id      = data.azurerm_virtual_machine.elk_vms[each.key].id
+  data_collection_rule_id = data.azurerm_monitor_data_collection_rule.linux_data_collection_rule.id
+  description             = "Association between the ELK linux VMs and the appropriate data collection rule."
 }
