@@ -176,3 +176,13 @@ resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra" {
   data_collection_rule_id = data.azurerm_monitor_data_collection_rule.linux_data_collection_rule.id
   description             = "Association between the ELK linux VMs and the appropriate data collection rule."
 }
+
+data "azurerm_application_security_group" "data_asg" {
+  name                = "ccd-data-asg"
+  resource_group_name = module.elastic.elastic_resource_group_name
+  depends_on          = [module.elastic]
+}
+
+output "ccd-data-asg-id" {
+  value = data.azurerm_application_security_group.data_asg.id
+}
