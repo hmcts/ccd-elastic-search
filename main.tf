@@ -160,7 +160,7 @@ data "azurerm_monitor_data_collection_rule" "linux_data_collection_rule" {
 }
 
 data "azurerm_virtual_machine" "elk_vms" {
-  for_each = toset(var.vm_names)
+  for_each = var.env != "production" ? toset(var.vm_names) : toset([])
 
   name                = each.value
   resource_group_name = "ccd-elastic-search-${var.env}"
