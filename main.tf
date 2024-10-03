@@ -171,7 +171,7 @@ data "azurerm_virtual_machine" "elk_vms" {
 resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra" {
   for_each = toset(var.vm_names)
 
-  name                    = "vm-${each.value}-dcra"
+  name                    = "vm-${each.value}-${var.env}-dcra"
   target_resource_id      = data.azurerm_virtual_machine.elk_vms[each.key].id
   data_collection_rule_id = data.azurerm_monitor_data_collection_rule.linux_data_collection_rule.id
   description             = "Association between the ELK linux VMs and the appropriate data collection rule."
