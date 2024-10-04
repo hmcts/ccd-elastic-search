@@ -97,3 +97,8 @@ variable "dynatrace_hostgroup" {
 variable "mgmt_subscription_id" {}
 
 variable "aks_subscription_id" {}
+
+variable "vm_names" {
+  type    = list(string)
+  default = ["ccd-data-0", "ccd-data-1", "ccd-data-2", "ccd-data-3"]
+}
