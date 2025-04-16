@@ -102,3 +102,25 @@ variable "vm_names" {
   type    = list(string)
   default = ["ccd-data-0", "ccd-data-1", "ccd-data-2", "ccd-data-3"]
 }
+
+
+variable "vms" {
+  type = map(object({
+    name = optional(string)
+    ip   = optional(string)
+    managed_disks = map(object({
+      name                 = string,
+      resource_group_name  = string,
+      storage_account_type = optional(string, "StandardSSD_LRS")
+      disk_lun             = string
+    }))
+  }))
+  default = {
+  }
+}
+
+variable "managed_disks" {
+  type = map(object)
+  default = {
+  }
+}
