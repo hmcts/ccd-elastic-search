@@ -118,9 +118,3 @@ variable "vms" {
   default = {
   }
 }
-
-variable "managed_disks" {
-  type = map(object)
-  default = {
-  }
-}
