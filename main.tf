@@ -121,7 +121,7 @@ resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
 
 resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
   name         = "${var.raw_product}-ELASTIC-SEARCH-PASSWORD"
-  value        = module.elastic.elasticsearch_admin_password
+  value        = module.elastic[0].elasticsearch_admin_password
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
@@ -165,7 +165,7 @@ data "azurerm_virtual_machine" "elk_vms" {
   name                = each.value
   resource_group_name = "ccd-elastic-search-${var.env}"
 
-  depends_on = [module.elastic]
+  depends_on = [module.elastic[0]]
 }
 
 resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra" {

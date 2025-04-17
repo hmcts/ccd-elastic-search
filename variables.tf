@@ -111,7 +111,7 @@ variable "vms" {
     managed_disks = map(object({
       name                 = string,
       resource_group_name  = string,
-      storage_account_type = optional(string, "StandardSSD_LRS")
+      storage_account_type = optional(string, "StandardSSD_LRS"),
       disk_lun             = string
     }))
   }))
