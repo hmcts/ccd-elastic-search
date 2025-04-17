@@ -43,45 +43,45 @@ locals {
   vNetLoadBalancerIp = cidrhost(data.azurerm_subnet.elastic-subnet.address_prefix, -2)
 }
 
-module "elastic" {
-  count                         = var.env == "sandbox" ? 0 : 1
-  source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=DTSPO-17635/datadisk-sku"
-  vmHostNamePrefix              = "ccd-"
-  product                       = var.raw_product
-  location                      = var.location
-  env                           = var.env
-  subscription                  = var.subscription
-  esVersion                     = var.esVersion
-  common_tags                   = var.common_tags
-  vNetLoadBalancerIp            = local.vNetLoadBalancerIp
-  dataNodesAreMasterEligible    = true
-  vmDataNodeCount               = var.vmDataNodeCount
-  vmSizeAllNodes                = var.vmSizeAllNodes
-  storageAccountType            = var.storageAccountType
-  dataStorageAccountType        = var.dataStorageAccountType
-  vmDataDiskCount               = var.vmDataDiskCount
-  ssh_elastic_search_public_key = data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value
-  providers = {
-    azurerm           = azurerm
-    azurerm.mgmt      = azurerm.mgmt
-    azurerm.aks-infra = azurerm.aks-infra
-  }
-  logAnalyticsId       = data.azurerm_log_analytics_workspace.log_analytics.workspace_id
-  logAnalyticsKey      = data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key
-  dynatrace_instance   = var.dynatrace_instance
-  dynatrace_hostgroup  = var.dynatrace_hostgroup
-  dynatrace_token      = data.azurerm_key_vault_secret.dynatrace_token.value
-  enable_logstash      = false
-  enable_kibana        = true
-  alerts_email         = data.azurerm_key_vault_secret.alerts_email.value
-  esAdditionalYaml     = var.esAdditionalYaml
-  kibanaAdditionalYaml = var.kibanaAdditionalYaml
-}
+# module "elastic" {
+#   count                         = var.env == "sandbox" ? 0 : 1
+#   source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=DTSPO-17635/datadisk-sku"
+#   vmHostNamePrefix              = "ccd-"
+#   product                       = var.raw_product
+#   location                      = var.location
+#   env                           = var.env
+#   subscription                  = var.subscription
+#   esVersion                     = var.esVersion
+#   common_tags                   = var.common_tags
+#   vNetLoadBalancerIp            = local.vNetLoadBalancerIp
+#   dataNodesAreMasterEligible    = true
+#   vmDataNodeCount               = var.vmDataNodeCount
+#   vmSizeAllNodes                = var.vmSizeAllNodes
+#   storageAccountType            = var.storageAccountType
+#   dataStorageAccountType        = var.dataStorageAccountType
+#   vmDataDiskCount               = var.vmDataDiskCount
+#   ssh_elastic_search_public_key = data.azurerm_key_vault_secret.ccd_elastic_search_public_key.value
+#   providers = {
+#     azurerm           = azurerm
+#     azurerm.mgmt      = azurerm.mgmt
+#     azurerm.aks-infra = azurerm.aks-infra
+#   }
+#   logAnalyticsId       = data.azurerm_log_analytics_workspace.log_analytics.workspace_id
+#   logAnalyticsKey      = data.azurerm_log_analytics_workspace.log_analytics.primary_shared_key
+#   dynatrace_instance   = var.dynatrace_instance
+#   dynatrace_hostgroup  = var.dynatrace_hostgroup
+#   dynatrace_token      = data.azurerm_key_vault_secret.dynatrace_token.value
+#   enable_logstash      = false
+#   enable_kibana        = true
+#   alerts_email         = data.azurerm_key_vault_secret.alerts_email.value
+#   esAdditionalYaml     = var.esAdditionalYaml
+#   kibanaAdditionalYaml = var.kibanaAdditionalYaml
+# }
 
-moved {
-  from = module.elastic
-  to   = module.elastic[0]
-}
+# moved {
+#   from = module.elastic
+#   to   = module.elastic[0]
+# }
 data "azurerm_virtual_network" "core_infra_vnet" {
   name                = "core-infra-vnet-${var.env}"
   resource_group_name = "core-infra-${var.env}"
@@ -119,11 +119,11 @@ resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
-resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
-  name         = "${var.raw_product}-ELASTIC-SEARCH-PASSWORD"
-  value        = module.elastic[0].elasticsearch_admin_password
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
+# resource "azurerm_key_vault_secret" "elastic_search_pwd_key_setting" {
+#   name         = "${var.raw_product}-ELASTIC-SEARCH-PASSWORD"
+#   value        = module.elastic[0].elasticsearch_admin_password
+#   key_vault_id = data.azurerm_key_vault.key_vault.id
+# }
 
 data "azurerm_key_vault_secret" "alerts_email" {
   name         = "elk-alerts-email"
@@ -165,7 +165,7 @@ data "azurerm_virtual_machine" "elk_vms" {
   name                = each.value
   resource_group_name = "ccd-elastic-search-${var.env}"
 
-  depends_on = [module.elastic[0]]
+  # depends_on = [module.elastic[0]]
 }
 
 resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra" {
