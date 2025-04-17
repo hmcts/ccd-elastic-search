@@ -30,7 +30,7 @@ module "elastic2" {
   source            = "github.com/hmcts/ccd-module-elastic-search.git?ref=main"
   env               = var.env
   vm_name           = each.value.name
-  vm_resource_group = azurerm_resource_group.rg.name
+  vm_resource_group = "ccd-elastic-search-${var.env}"
   vm_admin_password = random_password.vm_password.result
   vm_subnet_id      = data.azurerm_subnet.elastic-subnet.id
   vm_private_ip     = each.value.ip
@@ -39,12 +39,6 @@ module "elastic2" {
   managed_disks     = each.value.managed_disks
 }
 
-resource "azurerm_resource_group" "rg" {
-  count    = var.env == "sandbox" ? 1 : 0
-  name     = "ccd-elastic-search-${var.env}"
-  location = "uk south"
-  tags     = merge(module.ctags.common_tags, { expiresAfter = local.expiresAfter })
-}
 
 
 locals {
