@@ -3,7 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.117.0"
+      version = "~> 4.26.0"
     }
   }
 }
@@ -44,6 +44,7 @@ locals {
 }
 
 module "elastic" {
+  count                         = var.env == "sandbox" ? 0 : 1
   source                        = "git@github.com:hmcts/cnp-module-elk.git?ref=DTSPO-17635/datadisk-sku"
   vmHostNamePrefix              = "ccd-"
   product                       = var.raw_product
@@ -77,6 +78,10 @@ module "elastic" {
   kibanaAdditionalYaml = var.kibanaAdditionalYaml
 }
 
+moved {
+  from = module.elastic
+  to   = module.elastic[0]
+}
 data "azurerm_virtual_network" "core_infra_vnet" {
   name                = "core-infra-vnet-${var.env}"
   resource_group_name = "core-infra-${var.env}"
