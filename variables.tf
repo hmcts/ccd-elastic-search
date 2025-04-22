@@ -125,3 +125,9 @@ variable "soc_vault_name" {
   type        = string
   default     = null
 }
+
+variable "soc_vault_rg" {
+  description = "The name of the SOC resource group."
+  type        = string
+  default     = null
+}
