@@ -118,3 +118,10 @@ variable "vms" {
   default = {
   }
 }
+
+
+variable "soc_vault_name" {
+  description = "The name of the SOC Key Vault."
+  type        = string
+  default     = null
+}

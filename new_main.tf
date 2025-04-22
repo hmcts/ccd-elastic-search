@@ -37,6 +37,7 @@ module "elastic2" {
   os_disk_name      = "${each.value.name}-osdisk"
   tags              = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
   managed_disks     = each.value.managed_disks
+  soc_vault_name    = var.soc_vault_name
 }
 
 

@@ -69,3 +69,4 @@ vms = {
   }
 }
 
+soc_vault_name = "soc-sbox"
