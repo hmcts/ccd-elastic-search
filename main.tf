@@ -159,14 +159,14 @@ data "azurerm_monitor_data_collection_rule" "linux_data_collection_rule" {
   resource_group_name = data.azurerm_resource_group.la_rg.name
 }
 
-data "azurerm_virtual_machine" "elk_vms" {
-  for_each = toset(var.vm_names)
+# data "azurerm_virtual_machine" "elk_vms" {
+#   for_each = toset(var.vm_names)
 
-  name                = each.value
-  resource_group_name = "ccd-elastic-search-${var.env}"
+#   name                = each.value
+#   resource_group_name = "ccd-elastic-search-${var.env}"
 
-  # depends_on = [module.elastic[0]]
-}
+#   depends_on = [module.elastic[0]]
+# }
 
 # resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra" {
 #   for_each = toset(var.vm_names)
