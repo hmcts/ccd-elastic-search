@@ -81,7 +81,7 @@ resource "tls_private_key" "admin_ssh_key" {
   rsa_bits  = 4096
 }
 resource "azurerm_key_vault_secret" "admin_ssh_key" {
-  name         = "ccd_vm_ssh_private_key"
+  name         = "ccd-vm-ssh-private-key"
   value        = tls_private_key.admin_ssh_key.private_key_openssh
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
