@@ -93,7 +93,7 @@ resource "azurerm_key_vault_secret" "admin_name" {
 }
 
 resource "terraform_data" "vm" {
-  for_each = var.env == "sandbox" ? var.vms : {}
+  for_each = var.env == "xsandbox" ? var.vms : {}
   connection {
     type        = "ssh"
     host        = each.value.ip
@@ -108,3 +108,5 @@ resource "terraform_data" "vm" {
   }
 
 }
+
+
