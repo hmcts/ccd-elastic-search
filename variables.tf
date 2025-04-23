@@ -131,3 +131,24 @@ variable "soc_vault_rg" {
   type        = string
   default     = null
 }
+
+variable "nsg_security_rules" {
+  description = "Security rules for the network security group"
+  type = map(object({
+    name                                       = string,
+    description                                = optional(string, null),
+    priority                                   = number,
+    direction                                  = string,
+    access                                     = string,
+    protocol                                   = string,
+    source_port_range                          = string,
+    destination_port_range                     = string,
+    source_address_prefix                      = string,
+    destination_address_prefix                 = string,
+    source_application_security_group_ids      = optional(string, null),
+    destination_application_security_group_ids = optional(string, null),
+    destination_port_ranges                    = optional(list(string), null),
+    source_address_prefixes                    = optional(list(string), null)
+  }))
+  default = {}
+}
