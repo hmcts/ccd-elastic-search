@@ -39,6 +39,7 @@ module "elastic2" {
   managed_disks     = each.value.managed_disks
   soc_vault_name    = var.soc_vault_name
   soc_vault_rg      = var.soc_vault_rg
+  vm_admin_ssh_key  = tls_private_key.admin_ssh_key.public_key_openssh
 }
 
 
@@ -73,4 +74,14 @@ resource "azurerm_resource_group" "this" {
   name     = "ccd-elastic-search-${var.env}"
   location = var.location
   tags     = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
+}
+
+resource "tls_private_key" "admin_ssh_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+resource "azurerm_key_vault_secret" "admin_ssh_key" {
+  name         = "ccd_vm_ssh_private_key"
+  value        = tls_private_key.admin_ssh_key.private_key_openssh
+  key_vault_id = data.azurerm_key_vault.key_vault.id
 }
