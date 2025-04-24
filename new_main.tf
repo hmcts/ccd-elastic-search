@@ -31,7 +31,7 @@ module "elastic2" {
   env               = var.env
   vm_name           = each.value.name
   vm_resource_group = azurerm_resource_group.this.name
-  vm_admin_password = random_password.vm_password.result
+  vm_admin_password = local.lin_password
   vm_subnet_id      = data.azurerm_subnet.elastic-subnet.id
   vm_private_ip     = each.value.ip
   os_disk_name      = "${each.value.name}-osdisk"
@@ -82,13 +82,19 @@ resource "tls_private_key" "admin_ssh_key" {
 }
 resource "azurerm_key_vault_secret" "admin_ssh_key" {
   name         = "ccd-vm-ssh-private-key"
-  value        = tls_private_key.admin_ssh_key.private_key_openssh
+  value        = tls_private_key.admin_ssh_key.private_key_pem
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
 resource "azurerm_key_vault_secret" "admin_name" {
   name         = "ccd-vm-admin-name"
   value        = "ccdadmin"
+  key_vault_id = data.azurerm_key_vault.key_vault.id
+}
+
+resource "azurerm_key_vault_secret" "password" {
+  name         = "ccd-vm-admin-password"
+  value        = local.lin_password
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
