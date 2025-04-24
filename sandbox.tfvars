@@ -98,7 +98,7 @@ nsg_security_rules = {
     source_port_range                     = "*"
     destination_port_range                = null
     destination_port_ranges               = ["9200", "9300"]
-    source_address_prefix                 = "*"
+    source_address_prefix                 = null
     destination_address_prefix            = "*"
     source_application_security_group_ids = "id"
   },
