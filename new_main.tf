@@ -89,6 +89,9 @@ resource "azurerm_key_vault_secret" "password" {
 
 resource "terraform_data" "vm" {
   for_each = var.env == "sandbox" ? var.vms : {}
+  triggers_replace = [
+    timestamp()
+  ]
   connection {
     type        = "ssh"
     host        = each.value.ip
