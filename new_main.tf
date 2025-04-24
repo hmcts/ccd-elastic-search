@@ -93,7 +93,7 @@ resource "terraform_data" "vm" {
     type        = "ssh"
     host        = each.value.ip
     user        = azurerm_key_vault_secret.admin_name.value
-    private_key = "nothing" #= azurerm_key_vault_secret.admin_ssh_key.value
+    private_key = data.azurerm_key_vault_secret.private_key.value
     timeout     = "15m"
   }
   provisioner "remote-exec" {
@@ -105,3 +105,7 @@ resource "terraform_data" "vm" {
 }
 
 
+data "azurerm_key_vault_secret" "private_key" {
+  name         = "ccd-vm-ssh-private-key"
+  key_vault_id = data.azurerm_key_vault.key_vault.id
+}
