@@ -90,11 +90,11 @@ resource "azurerm_key_vault_secret" "password" {
 resource "terraform_data" "vm" {
   for_each = var.env == "sandbox" ? var.vms : {}
   connection {
-    type = "ssh"
-    host = each.value.ip
-    user = azurerm_key_vault_secret.admin_name.value
-    # private_key = azurerm_key_vault_secret.admin_ssh_key.value
-    timeout = "15m"
+    type        = "ssh"
+    host        = each.value.ip
+    user        = azurerm_key_vault_secret.admin_name.value
+    private_key = "nothing" #= azurerm_key_vault_secret.admin_ssh_key.value
+    timeout     = "15m"
   }
   provisioner "remote-exec" {
     inline = [
