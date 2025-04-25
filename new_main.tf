@@ -93,11 +93,12 @@ resource "terraform_data" "vm" {
     timestamp()
   ]
   connection {
-    type        = "ssh"
-    host        = each.value.ip
-    user        = azurerm_key_vault_secret.admin_name.value
-    private_key = replace(data.azurerm_key_vault_secret.privatekey.value, "\\n", "\n")
-    timeout     = "15m"
+    type = "ssh"
+    host = each.value.ip
+    user = azurerm_key_vault_secret.admin_name.value
+    # private_key = replace(data.azurerm_key_vault_secret.privatekey.value, "\\n", "\n")
+    password = local.lin_password
+    timeout  = "15m"
   }
   provisioner "remote-exec" {
     inline = [
