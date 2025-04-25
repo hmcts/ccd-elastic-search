@@ -1,0 +1,20 @@
+
+
+- name: "Install elasticsearch"
+  ansible.builtin.shell: |
+    set -x
+    sudo apt-get update
+
+    wget --no-check-certificate "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}-linux-x86_64.tar.gz"
+    wget --no-check-certificate "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}-linux-x86_64.tar.gz.sha512"
+    shasum -a 512 -c "{{ elastic_search_version }}-linux-x86_64.tar.gz.sha512"
+    tar -xzf "{{ elastic_search_version }}-linux-x86_64.tar.gz"
+
+
+    # Enable ufw to allow access to elasticsearch ports
+    sudo ufw allow in 9200:9300/tcp
+    sudo ufw allow out 9200:9300/tcp
+
+    # Enable CustomData script decode and execution
+    sudo sed -i "s/Provisioning.DecodeCustomData=n/Provisioning.DecodeCustomData=y/g" /etc/waagent.conf
+    sudo sed -i "s/Provisioning.ExecuteCustomData=n/Provisioning.ExecuteCustomData=y/g" /etc/waagent.conf

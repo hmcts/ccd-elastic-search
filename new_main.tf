@@ -1,4 +1,3 @@
-
 provider "azurerm" {
   alias = "cnp"
   features {}
@@ -93,16 +92,17 @@ resource "terraform_data" "vm" {
     timestamp()
   ]
   connection {
-    type = "ssh"
-    host = each.value.ip
-    user = azurerm_key_vault_secret.admin_name.value
-    # private_key = replace(data.azurerm_key_vault_secret.privatekey.value, "\\n", "\n")
+    type     = "ssh"
+    host     = each.value.ip
+    user     = azurerm_key_vault_secret.admin_name.value
     password = local.lin_password
     timeout  = "15m"
   }
   provisioner "remote-exec" {
     inline = [
-      "echo 'Hello, World!'",
+      "echo Hello from $(hostname)",
+      "sudo apt update && sudo apt install -y ansible",
+      "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C DTSPO-24632-module-consume ansible/main.yml",
     ]
   }
 
