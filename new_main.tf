@@ -102,7 +102,7 @@ resource "terraform_data" "vm" {
     inline = [
       "echo Hello from $(hostname)",
       "sudo apt update && sudo apt install -y ansible",
-      "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C DTSPO-24632-module-consume ansible/main.yml",
+      "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C DTSPO-24632-module-consume -i ansible/inventory.ini ansible/main.yml",
     ]
   }
 

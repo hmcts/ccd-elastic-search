@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: local
   become: true
   gather_facts: false
   roles:
