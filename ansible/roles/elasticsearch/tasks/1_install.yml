@@ -39,8 +39,6 @@
   ansible.builtin.shell: |
     cd /tmp
     sha512sum -c elasticsearch.tar.gz.sha512
-  args:
-    warn: false
   become: true
 
 - name: "Extract Elasticsearch"
