@@ -15,8 +15,8 @@
   register: checksum_output
   failed_when: checksum_output.rc != 0
 - name: Install Elasticsearch deb package
-  dpkg:
-    name: "/tmp/{{ elastic_search_version }}"
+  ansible.builtin.apt:
+    deb: "/tmp/{{ elastic_search_version }}"
     state: present
 - name: Ensure Elasticsearch is started and enabled
   ansible.builtin.systemd:
