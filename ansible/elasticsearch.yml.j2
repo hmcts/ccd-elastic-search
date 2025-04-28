@@ -1,5 +1,5 @@
 # elasticsearch.yml.j2
-cluster.name: "ccd-elastic-search-sandbox"
+cluster.name: "{{ elastic_clustername }}"
 node.name: "{{ ansible_hostname }}"
 path.logs: /var/log/elasticsearch
 path.data: /datadisks/disk1/elasticsearch/data
