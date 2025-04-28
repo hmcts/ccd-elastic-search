@@ -1,20 +1,95 @@
+- name: "Install Java (required for Elasticsearch)"
+  ansible.builtin.apt:
+    name: openjdk-17-jre-headless
+    state: present
+    update_cache: true
+  become: true
 
+- name: "Create elasticsearch user"
+  ansible.builtin.user:
+    name: elasticsearch
+    shell: /bin/bash
+    create_home: yes
+  become: true
 
-- name: "Install elasticsearch"
+- name: "Create elasticsearch installation directory"
+  ansible.builtin.file:
+    path: /opt/elasticsearch
+    state: directory
+    owner: elasticsearch
+    group: elasticsearch
+    mode: '0755'
+  become: true
+
+- name: "Download Elasticsearch tar.gz"
+  ansible.builtin.get_url:
+    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}-linux-x86_64.tar.gz"
+    dest: /tmp/elasticsearch.tar.gz
+    mode: '0644'
+  become: true
+
+- name: "Download Elasticsearch checksum"
+  ansible.builtin.get_url:
+    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}-linux-x86_64.tar.gz.sha512"
+    dest: /tmp/elasticsearch.tar.gz.sha512
+    mode: '0644'
+  become: true
+
+- name: "Verify checksum of the downloaded archive"
   ansible.builtin.shell: |
-    set -x
-    sudo apt-get update
+    cd /tmp
+    sha512sum -c elasticsearch.tar.gz.sha512
+  args:
+    warn: false
+  become: true
 
-    wget --no-check-certificate "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}-linux-x86_64.tar.gz"
-    wget --no-check-certificate "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}-linux-x86_64.tar.gz.sha512"
-    shasum -a 512 -c "{{ elastic_search_version }}-linux-x86_64.tar.gz.sha512"
-    tar -xzf "{{ elastic_search_version }}-linux-x86_64.tar.gz"
+- name: "Extract Elasticsearch"
+  ansible.builtin.unarchive:
+    src: /tmp/elasticsearch.tar.gz
+    dest: /opt/elasticsearch
+    remote_src: true
+    extra_opts: [--strip-components=1]
+    owner: elasticsearch
+    group: elasticsearch
+  become: true
 
+- name: "Create systemd service for Elasticsearch"
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/elasticsearch.service
+    owner: root
+    group: root
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Elasticsearch Service
+      After=network.target
 
-    # Enable ufw to allow access to elasticsearch ports
-    sudo ufw allow in 9200:9300/tcp
-    sudo ufw allow out 9200:9300/tcp
+      [Service]
+      Type=simple
+      User=elasticsearch
+      ExecStart=/opt/elasticsearch/bin/elasticsearch
+      Restart=always
+      LimitNOFILE=65536
 
-    # Enable CustomData script decode and execution
-    sudo sed -i "s/Provisioning.DecodeCustomData=n/Provisioning.DecodeCustomData=y/g" /etc/waagent.conf
-    sudo sed -i "s/Provisioning.ExecuteCustomData=n/Provisioning.ExecuteCustomData=y/g" /etc/waagent.conf
+      [Install]
+      WantedBy=multi-user.target
+  become: true
+
+- name: "Reload systemd daemon"
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+
+- name: "Enable and start Elasticsearch service"
+  ansible.builtin.systemd:
+    name: elasticsearch
+    enabled: true
+    state: started
+  become: true
+
+- name: "Allow Elasticsearch ports through UFW firewall"
+  ansible.builtin.ufw:
+    rule: allow
+    port: "9200:9300"
+    proto: tcp
+  become: true
