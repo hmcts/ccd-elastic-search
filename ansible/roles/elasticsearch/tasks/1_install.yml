@@ -14,8 +14,8 @@
     sha512sum -c "{{ elastic_search_version }}.sha512"
   register: checksum_output
   failed_when: checksum_output.rc != 0
-- name: Install Elasticsearch .deb package
-  ansible.builtin.dpkg:
+- name: Install Elasticsearch deb package
+  dpkg:
     name: "/tmp/{{ elastic_search_version }}"
     state: present
 - name: Ensure Elasticsearch is started and enabled
