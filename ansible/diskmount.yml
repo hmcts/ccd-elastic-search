@@ -24,7 +24,6 @@
         number: 1
         state: present
         part_type: primary
-        fs_type: linux
         part_start: 0%
         part_end: 100%
       loop: "{{ datadisks }}"
