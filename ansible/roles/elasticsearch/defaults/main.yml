@@ -1,2 +1,3 @@
 # Elasticsearch default vars
 elastic_search_version: "elasticsearch-7.17.28-amd64.deb"
+ansible_hostname: "ccd-data"
