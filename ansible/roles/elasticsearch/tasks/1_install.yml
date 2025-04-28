@@ -1,94 +1,44 @@
-- name: "Install Java (required for Elasticsearch)"
-  ansible.builtin.apt:
-    name: openjdk-17-jre-headless
-    state: present
-    update_cache: true
-  become: true
-
-- name: "Create elasticsearch user"
-  ansible.builtin.user:
-    name: elasticsearch
-    shell: /bin/bash
-    create_home: yes
-  become: true
-
-- name: "Create elasticsearch installation directory"
-  ansible.builtin.file:
-    path: /opt/elasticsearch
-    state: directory
-    owner: elasticsearch
-    group: elasticsearch
-    mode: '0755'
-  become: true
-
-- name: "Download Elasticsearch tar.gz"
+- name: Download Elasticsearch .deb package
   ansible.builtin.get_url:
-    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_file }}"
-    dest: "/tmp/{{ elastic_search_file }}"
+    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}"
+    dest: "/tmp/{{ elastic_search_version }}"
     mode: '0644'
-  become: true
-
-- name: "Download Elasticsearch checksum"
+- name: Download Elasticsearch checksum file
   ansible.builtin.get_url:
-    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_file }}.sha512"
-    dest: "/tmp/{{ elastic_search_file }}.sha512"
+    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}.sha512"
+    dest: "/tmp/{{ elastic_search_version }}.sha512"
     mode: '0644'
-  become: true
-
-
-- name: "Verify checksum of the downloaded archive"
+- name: Verify checksum of the downloaded package
   ansible.builtin.shell: |
     cd /tmp
-    sha512sum -c "{{ elastic_search_file }}.sha512"
-  become: true
-
-- name: "Extract Elasticsearch"
-  ansible.builtin.unarchive:
-    src: "/tmp/{{ elastic_search_file }}"
-    dest: /opt/elasticsearch
-    remote_src: true
-    extra_opts: [--strip-components=1]
-    owner: elasticsearch
-    group: elasticsearch
-  become: true
-
-- name: "Create systemd service for Elasticsearch"
-  ansible.builtin.copy:
-    dest: /etc/systemd/system/elasticsearch.service
-    owner: root
-    group: root
-    mode: '0644'
-    content: |
-      [Unit]
-      Description=Elasticsearch Service
-      After=network.target
-
-      [Service]
-      Type=simple
-      User=elasticsearch
-      ExecStart=/opt/elasticsearch/bin/elasticsearch
-      Restart=always
-      LimitNOFILE=65536
-
-      [Install]
-      WantedBy=multi-user.target
-  become: true
-
-- name: "Reload systemd daemon"
-  ansible.builtin.systemd:
-    daemon_reload: true
-  become: true
-
-- name: "Enable and start Elasticsearch service"
+    sha512sum -c "{{ elastic_search_version }}.sha512"
+  register: checksum_output
+  failed_when: checksum_output.rc != 0
+- name: Install Elasticsearch .deb package
+  ansible.builtin.dpkg:
+    name: "/tmp/{{ elastic_search_version }}"
+    state: present
+- name: Ensure Elasticsearch is started and enabled
   ansible.builtin.systemd:
     name: elasticsearch
-    enabled: true
     state: started
-  become: true
-
-- name: "Allow Elasticsearch ports through UFW firewall"
-  ansible.builtin.ufw:
-    rule: allow
-    port: "9200:9300"
-    proto: tcp
-  become: true
+    enabled: yes
+- name: Configure Elasticsearch settings
+  ansible.builtin.template:
+    src: "elasticsearch.yml.j2"
+    dest: "/etc/elasticsearch/elasticsearch.yml"
+    mode: '0644'
+    owner: root
+    group: root
+- name: Set JVM heap size
+  ansible.builtin.lineinfile:
+    path: "/etc/elasticsearch/jvm.options"
+    regexp: "^#?-Xms.*"
+    line: "-Xms2g"
+    state: present
+- name: Enable memory locking
+  ansible.builtin.lineinfile:
+    path: "/etc/elasticsearch/elasticsearch.yml"
+    regexp: "^#?bootstrap.memory_lock"
+    line: "bootstrap.memory_lock: true"
+    state: present
