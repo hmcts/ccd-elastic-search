@@ -23,27 +23,28 @@
 
 - name: "Download Elasticsearch tar.gz"
   ansible.builtin.get_url:
-    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}-linux-x86_64.tar.gz"
-    dest: /tmp/elasticsearch.tar.gz
+    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_file }}"
+    dest: "/tmp/{{ elastic_search_file }}"
     mode: '0644'
   become: true
 
 - name: "Download Elasticsearch checksum"
   ansible.builtin.get_url:
-    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}-linux-x86_64.tar.gz.sha512"
-    dest: /tmp/elasticsearch.tar.gz.sha512
+    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_file }}.sha512"
+    dest: "/tmp/{{ elastic_search_file }}.sha512"
     mode: '0644'
   become: true
+
 
 - name: "Verify checksum of the downloaded archive"
   ansible.builtin.shell: |
     cd /tmp
-    sha512sum -c elasticsearch.tar.gz.sha512
+    sha512sum -c "{{ elastic_search_file }}.sha512"
   become: true
 
 - name: "Extract Elasticsearch"
   ansible.builtin.unarchive:
-    src: /tmp/elasticsearch.tar.gz
+    src: "/tmp/{{ elastic_search_file }}"
     dest: /opt/elasticsearch
     remote_src: true
     extra_opts: [--strip-components=1]

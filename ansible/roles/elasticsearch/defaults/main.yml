@@ -1,2 +1,4 @@
 # Elasticsearch default vars
 elastic_search_version: "elasticsearch-7.17.28"
+elastic_search_file: "{{ elastic_search_version }}-linux-x86_64.tar.gz"
+
