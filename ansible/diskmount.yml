@@ -1,0 +1,81 @@
+---
+- name: Set up RAID0 from two datadisks and mount for Elasticsearch
+  hosts: all
+  become: true
+
+  vars:
+    datadisks:
+      - /dev/sdc
+      - /dev/sdd
+    raid_device: /dev/md0
+    mount_point: /datadisks/disk1
+    filesystem: ext4
+
+  tasks:
+    - name: Install required package for RAID
+      apt:
+        name: mdadm
+        state: present
+        update_cache: true
+
+    - name: Create partitions on data disks
+      parted:
+        device: "{{ item }}"
+        number: 1
+        state: present
+        part_type: primary
+        fs_type: linux
+        start: 0%
+        end: 100%
+      loop: "{{ datadisks }}"
+
+    - name: Create RAID0 array
+      command: >
+        mdadm --create --verbose {{ raid_device }}
+        --level=0 --raid-devices=2 {{ datadisks[0] }}1 {{ datadisks[1] }}1
+      args:
+        creates: "{{ raid_device }}"
+
+    - name: Create mdadm.conf for RAID persistence
+      shell: |
+        echo "DEVICE partitions" > /etc/mdadm/mdadm.conf
+        mdadm --detail --scan >> /etc/mdadm/mdadm.conf
+      args:
+        creates: /etc/mdadm/mdadm.conf
+
+    - name: Update initramfs to include RAID config
+      command: update-initramfs -u
+
+    - name: Create filesystem on RAID device
+      filesystem:
+        fstype: "{{ filesystem }}"
+        dev: "{{ raid_device }}"
+
+    - name: Create mount point
+      file:
+        path: "{{ mount_point }}"
+        state: directory
+        mode: '0755'
+
+    - name: Mount RAID device
+      mount:
+        path: "{{ mount_point }}"
+        src: "{{ raid_device }}"
+        fstype: "{{ filesystem }}"
+        opts: defaults
+        state: mounted
+
+    - name: Ensure fstab entry for RAID device
+      mount:
+        path: "{{ mount_point }}"
+        src: "{{ raid_device }}"
+        fstype: "{{ filesystem }}"
+        opts: defaults
+        state: present
+
+    - name: Set ownership to elasticsearch
+      file:
+        path: "{{ mount_point }}"
+        owner: elasticsearch
+        group: elasticsearch
+        recurse: yes
