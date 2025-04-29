@@ -89,7 +89,10 @@ resource "azurerm_key_vault_secret" "password" {
 resource "terraform_data" "vm" {
   for_each = var.env == "sandbox" ? var.vms : {}
   triggers_replace = [
-    timestamp()
+    local.defaults_main_hash,
+    local.task_install_hash,
+    local.disk_mount_hash,
+    local.config_template,
   ]
   connection {
     type     = "ssh"
