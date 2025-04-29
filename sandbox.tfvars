@@ -12,6 +12,7 @@ vms = {
         name                = "ccd-data-0-datadisk2"
         resource_group_name = "ccd-elastic-search-sandbox"
         disk_lun            = "1"
+        disk_size_gb        = "1023"
       }
     }
 
