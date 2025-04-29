@@ -112,8 +112,7 @@ variable "vms" {
       name                 = string,
       resource_group_name  = string,
       storage_account_type = optional(string, "StandardSSD_LRS"),
-      disk_lun             = string,
-      disk_size_gb         = optional(string, "1024")
+      disk_lun             = string
     }))
   }))
   default = {
