@@ -42,3 +42,41 @@
     regexp: "^#?bootstrap.memory_lock"
     line: "bootstrap.memory_lock: true"
     state: present
+
+# Create directory for systemd override
+- name: Create systemd override directory for Elasticsearch
+  ansible.builtin.file:
+    path: /etc/systemd/system/elasticsearch.service.d
+    state: directory
+    mode: '0755'
+
+# Create systemd override file
+- name: Set LimitMEMLOCK in systemd override
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/elasticsearch.service.d/override.conf
+    content: |
+      [Service]
+      LimitMEMLOCK=infinity
+    mode: '0644'
+
+# Reload systemd to apply override
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+# Create custom JVM options file
+- name: Create custom JVM options file
+  ansible.builtin.copy:
+    dest: /etc/elasticsearch/jvm.options.d/custom.options
+    content: |
+      -Xms8g
+      -Xmx8g
+    mode: '0644'
+    owner: root
+    group: root
+    
+- name: Restart Elasticsearch to apply changes
+  ansible.builtin.systemd:
+    name: elasticsearch
+    state: restarted
+    enabled: yes
