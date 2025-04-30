@@ -102,3 +102,53 @@ variable "vm_names" {
   type    = list(string)
   default = ["ccd-data-0", "ccd-data-1", "ccd-data-2", "ccd-data-3"]
 }
+
+
+variable "vms" {
+  type = map(object({
+    name = optional(string)
+    ip   = optional(string)
+    managed_disks = map(object({
+      name                 = string,
+      resource_group_name  = string,
+      storage_account_type = optional(string, "StandardSSD_LRS"),
+      disk_lun             = string
+    }))
+  }))
+  default = {
+  }
+}
+
+
+variable "soc_vault_name" {
+  description = "The name of the SOC Key Vault."
+  type        = string
+  default     = null
+}
+
+variable "soc_vault_rg" {
+  description = "The name of the SOC resource group."
+  type        = string
+  default     = null
+}
+
+variable "nsg_security_rules" {
+  description = "Security rules for the network security group"
+  type = map(object({
+    name                                       = string,
+    description                                = optional(string, null),
+    priority                                   = number,
+    direction                                  = string,
+    access                                     = string,
+    protocol                                   = string,
+    source_port_range                          = string,
+    destination_port_range                     = string,
+    source_address_prefix                      = string,
+    destination_address_prefix                 = string,
+    source_application_security_group_ids      = optional(string, null),
+    destination_application_security_group_ids = optional(string, null),
+    destination_port_ranges                    = optional(list(string), null),
+    source_address_prefixes                    = optional(list(string), null)
+  }))
+  default = {}
+}
