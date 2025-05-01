@@ -6,7 +6,7 @@ vmDataNodeCount        = "4"
 vms = {
   ccd-data-0 = {
     name = "ccd-data-0"
-    ip   = "10.100.157.10"
+    ip   = "10.96.216.100"
     managed_disks = {
       disk1 = {
         name                = "ccd-data-0-datadisk1"
@@ -23,7 +23,7 @@ vms = {
   }
   ccd-data-1 = {
     name = "ccd-data-1"
-    ip   = "10.100.157.11"
+    ip   = "10.96.216.101"
     managed_disks = {
       disk1 = {
         name                = "ccd-data-1-datadisk1"
@@ -40,7 +40,7 @@ vms = {
   }
   ccd-data-2 = {
     name = "ccd-data-2"
-    ip   = "10.100.157.12"
+    ip   = "10.96.216.102"
     managed_disks = {
       disk1 = {
         name                = "ccd-data-2-datadisk1"
@@ -57,7 +57,7 @@ vms = {
   }
   ccd-data-3 = {
     name = "ccd-data-3"
-    ip   = "10.100.157.13"
+    ip   = "10.96.216.103"
     managed_disks = {
       disk1 = {
         name                = "ccd-data-3-datadisk1"
@@ -74,9 +74,9 @@ vms = {
   }
 }
 
-soc_vault_name = "soc-sbox"
+soc_vault_name = "soc-prod"
 
-soc_vault_rg = "soc-core-infra-sbox-rg"
+soc_vault_rg = "soc-core-infra-prod-rg"
 
 
 nsg_security_rules = {
@@ -144,7 +144,7 @@ nsg_security_rules = {
     protocol                                   = "Tcp"
     source_port_range                          = "*"
     destination_port_range                     = "9200"
-    source_address_prefix                      = "10.112.12.0/22"
+    source_address_prefix                      = "10.96.204.0/22"
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
@@ -158,7 +158,7 @@ nsg_security_rules = {
     source_port_range                          = "*"
     destination_port_range                     = "9200"
     source_address_prefix                      = null
-    source_address_prefixes                    = ["10.11.192.0/20", "10.11.208.0/20"]
+    source_address_prefixes                    = ["10.50.64.0/20", "10.50.80.0/20"]
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
@@ -175,20 +175,6 @@ nsg_security_rules = {
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
-  cft-ptlsbox = {
-    name                                       = "cft-ptlsbox"
-    description                                = "Allow AKS to access the ElasticSearch cluster"
-    priority                                   = 225
-    direction                                  = "Inbound"
-    access                                     = "Allow"
-    protocol                                   = "Tcp"
-    source_port_range                          = "*"
-    destination_port_range                     = "22"
-    source_address_prefix                      = null
-    source_address_prefixes                    = ["10.70.28.0/24"]
-    destination_address_prefix                 = null
-    destination_application_security_group_ids = "id"
-  },
   Bastion_To_VMs = {
     name                       = "Bastion_To_VMs"
     description                = "Allow Bastion SSH access overridding templates broad SSH access"
@@ -199,7 +185,7 @@ nsg_security_rules = {
     source_port_range          = "*"
     destination_port_range     = "22"
     source_address_prefix      = "10.11.72.32/27"
-    destination_address_prefix = "10.112.53.0/24"
+    destination_address_prefix = "10.96.216.0/24"
   },
   DenyAllOtherTraffic = {
     name                       = "DenyAllOtherTraffic"

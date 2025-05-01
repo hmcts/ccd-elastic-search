@@ -1,5 +1,5 @@
 module "elastic2" {
-  for_each = var.env == "sandbox" ? var.vms : {}
+  for_each = var.env == "sandbox" || var.env == "demo" ? var.vms : {}
 
   providers = {
     azurerm     = azurerm
@@ -68,7 +68,7 @@ resource "azurerm_key_vault_secret" "password" {
 }
 
 resource "terraform_data" "vm" {
-  for_each = var.env == "sandbox" ? var.vms : {}
+  for_each = var.env == "sandbox" || var.env == "demo" ? var.vms : {}
   triggers_replace = [
     local.defaults_main_hash,
     local.task_install_hash,
