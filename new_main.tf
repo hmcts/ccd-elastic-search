@@ -92,9 +92,3 @@ resource "terraform_data" "vm" {
   }
 
 }
-
-
-data "azurerm_key_vault_secret" "privatekey" {
-  name         = "ccd-vm-ssh-private-key-new"
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
