@@ -86,7 +86,7 @@ resource "terraform_data" "vm" {
 
   provisioner "file" {
     source      = "./ansible/"
-    destination = "/tmp/ansible"
+    destination = "/tmp/ansible2"
   }
   provisioner "remote-exec" {
     inline = [
