@@ -10,8 +10,7 @@
     raid_device: /dev/md0
     mount_point: /datadisks/disk1
     filesystem: ext4
-
-
+#test
   tasks:
     - name: Install required package for RAID
       apt:
