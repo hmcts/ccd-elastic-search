@@ -70,11 +70,11 @@ resource "azurerm_key_vault_secret" "password" {
 resource "terraform_data" "vm" {
   for_each = var.env == "sandbox" ? var.vms : {}
   triggers_replace = [
-    # local.defaults_main_hash,
-    # local.task_install_hash,
-    # local.disk_mount_hash,
-    # local.config_template,
-    timestamp(),
+    local.defaults_main_hash,
+    local.task_install_hash,
+    local.disk_mount_hash,
+    local.config_template,
+
   ]
   connection {
     type     = "ssh"
@@ -88,6 +88,7 @@ resource "terraform_data" "vm" {
     inline = [
       "echo Hello from $(hostname)",
       "sudo apt update && sudo apt install -y ansible",
+      "ls -l",
       "ansible-playbook -i ansible/inventory.ini ansible/diskmount.yml",
       "ansible-playbook -i ansible/inventory.ini ansible/main.yml --extra-vars 'ansible_hostname=${each.value.name} elastic_clustername=ccd-elastic-search-${var.env}'",
     ]
