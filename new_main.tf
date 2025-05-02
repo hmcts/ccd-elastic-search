@@ -7,7 +7,7 @@ module "elastic2" {
     azurerm.soc = azurerm.soc
     azurerm.dcr = azurerm.dcr
   }
-  source            = "github.com/hmcts/ccd-module-elastic-search.git?ref=main"
+  source            = "github.com/hmcts/ccd-module-elastic-search.git?ref=DTSPO-25523-lb-1"
   env               = var.env
   vm_name           = each.value.name
   vm_resource_group = azurerm_resource_group.this.name
