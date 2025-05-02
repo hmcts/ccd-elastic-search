@@ -7,7 +7,7 @@ module "elastic2" {
     azurerm.soc = azurerm.soc
     azurerm.dcr = azurerm.dcr
   }
-  source            = "github.com/hmcts/ccd-module-elastic-search.git?ref=main"
+  source            = "github.com/hmcts/ccd-module-elastic-search.git?ref=DTSPO-24943-test-module"
   env               = var.env
   vm_name           = each.value.name
   vm_resource_group = azurerm_resource_group.this.name
@@ -91,10 +91,4 @@ resource "terraform_data" "vm" {
     ]
   }
 
-}
-
-
-data "azurerm_key_vault_secret" "privatekey" {
-  name         = "ccd-vm-ssh-private-key-new"
-  key_vault_id = data.azurerm_key_vault.key_vault.id
 }
