@@ -74,7 +74,6 @@ resource "terraform_data" "vm" {
     local.task_install_hash,
     local.disk_mount_hash,
     local.config_template,
-    timestamp(),
   ]
   connection {
     type     = "ssh"
@@ -84,10 +83,6 @@ resource "terraform_data" "vm" {
     timeout  = "15m"
   }
 
-  provisioner "file" {
-    source      = "./ansible/"
-    destination = "/tmp/ansible2/"
-  }
   provisioner "remote-exec" {
     inline = [
       "echo Hello from $(hostname)",
