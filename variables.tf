@@ -152,3 +152,27 @@ variable "nsg_security_rules" {
   }))
   default = {}
 }
+
+variable "vnet_name" {
+  type = string
+}
+
+variable "vnet_resource_group" {
+  type = string
+}
+
+variable "subnet_name" {
+  type = string
+}
+
+variable "vms" {
+  type = map(object({
+    name          = string
+    ip            = string
+    managed_disks = map(object({
+      name                = string
+      resource_group_name = string
+      disk_lun            = string
+    }))
+  }))
+}
