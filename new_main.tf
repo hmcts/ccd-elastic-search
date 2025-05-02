@@ -82,12 +82,13 @@ resource "terraform_data" "vm" {
     password = local.lin_password
     timeout  = "15m"
   }
+
   provisioner "remote-exec" {
     inline = [
       "echo Hello from $(hostname)",
       "sudo apt update && sudo apt install -y ansible",
-      "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C DTSPO-24632-module-consume -i ansible/inventory.ini ansible/diskmount.yml",
-      "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C DTSPO-24632-module-consume -i ansible/inventory.ini ansible/main.yml --extra-vars 'ansible_hostname=${each.value.name} elastic_clustername=ccd-elastic-search-${var.env}'",
+      "ansible-playbook -i ansible/inventory.ini ansible/diskmount.yml",
+      "ansible-playbook -i ansible/inventory.ini ansible/main.yml --extra-vars 'ansible_hostname=${each.value.name} elastic_clustername=ccd-elastic-search-${var.env}'",
     ]
   }
 
