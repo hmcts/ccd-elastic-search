@@ -24,8 +24,9 @@
           {{
             disk_list.stdout_lines
             | map('regex_replace', '^', '/dev/')
-            | difference(['/dev/sda', '/dev/sdb'])
+            | difference(['/dev/sda', '/dev/sdb'])  
           }}
+        # Exclude system disks
     - name: Install required package for RAID
       apt:
         name: mdadm
