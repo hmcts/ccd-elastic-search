@@ -4,29 +4,14 @@
   become: true
 
   vars:
-    # datadisks:
-    #   - /dev/sdc
-    #   - /dev/sdd
-    #   - /dev/sdb
-    #   - /dev/sde
+    datadisks:
+      - /dev/sdc
+      - /dev/sdd
     raid_device: /dev/md0
     mount_point: /datadisks/disk1
     filesystem: ext4
-
+#test
   tasks:
-    - name: Discover available disks
-      command: lsblk -dn -o NAME
-      register: disk_list
-
-    - name: Filter disks dynamically
-      set_fact:
-        datadisks: >-
-          {{
-            disk_list.stdout_lines
-            | map('regex_replace', '^', '/dev/')
-            | difference(['/dev/sda', '/dev/sdb', '/dev/sr0'])  
-          }}
-        # Exclude system disks
     - name: Install required package for RAID
       apt:
         name: mdadm
