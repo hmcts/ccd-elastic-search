@@ -93,4 +93,6 @@ resource "terraform_data" "vm" {
     ]
   }
 
+  depends_on = [module.elastic2]
+
 }
