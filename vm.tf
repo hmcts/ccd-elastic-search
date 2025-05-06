@@ -50,7 +50,7 @@ resource "random_password" "vm_password" {
 }
 
 resource "azurerm_resource_group" "this" {
-  name     = "ccd-elastic-search-${var.env}"
+  name     = "ccd-elastic-search-${var.env}-int"
   location = var.location
   tags     = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
 }

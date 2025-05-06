@@ -10,12 +10,12 @@ vms = {
     managed_disks = {
       disk1 = {
         name                = "ccd-data-0-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo"
+        resource_group_name = "ccd-elastic-search-demo-int"
         disk_lun            = "0"
       }
       disk2 = {
         name                = "ccd-data-0-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo"
+        resource_group_name = "ccd-elastic-search-demo-int"
         disk_lun            = "1"
       }
     }
@@ -27,12 +27,12 @@ vms = {
     managed_disks = {
       disk1 = {
         name                = "ccd-data-1-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo"
+        resource_group_name = "ccd-elastic-search-demo-int"
         disk_lun            = "0"
       }
       disk2 = {
         name                = "ccd-data-1-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo"
+        resource_group_name = "ccd-elastic-search-demo-int"
         disk_lun            = "1"
       }
     }
@@ -44,12 +44,12 @@ vms = {
     managed_disks = {
       disk1 = {
         name                = "ccd-data-2-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo"
+        resource_group_name = "ccd-elastic-search-demo-int"
         disk_lun            = "0"
       }
       disk2 = {
         name                = "ccd-data-2-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo"
+        resource_group_name = "ccd-elastic-search-demo-int"
         disk_lun            = "1"
       }
     }
@@ -61,12 +61,12 @@ vms = {
     managed_disks = {
       disk1 = {
         name                = "ccd-data-3-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo"
+        resource_group_name = "ccd-elastic-search-demo-int"
         disk_lun            = "0"
       }
       disk2 = {
         name                = "ccd-data-3-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo"
+        resource_group_name = "ccd-elastic-search-demo-int"
         disk_lun            = "1"
       }
     }
