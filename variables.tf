@@ -152,3 +152,7 @@ variable "nsg_security_rules" {
   }))
   default = {}
 }
+variable "lb_private_ip_address" {
+  description = "The private IP address for the load balancer."
+  type        = string
+}

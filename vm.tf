@@ -21,6 +21,7 @@ module "elastic2" {
   soc_vault_rg         = var.soc_vault_rg
   backend_vm_addresses = { for k, v in var.vms : k => v.ip }
   vms                  = var.vms
+  private_ip_address   = var.lb_private_ip_address
 }
 
 
