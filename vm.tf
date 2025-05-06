@@ -7,18 +7,20 @@ module "elastic2" {
     azurerm.soc = azurerm.soc
     azurerm.dcr = azurerm.dcr
   }
-  source            = "github.com/hmcts/ccd-module-elastic-search.git?ref=main"
-  env               = var.env
-  vm_name           = each.value.name
-  vm_resource_group = azurerm_resource_group.this.name
-  vm_admin_password = local.lin_password
-  vm_subnet_id      = data.azurerm_subnet.elastic-subnet.id
-  vm_private_ip     = each.value.ip
-  os_disk_name      = "${each.value.name}-osdisk"
-  tags              = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
-  managed_disks     = each.value.managed_disks
-  soc_vault_name    = var.soc_vault_name
-  soc_vault_rg      = var.soc_vault_rg
+  source               = "github.com/hmcts/ccd-module-elastic-search.git?ref=DTSPO-25523-lb-1"
+  env                  = var.env
+  vm_name              = each.value.name
+  vm_resource_group    = azurerm_resource_group.this.name
+  vm_admin_password    = local.lin_password
+  vm_subnet_id         = data.azurerm_subnet.elastic-subnet.id
+  vm_private_ip        = each.value.ip
+  os_disk_name         = "${each.value.name}-osdisk"
+  tags                 = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
+  managed_disks        = each.value.managed_disks
+  soc_vault_name       = var.soc_vault_name
+  soc_vault_rg         = var.soc_vault_rg
+  backend_vm_addresses = { for k, v in var.vms : k => v.ip }
+  vms                  = var.vms
 }
 
 
