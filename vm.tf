@@ -1,5 +1,5 @@
 module "elastic_lb" {
-    providers = {
+  providers = {
     azurerm     = azurerm
     azurerm.cnp = azurerm.cnp
     azurerm.soc = azurerm.soc
