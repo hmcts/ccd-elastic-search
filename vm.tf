@@ -1,18 +1,3 @@
-# module "elastic_lb" {
-#   providers = {
-#     azurerm     = azurerm
-#     azurerm.cnp = azurerm.cnp
-#     azurerm.soc = azurerm.soc
-#     azurerm.dcr = azurerm.dcr
-#   }
-#   source                = "github.com/hmcts/ccd-module-elastic-search.git?ref=DTSPO-25523-lb-1"
-#   subnet_id             = data.azurerm_subnet.elastic-subnet.id
-#   lb_private_ip_address = var.lb_private_ip_address
-#   vms                   = var.vms
-#   env                   = var.env
-#   backend_vm_addresses  = { for k, v in var.vms : k => v.ip }
-# }
-
 module "elastic2" {
   for_each = var.env == "sandbox" ? var.vms : {}
 
