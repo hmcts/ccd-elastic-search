@@ -69,7 +69,7 @@ vms = {
   }
 }
 
-lb_private_ip_address = "v10.100.157.254"
+lb_private_ip_address = "10.100.157.254"
 
 soc_vault_name = "soc-sbox"
 
