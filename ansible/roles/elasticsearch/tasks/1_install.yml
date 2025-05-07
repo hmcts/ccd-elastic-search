@@ -64,7 +64,7 @@
   ansible.builtin.systemd:
     daemon_reload: yes
 
-# Create custom JVM options file
+# Create custom JVM options file 
 - name: Create custom JVM options file
   ansible.builtin.copy:
     dest: /etc/elasticsearch/jvm.options.d/custom.options
