@@ -89,7 +89,7 @@ resource "terraform_data" "vm" {
       "sudo apt update && sudo apt install -y ansible",
       # IF you have done changes on the Ansible, , in order to test the changes before merging to master, make sure to change the branch name for below 2 lines
       "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C master -i ansible/inventory.ini ansible/diskmount.yml",
-      "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C master -i ansible/inventory.ini ansible/main.yml --extra-vars 'ansible_hostname=${each.value.name} elastic_clustername=ccd-elastic-search-${var.env}'",
+      "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C master -i ansible/inventory.ini ansible/main.yml --extra-vars 'ansible_hostname=${each.value.name} elastic_clustername=ccd-elastic-search-demo-int'",
     ]
   }
 
