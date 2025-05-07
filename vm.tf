@@ -94,9 +94,3 @@ resource "terraform_data" "vm" {
   }
 
 }
-
-output "vm_private_ips" {
-  value = {
-    for k, v in azurerm_network_interface.elastic_nic : k => v.private_ip_address
-  }
-}
