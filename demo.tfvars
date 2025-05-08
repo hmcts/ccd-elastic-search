@@ -74,6 +74,8 @@ vms = {
   }
 }
 
+lb_private_ip_address = "10.96.216.154"
+
 soc_vault_name = "soc-prod"
 
 soc_vault_rg = "soc-core-infra-prod-rg"
