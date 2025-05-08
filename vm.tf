@@ -55,17 +55,17 @@ resource "azurerm_resource_group" "this" {
   tags     = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
 }
 
-resource "azurerm_key_vault_secret" "admin_name" {
-  name         = "ccd-vm-admin-name"
-  value        = "ccdadmin"
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
+# resource "azurerm_key_vault_secret" "admin_name" {
+#   name         = "ccd-vm-admin-name"
+#   value        = "ccdadmin"
+#   key_vault_id = data.azurerm_key_vault.key_vault.id
+# }
 
-resource "azurerm_key_vault_secret" "password" {
-  name         = "ccd-vm-admin-password"
-  value        = local.lin_password
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
+# resource "azurerm_key_vault_secret" "password" {
+#   name         = "ccd-vm-admin-password"
+#   value        = local.lin_password
+#   key_vault_id = data.azurerm_key_vault.key_vault.id
+# }
 
 resource "terraform_data" "vm" {
   for_each = var.env == "sandbox" ? var.vms : {}
