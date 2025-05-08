@@ -14,7 +14,7 @@ locals {
 }
 
 resource "azurerm_lb" "this" {
-#   count               = var.env == "sandbox" ? 1 : 0
+  #   count               = var.env == "sandbox" ? 1 : 0
   name                = "ccd-internal-${var.env}-lb"
   location            = var.location
   resource_group_name = "ccd-elastic-search-${var.env}"
@@ -29,13 +29,13 @@ resource "azurerm_lb" "this" {
 }
 
 resource "azurerm_lb_backend_address_pool" "this" {
-#   count           = var.env == "sandbox" ? 1 : 0
+  #   count           = var.env == "sandbox" ? 1 : 0
   name            = "LBBE"
   loadbalancer_id = azurerm_lb.this.id
 }
 
 resource "azurerm_lb_backend_address_pool_address" "elastic_vm" {
-#   for_each                = var.env == "sandbox" ? var.vms : {}
+  #   for_each                = var.env == "sandbox" ? var.vms : {}
   name                    = each.key
   backend_address_pool_id = azurerm_lb_backend_address_pool.this.id
   ip_address              = each.value.ip
@@ -44,7 +44,7 @@ resource "azurerm_lb_backend_address_pool_address" "elastic_vm" {
 
 
 resource "azurerm_lb_probe" "this" {
-#   for_each        = var.env == "sandbox" ? local.lb_ports : {}
+  #   for_each        = var.env == "sandbox" ? local.lb_ports : {}
   name            = each.value.probe_name
   protocol        = "Tcp"
   port            = each.value.port
@@ -52,7 +52,7 @@ resource "azurerm_lb_probe" "this" {
 }
 
 resource "azurerm_lb_rule" "this" {
-#   for_each                       = var.env == "sandbox" ? local.lb_ports : {}
+  #   for_each                       = var.env == "sandbox" ? local.lb_ports : {}
   name                           = each.value.name
   protocol                       = "Tcp"
   frontend_port                  = each.value.port
