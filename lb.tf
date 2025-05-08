@@ -58,7 +58,7 @@ resource "azurerm_lb_rule" "this" {
   frontend_port                  = each.value.port
   backend_port                   = each.value.port
   frontend_ip_configuration_name = "LBFE"
-  backend_address_pool_ids       = azurerm_lb_backend_address_pool.this.id
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.this.id]
   probe_id                       = azurerm_lb_probe.this[each.key].id
   loadbalancer_id                = azurerm_lb.this.id
 }
