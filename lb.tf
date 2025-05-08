@@ -39,7 +39,7 @@ resource "azurerm_lb_backend_address_pool_address" "elastic_vm" {
   name                    = each.key
   backend_address_pool_id = azurerm_lb_backend_address_pool.this.id
   ip_address              = each.value.ip
-  virtual_network_id      = data.azurerm_subnet.elastic-subnet.virtual_network_id
+  virtual_network_id      = data.azurerm_virtual_network.core_infra_vnet.id
 }
 
 
@@ -48,7 +48,7 @@ resource "azurerm_lb_probe" "this" {
   name            = each.value.probe_name
   protocol        = "Tcp"
   port            = each.value.port
-  loadbalancer_id = azurerm_lb.this[0].id
+  loadbalancer_id = azurerm_lb.this.id
 }
 
 resource "azurerm_lb_rule" "this" {
