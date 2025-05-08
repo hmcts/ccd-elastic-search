@@ -21,7 +21,7 @@ resource "azurerm_lb" "this" {
   for_each            = local.env_map
   name                = "ccd-internal-${var.env}-int-lb"
   location            = var.location
-  resource_group_name = "ccd-elastic-search-${var.env}"
+  resource_group_name = "ccd-elastic-search-${var.env}-int"
   sku                 = "Standard"
 
   frontend_ip_configuration {
