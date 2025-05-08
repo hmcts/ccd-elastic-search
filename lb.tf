@@ -35,7 +35,7 @@ resource "azurerm_lb_backend_address_pool" "this" {
 }
 
 resource "azurerm_lb_backend_address_pool_address" "elastic_vm" {
-  #   for_each                = var.env == "sandbox" ? var.vms : {}
+  for_each                = var.vms
   name                    = each.key
   backend_address_pool_id = azurerm_lb_backend_address_pool.this.id
   ip_address              = each.value.ip
@@ -44,7 +44,7 @@ resource "azurerm_lb_backend_address_pool_address" "elastic_vm" {
 
 
 resource "azurerm_lb_probe" "this" {
-  #   for_each        = var.env == "sandbox" ? local.lb_ports : {}
+  for_each        = local.lb_ports
   name            = each.value.probe_name
   protocol        = "Tcp"
   port            = each.value.port
@@ -52,7 +52,7 @@ resource "azurerm_lb_probe" "this" {
 }
 
 resource "azurerm_lb_rule" "this" {
-  #   for_each                       = var.env == "sandbox" ? local.lb_ports : {}
+  for_each                       = local.lb_ports
   name                           = each.value.name
   protocol                       = "Tcp"
   frontend_port                  = each.value.port
@@ -60,5 +60,5 @@ resource "azurerm_lb_rule" "this" {
   frontend_ip_configuration_name = "LBFE"
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.this[0].id]
   probe_id                       = azurerm_lb_probe.this[each.key].id
-  loadbalancer_id                = azurerm_lb.this[0].id
+  loadbalancer_id                = azurerm_lb.this.id
 }
