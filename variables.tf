@@ -119,6 +119,10 @@ variable "vms" {
   }
 }
 
+variable "lb_private_ip_address" {
+  description = "The private IP address for the load balancer."
+  type        = string
+}
 
 variable "soc_vault_name" {
   description = "The name of the SOC Key Vault."
