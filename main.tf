@@ -27,36 +27,36 @@ data "azurerm_subnet" "elastic-subnet" {
   resource_group_name  = data.azurerm_virtual_network.core_infra_vnet.resource_group_name
 }
 
-data "azurerm_key_vault" "key_vault" {
-  name                = local.vaultName
-  resource_group_name = local.sharedResourceGroup
-}
+# data "azurerm_key_vault" "key_vault" {
+#   name                = local.vaultName
+#   resource_group_name = local.sharedResourceGroup
+# }
 
 data "azurerm_log_analytics_workspace" "log_analytics" {
   name                = "hmcts-${var.subscription}"
   resource_group_name = "oms-automation"
 }
 
-data "azurerm_key_vault_secret" "ccd_elastic_search_public_key" {
-  name         = "${var.raw_product}-ELASTIC-SEARCH-PUB-KEY"
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
+# data "azurerm_key_vault_secret" "ccd_elastic_search_public_key" {
+#   name         = "${var.raw_product}-ELASTIC-SEARCH-PUB-KEY"
+#   key_vault_id = data.azurerm_key_vault.key_vault.id
+# }
 
-data "azurerm_key_vault_secret" "dynatrace_token" {
-  name         = "dynatrace-token"
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
+# data "azurerm_key_vault_secret" "dynatrace_token" {
+#   name         = "dynatrace-token"
+#   key_vault_id = data.azurerm_key_vault.key_vault.id
+# }
 
-resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
-  name         = "${var.raw_product}-ELASTIC-SEARCH-URL"
-  value        = local.vNetLoadBalancerIp
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
+# resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
+#   name         = "${var.raw_product}-ELASTIC-SEARCH-URL"
+#   value        = local.vNetLoadBalancerIp
+#   key_vault_id = data.azurerm_key_vault.key_vault.id
+# }
 
-data "azurerm_key_vault_secret" "alerts_email" {
-  name         = "elk-alerts-email"
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
+# data "azurerm_key_vault_secret" "alerts_email" {
+#   name         = "elk-alerts-email"
+#   key_vault_id = data.azurerm_key_vault.key_vault.id
+# }
 
 // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200.service.core-compute-${var.env}.internal","http://ccd-data-2.service.core-compute-${var.env}.internal:9200"
 data "template_file" "es_data_nodes_url_template" {
@@ -69,11 +69,11 @@ data "template_file" "es_data_nodes_url_template" {
   }
 }
 
-resource "azurerm_key_vault_secret" "es_data_nodes_url" {
-  name         = "${var.raw_product}-ELASTIC-SEARCH-DATA-NODES-URL"
-  value        = local.es_data_nodes_url
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
+# resource "azurerm_key_vault_secret" "es_data_nodes_url" {
+#   name         = "${var.raw_product}-ELASTIC-SEARCH-DATA-NODES-URL"
+#   value        = local.es_data_nodes_url
+#   key_vault_id = data.azurerm_key_vault.key_vault.id
+# }
 
 # AMA Data Collection Rule Association
 data "azurerm_resource_group" "la_rg" {
