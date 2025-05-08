@@ -25,10 +25,10 @@ resource "azurerm_lb" "this" {
   sku                 = "Standard"
 
   frontend_ip_configuration {
-    name                           = "LBFE"
-    subnet_id                      = data.azurerm_subnet.elastic-subnet.id
-    private_ip_address_allocation  = "Static"
-    private_ip_address             = var.lb_private_ip_address
+    name                          = "LBFE"
+    subnet_id                     = data.azurerm_subnet.elastic-subnet.id
+    private_ip_address_allocation = "Static"
+    private_ip_address            = var.lb_private_ip_address
   }
 }
 
@@ -55,13 +55,13 @@ resource "azurerm_lb_probe" "this" {
 }
 
 resource "azurerm_lb_rule" "this" {
-  for_each                        = local.is_enabled_env ? local.lb_ports : {}
-  name                            = each.value.name
-  protocol                        = "Tcp"
-  frontend_port                   = each.value.port
-  backend_port                    = each.value.port
+  for_each                       = local.is_enabled_env ? local.lb_ports : {}
+  name                           = each.value.name
+  protocol                       = "Tcp"
+  frontend_port                  = each.value.port
+  backend_port                   = each.value.port
   frontend_ip_configuration_name = "LBFE"
-  backend_address_pool_ids        = [azurerm_lb_backend_address_pool.this[var.env].id]
-  probe_id                        = azurerm_lb_probe.this[each.key].id
-  loadbalancer_id                 = azurerm_lb.this[var.env].id
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.this[var.env].id]
+  probe_id                       = azurerm_lb_probe.this[each.key].id
+  loadbalancer_id                = azurerm_lb.this[var.env].id
 }
