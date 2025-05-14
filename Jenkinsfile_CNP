@@ -47,6 +47,10 @@ if (params.DEPLOY_ES_CLUSTER == true) {
    before('buildinfra:sandbox') {
     sh "echo 'chirag testing'"
   }
+
+   afterSuccess('buildinfra') {
+    sh "echo 'test aftersuccess in the buildinfra stage'"
+  }
 }
 
 def healthCheckStage(subscription, environmentName) {
