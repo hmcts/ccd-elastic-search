@@ -43,6 +43,10 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 //            healthCheckStage('qa', 'ithc')
 //        }
    }
+
+   after('buildinfra:sandbox') {
+    sh "echo 'chirag testing'"
+  }
 }
 
 def healthCheckStage(subscription, environmentName) {
