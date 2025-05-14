@@ -44,7 +44,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 //        }
    }
 
-   after('buildinfra:sandbox') {
+   before('buildinfra:sandbox') {
     sh "echo 'chirag testing'"
   }
 }
