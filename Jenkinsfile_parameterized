@@ -24,6 +24,8 @@ withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox
     afterAlways('buildinfra:sandbox') {
         echo 'Healthcheck in sprod'
         healthCheckStage('sandbox', 'sprod')
+
+        sh "echo 'chirag testing1'"
     }
 }
 
