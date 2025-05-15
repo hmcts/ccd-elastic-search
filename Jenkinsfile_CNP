@@ -43,7 +43,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 //            healthCheckStage('qa', 'ithc')
 //        }
    
-    before('buildinfra:sandbox') 
+    before('buildinfra:sbox') 
     {
         sh "echo 'chirag testing'"
     }
