@@ -13,7 +13,7 @@ properties([
 ])
 
 
-withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, params.RUN_ANSIBLE, 'sandbox') {
+withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
     
 
     afterAlways('buildinfra:sandbox') {
@@ -25,9 +25,9 @@ withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, params.R
         healthCheckStage('sandbox', 'saat')
     }
     afterAlways('buildinfra:sandbox') {
-        if (params.RUN_ANSIBLE == true) {
-                sh "echo 'Running Ansible Playbook for Sandbox'"
-        }
+        // if (params.RUN_ANSIBLE == true) {
+        sh "echo 'Running Ansible Playbook for Sandbox'"
+        // }
         echo 'Healthcheck in sprod'
         healthCheckStage('sandbox', 'sprod')
     }
