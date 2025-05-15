@@ -13,7 +13,7 @@ properties([
 ])
 
 
-withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
+withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, params.RUN_ANSIBLE, 'sandbox') {
     
 
     afterAlways('buildinfra:sandbox') {
