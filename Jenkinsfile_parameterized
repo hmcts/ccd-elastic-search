@@ -13,6 +13,13 @@ properties([
 
 
 withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
+    
+
+     afterSuccess('checkout') 
+    {
+        sh "echo 'chirag testing2'"
+    }
+
     afterAlways('buildinfra:sandbox') {
         echo 'Healthcheck in Sandbox'
         healthCheckStage('sandbox', 'sandbox')
@@ -24,8 +31,6 @@ withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox
     afterAlways('buildinfra:sandbox') {
         echo 'Healthcheck in sprod'
         healthCheckStage('sandbox', 'sprod')
-
-        sh "echo 'chirag testing1'"
     }
 }
 

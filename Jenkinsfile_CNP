@@ -49,11 +49,6 @@ if (params.DEPLOY_ES_CLUSTER == true) {
         sh "echo 'chirag testing1'"
     }
 
-    afterSuccess('checkout') 
-    {
-        sh "echo 'chirag testing2'"
-    }
-
    }
 
 
