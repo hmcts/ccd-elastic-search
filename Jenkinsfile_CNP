@@ -20,6 +20,9 @@ if (params.DEPLOY_ES_CLUSTER == true) {
        onDemo {
            enableSlackNotifications('#ccd-demo-builds')
        }
+       onSandbox {
+           env.ENV = 'sandbox'
+       }
 
        // TODO: Healthcheck per env
 //        afterAlways('buildinfra:aat') {
@@ -43,7 +46,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 //            healthCheckStage('qa', 'ithc')
 //        }
    
-    before('buildinfra:sbox') 
+    before('buildinfra:sandbox') 
     {
         sh "echo 'chirag testing'"
     }
