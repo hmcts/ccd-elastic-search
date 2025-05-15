@@ -48,8 +48,12 @@ if (params.DEPLOY_ES_CLUSTER == true) {
    
     before('buildinfra:sandbox') 
     {
-        sh "echo 'chirag testing'"
+        sh "echo 'chirag testing1'"
     }
+
+    afterSuccess('build') {
+    sh "echo 'chirag testing2'"
+  }
 
    }
 
