@@ -8,7 +8,7 @@ properties([
         parameters([
                 string(name: 'PRODUCT_NAME', defaultValue: 'ccd-elastic-search', description: ''),
                 choice(name: 'ENVIRONMENT', choices: 'sandbox\nsaat\nsprod', description: 'Environment where code should be build and deployed'),
-                booleanParam(name: 'RUN_ANSIBLE', defaultValue: false, description: 'Select this to run ansible playbook'),
+                booleanParam(name: 'RUN_ANSIBLE', defaultValue: true, description: 'Select this to run ansible playbook'),
         ])
 ])
 
@@ -18,6 +18,9 @@ if (params.RUN_ANSIBLE == true) {
 
     before('buildinfra:sandbox') 
     {
+        sh "echo 'Running Ansible Playbook for Sandbox'"
+        
+        sh "echo Hello from $(hostname)"
         sh "echo 'chirag testing1'"
     }
 
@@ -30,7 +33,7 @@ if (params.RUN_ANSIBLE == true) {
         healthCheckStage('sandbox', 'saat')
     }
     afterAlways('buildinfra:sandbox') {
-        sh "echo 'Running Ansible Playbook for Sandbox'"
+        
 
         echo 'Healthcheck in sprod'
         healthCheckStage('sandbox', 'sprod')
