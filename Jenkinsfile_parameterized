@@ -7,12 +7,44 @@ import uk.gov.hmcts.contino.azure.KeyVault
 properties([
         parameters([
                 string(name: 'PRODUCT_NAME', defaultValue: 'ccd-elastic-search', description: ''),
-                choice(name: 'ENVIRONMENT', choices: 'sandbox\nsaat\nsprod', description: 'Environment where code should be build and deployed')
+                choice(name: 'ENVIRONMENT', choices: 'sandbox\nsaat\nsprod', description: 'Environment where code should be build and deployed'),
+                booleanParam(name: 'RUN_ANSIBLE', defaultValue: true, description: 'Select this to run ansible playbook'),
         ])
 ])
 
+if (params.RUN_ANSIBLE == true) {
+        withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
+    
 
-withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
+    before('buildinfra:sandbox') 
+    {
+        sh "echo 'Running Ansible Playbook for Sandbox'"
+        sh "sudo apt update && sudo apt install -y ansible"
+        sh "ansible --version"
+    }
+
+    afterAlways('buildinfra:sandbox') {
+        echo 'Healthcheck in Sandbox'
+        healthCheckStage('sandbox', 'sandbox')
+    }
+    afterAlways('buildinfra:saat') {
+        echo 'Healthcheck in SAAT'
+        healthCheckStage('sandbox', 'saat')
+    }
+    afterAlways('buildinfra:sandbox') {
+        
+
+        echo 'Healthcheck in sprod'
+        healthCheckStage('sandbox', 'sprod')
+    }
+}
+
+
+}
+else{
+        withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
+    
+
     afterAlways('buildinfra:sandbox') {
         echo 'Healthcheck in Sandbox'
         healthCheckStage('sandbox', 'sandbox')
@@ -26,6 +58,9 @@ withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox
         healthCheckStage('sandbox', 'sprod')
     }
 }
+
+}
+
 
 def healthCheckStage(subscription, environmentName) {
         stage('HealthCheck') {

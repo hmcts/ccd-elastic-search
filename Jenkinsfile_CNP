@@ -21,6 +21,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
            enableSlackNotifications('#ccd-demo-builds')
        }
 
+
        // TODO: Healthcheck per env
 //        afterAlways('buildinfra:aat') {
 //            echo 'Healthcheck in AAT'
@@ -42,7 +43,10 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 //            echo 'Healthcheck in Perftest'
 //            healthCheckStage('qa', 'ithc')
 //        }
+
    }
+
+
 }
 
 def healthCheckStage(subscription, environmentName) {
