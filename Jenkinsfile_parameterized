@@ -19,9 +19,8 @@ if (params.RUN_ANSIBLE == true) {
     before('buildinfra:sandbox') 
     {
         sh "echo 'Running Ansible Playbook for Sandbox'"
+        sh "sudo apt update && sudo apt install -y ansible"
         sh "ansible --version"
-        
-        
     }
 
     afterAlways('buildinfra:sandbox') {
