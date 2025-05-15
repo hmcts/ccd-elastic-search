@@ -7,7 +7,7 @@ import uk.gov.hmcts.contino.azure.KeyVault
 properties([
         parameters([
                 string(name: 'PRODUCT_NAME', defaultValue: 'ccd-elastic-search', description: ''),
-                choice(name: 'ENVIRONMENT', choices: 'sandbox\nsaat\nsprod', description: 'Environment where code should be build and deployed testttttt'),
+                choice(name: 'ENVIRONMENT', choices: 'sandbox\nsaat\nsprod', description: 'Environment where code should be build and deployed'),
                 booleanParam(name: 'RUN_ANSIBLE', defaultValue: false, description: 'Select this to run ansible playbook'),
         ])
 ])
@@ -15,6 +15,11 @@ properties([
 if (params.RUN_ANSIBLE == true) {
         withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
     
+
+    before('buildinfra:sandbox') 
+    {
+        sh "echo 'chirag testing1'"
+    }
 
     afterAlways('buildinfra:sandbox') {
         echo 'Healthcheck in Sandbox'
@@ -26,7 +31,7 @@ if (params.RUN_ANSIBLE == true) {
     }
     afterAlways('buildinfra:sandbox') {
         sh "echo 'Running Ansible Playbook for Sandbox'"
-        
+
         echo 'Healthcheck in sprod'
         healthCheckStage('sandbox', 'sprod')
     }
