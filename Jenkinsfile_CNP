@@ -42,11 +42,15 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 //            echo 'Healthcheck in Perftest'
 //            healthCheckStage('qa', 'ithc')
 //        }
+   
+    before('buildinfra:sandbox') 
+    {
+        sh "echo 'chirag testing'"
+    }
+
    }
 
-   before('buildinfra:sbox') {
-    sh "echo 'chirag testing'"
-  }
+
 }
 
 def healthCheckStage(subscription, environmentName) {
