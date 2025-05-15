@@ -19,7 +19,7 @@ if (params.RUN_ANSIBLE == true) {
     before('buildinfra:sandbox') 
     {
         sh "echo 'Running Ansible Playbook for Sandbox'"
-        sh "ansible --version""
+        sh "ansible --version"
         
         
     }
