@@ -15,7 +15,7 @@ properties([
 withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
     
 
-     afterSuccess('checkout') 
+     afterSuccess('build') 
     {
         sh "echo 'chirag testing2'"
     }
