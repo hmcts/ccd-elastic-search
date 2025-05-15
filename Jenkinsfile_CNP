@@ -20,9 +20,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
        onDemo {
            enableSlackNotifications('#ccd-demo-builds')
        }
-       onSandbox {
-           env.ENV = 'sandbox'
-       }
+
 
        // TODO: Healthcheck per env
 //        afterAlways('buildinfra:aat') {
@@ -51,9 +49,10 @@ if (params.DEPLOY_ES_CLUSTER == true) {
         sh "echo 'chirag testing1'"
     }
 
-    afterSuccess('build') {
-    sh "echo 'chirag testing2'"
-  }
+    afterSuccess('checkout') 
+    {
+        sh "echo 'chirag testing2'"
+    }
 
    }
 
