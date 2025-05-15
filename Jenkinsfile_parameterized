@@ -12,8 +12,8 @@ properties([
         ])
 ])
 
-
-withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
+if (params.RUN_ANSIBLE == true) {
+        withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
     
 
     afterAlways('buildinfra:sandbox') {
@@ -25,13 +25,35 @@ withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox
         healthCheckStage('sandbox', 'saat')
     }
     afterAlways('buildinfra:sandbox') {
-        // if (params.RUN_ANSIBLE == true) {
         sh "echo 'Running Ansible Playbook for Sandbox'"
-        // }
+        
         echo 'Healthcheck in sprod'
         healthCheckStage('sandbox', 'sprod')
     }
 }
+
+
+}
+else{
+        withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
+    
+
+    afterAlways('buildinfra:sandbox') {
+        echo 'Healthcheck in Sandbox'
+        healthCheckStage('sandbox', 'sandbox')
+    }
+    afterAlways('buildinfra:saat') {
+        echo 'Healthcheck in SAAT'
+        healthCheckStage('sandbox', 'saat')
+    }
+    afterAlways('buildinfra:sandbox') {
+        echo 'Healthcheck in sprod'
+        healthCheckStage('sandbox', 'sprod')
+    }
+}
+
+}
+
 
 def healthCheckStage(subscription, environmentName) {
         stage('HealthCheck') {
