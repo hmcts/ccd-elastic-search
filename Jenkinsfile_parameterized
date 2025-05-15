@@ -19,9 +19,9 @@ if (params.RUN_ANSIBLE == true) {
     before('buildinfra:sandbox') 
     {
         sh "echo 'Running Ansible Playbook for Sandbox'"
-
-        sh "echo 'Hello from \$(hostname)'"
-        sh "echo 'chirag testing1'"
+        sh "ansible --version""
+        
+        
     }
 
     afterAlways('buildinfra:sandbox') {
