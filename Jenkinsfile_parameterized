@@ -20,7 +20,7 @@ if (params.RUN_ANSIBLE == true) {
     {
         sh "echo 'Running Ansible Playbook for Sandbox'"
 
-        sh "echo 'Hello from $(hostname)'"
+        sh "echo 'Hello from \$(hostname)'"
         sh "echo 'chirag testing1'"
     }
 
