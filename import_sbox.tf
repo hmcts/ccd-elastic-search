@@ -1,19 +1,10 @@
 import {
-  to = azurerm_key_vault_secret.elastic_search_url_key_setting
-  id = "https://ccd-sandbox.vault.azure.net/secrets/ccd-ELASTIC-SEARCH-URL/ff4f0da523a34cacab5aeb78a38772c2"
+  to = module.elastic2["ccd-data-0"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.dynatrace_oneagent[0]
+  id = "/subscriptions/bf308a5c-0624-4334-8ff8-8dca9fd43783/resourceGroups/ccd-elastic-search-sandbox/providers/Microsoft.Compute/virtualMachines/ccd-data-0/extensions/Dynatrace"
 }
 
 import {
-  to = azurerm_key_vault_secret.es_data_nodes_url
-  id = "https://ccd-sandbox.vault.azure.net/secrets/ccd-ELASTIC-SEARCH-DATA-NODES-URL/1ab689731b9e4e7da06ab9ce9c0c5d6a"
+  to = module.elastic2["ccd-data-0"].module.virtual-machines.azurerm_virtual_machine_extension.entra[0]
+  id = "/subscriptions/bf308a5c-0624-4334-8ff8-8dca9fd43783/resourceGroups/ccd-elastic-search-sandbox/providers/Microsoft.Compute/virtualMachines/ccd-data-0/extensions/AADSSHLoginForLinux"
 }
 
-import {
-  to = azurerm_key_vault_secret.admin_name
-  id = "https://ccd-sandbox.vault.azure.net/secrets/ccd-vm-admin-name/86ec94f004794a3fa94ec20b5d572848"
-}
-
-import {
-  to = azurerm_key_vault_secret.password
-  id = "https://ccd-sandbox.vault.azure.net/secrets/ccd-vm-admin-password/b0a81ee0f879474aab47939e83bbb42a"
-}

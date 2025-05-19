@@ -51,9 +51,10 @@ if (params.RUN_ANSIBLE == true) {
     }
     afterAlways('buildinfra:sandbox') {
         
-
+        sh "echo 'environment ${env.ENV}'"
         echo 'Healthcheck in sprod'
         healthCheckStage('sandbox', 'sprod')
+        
     }
 }
 
