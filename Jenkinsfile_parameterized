@@ -38,6 +38,7 @@ if (params.RUN_ANSIBLE == true) {
 
     before('buildinfra:sandbox') 
     {
+        env.ENV = 'sandbox'
         setupSecret()
         def my_ENV = env.ENV 
         sh "echo 'Running Ansible Playbook for Sandbox'"
