@@ -69,7 +69,7 @@ resource "azurerm_key_vault_secret" "password" {
 }
 
 resource "terraform_data" "vm" {
-  for_each = var.env == "sandbox" ? var.vms : {}
+  for_each = var.env == "sandboxXXX" ? var.vms : {}
   triggers_replace = [
     local.defaults_main_hash,
     local.task_install_hash,
@@ -112,7 +112,7 @@ resource "azurerm_key_vault_secret" "ssh_public_key" {
 }
 
 resource "azurerm_key_vault_secret" "ssh_private_key" {
-  name         = "ccd-vm-vmss-ssh-private-key"
+  name         = "ccd-vm-ssh-private-key"
   value        = tls_private_key.rsa.private_key_pem
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }

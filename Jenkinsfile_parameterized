@@ -12,15 +12,33 @@ properties([
         ])
 ])
 
+def setupSecret() {
+  azureKeyVault(
+    keyVaultURL: "https://ccd-${env.ENV}.vault.azure.net/",
+    secrets: [
+      secret('ccd-vm-ssh-private-key', 'CCD_VM_SSH_PRIVATE_KEY'),
+      secret('ccd-vm-admin-name', 'CCD_VM_ADMIN_NAME'),
+    ]) {
+    env.CCD_VM_SSH_PRIVATE_KEY = "${CCD_VM_SSH_PRIVATE_KEY}"
+    env.CCD_VM_ADMIN_NAME = "${CCD_VM_ADMIN_NAME}"
+  }
+}
+
 if (params.RUN_ANSIBLE == true) {
         withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
     
 
     before('buildinfra:sandbox') 
     {
+        setupSecret()
         sh "echo 'Running Ansible Playbook for Sandbox'"
         sh "sudo apt update && sudo apt install -y ansible"
         sh "ansible --version"
+        sh "echo 'environment ${env.ENV}'"
+
+        sh "echo ${CCD_VM_ADMIN_NAME} > /tmp/ansible_admin_name.txt"
+
+        sh "cat /tmp/ansible_admin_name.txt"
     }
 
     afterAlways('buildinfra:sandbox') {
