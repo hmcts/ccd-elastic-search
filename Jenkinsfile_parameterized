@@ -14,8 +14,9 @@ properties([
 
 def setupSecret() {
   withAzureKeyvault(
-    credentialsId: 'AZURE_CREDENTIALS_ID', // Replace with your Jenkins Azure credentials ID
-    keyVaultName: "ccd-${env.ENV}",
+    def bootstap_env = env.ENV 
+    
+    keyVaultName: "ccd-${bootstap_env}",
     secrets: [
       [secretType: 'Secret', name: 'ccd-vm-admin-name', envVariable: 'CCD_VM_ADMIN_NAME']
     ]
@@ -31,10 +32,11 @@ if (params.RUN_ANSIBLE == true) {
     before('buildinfra:sandbox') 
     {
         setupSecret()
+        def my_ENV = env.ENV 
         sh "echo 'Running Ansible Playbook for Sandbox'"
         sh "sudo apt update && sudo apt install -y ansible"
         sh "ansible --version"
-        sh "echo 'environment ${env.ENV}'"
+        sh "echo 'environment ${my_ENV}'"
 
         sh "echo ${CCD_VM_ADMIN_NAME} > /tmp/ansible_admin_name.txt"
 
