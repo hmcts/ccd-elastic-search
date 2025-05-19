@@ -19,6 +19,7 @@ module "elastic2" {
   managed_disks     = each.value.managed_disks
   soc_vault_name    = var.soc_vault_name
   soc_vault_rg      = var.soc_vault_rg
+  vm_admin_ssh_key  = tls_private_key.rsa.public_key_openssh
 }
 
 
@@ -93,4 +94,25 @@ resource "terraform_data" "vm" {
     ]
   }
 
+}
+
+
+
+resource "tls_private_key" "rsa" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+
+# Write to key vault
+resource "azurerm_key_vault_secret" "ssh_public_key" {
+  name         = "ccd-vm-ssh-public-key"
+  value        = tls_private_key.rsa.public_key_openssh
+  key_vault_id = data.azurerm_key_vault.key_vault.id
+}
+
+resource "azurerm_key_vault_secret" "ssh_private_key" {
+  name         = "ccd-vm-vmss-ssh-private-key"
+  value        = tls_private_key.rsa.private_key_pem
+  key_vault_id = data.azurerm_key_vault.key_vault.id
 }
