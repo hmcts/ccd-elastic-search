@@ -44,11 +44,13 @@ if (params.RUN_ANSIBLE == true) {
         sh "echo 'Running Ansible Playbook for Sandbox'"
         sh "sudo apt update && sudo apt install -y ansible"
         sh "ansible --version"
-        sh "echo 'environment ${my_ENV}'"
+        sh "echo 'environment ${env.ENV}'"
 
         sh "echo ${CCD_VM_ADMIN_NAME} > /tmp/ansible_admin_name.txt"
 
         sh "cat /tmp/ansible_admin_name.txt"
+
+        sh "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C master -i ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=ansible/temp/ansible_admin_name.txt -C"
     }
 
     afterAlways('buildinfra:sandbox') {
