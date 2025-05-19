@@ -13,16 +13,14 @@ properties([
 ])
 
 def setupSecret() {
-  withAzureKeyvault(
-    def bootstap_env = env.ENV 
-    
-    keyVaultName: "ccd-${bootstap_env}",
+  def bootstap_env = env.ENV 
+  azureKeyVault(
+    keyVaultURL: "https://ccd-${bootstap_env}-kv.vault.azure.net/",
     secrets: [
-      [secretType: 'Secret', name: 'ccd-vm-admin-name', envVariable: 'CCD_VM_ADMIN_NAME']
-    ]
-  ) {
-    env.CCD_VM_ADMIN_NAME = "${env.CCD_VM_ADMIN_NAME}"
-  }
+      secret("ccd-vm-admin-name", 'CCD_VM_ADMIN_NAME'),
+    ]) {
+      env.CCD_VM_ADMIN_NAME = "${CCD_VM_ADMIN_NAME}"
+    }
 }
 
 if (params.RUN_ANSIBLE == true) {
