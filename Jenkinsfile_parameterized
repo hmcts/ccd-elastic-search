@@ -23,6 +23,15 @@ def setupSecret() {
     }
 }
 
+static Map<String, Object> secret(String secretName, String envVariable) {
+  [
+    $class     : 'AzureKeyVaultSecret',
+    secretType : 'Secret',
+    name       : secretName,
+    envVariable: envVariable
+  ]
+}
+
 if (params.RUN_ANSIBLE == true) {
         withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
     
