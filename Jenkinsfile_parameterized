@@ -15,7 +15,7 @@ properties([
 def setupSecret() {
   def bootstap_env = env.ENV 
   azureKeyVault(
-    keyVaultURL: "https://ccd-${bootstap_env}-kv.vault.azure.net/",
+    keyVaultURL: "https://ccd-${bootstap_env}.vault.azure.net/",
     secrets: [
       secret("ccd-vm-admin-name", 'CCD_VM_ADMIN_NAME'),
     ]) {
