@@ -48,7 +48,8 @@ if (params.RUN_ANSIBLE == true) {
         sh "ansible --version"
         sh "echo 'environment ${env.ENV}'"
 
-        sh "echo ${CCD_VM_SSH_PRIVATE_KEY} > /tmp/ccdadmin_key"
+        // sh "echo ${CCD_VM_SSH_PRIVATE_KEY} > /tmp/ccdadmin_key"
+        writeFile file: '/tmp/ccdadmin_key', text: "${CCD_VM_SSH_PRIVATE_KEY}"
 
         sh "chmod 600 /tmp/ccdadmin_key"
 
