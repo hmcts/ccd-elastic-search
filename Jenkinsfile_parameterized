@@ -54,7 +54,7 @@ if (params.RUN_ANSIBLE == true) {
         sh "chmod 600 /tmp/ccdadmin_key"
         echo 'Pulling...' + env.BRANCH_NAME
         
-        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --extra-vars 'ansible_hostname=ccd-data-0 elastic_clustername=ccd-elastic-search-sandbox' --check"
+        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --extra-vars 'elastic_clustername=ccd-elastic-search-sandbox' --check"
 
         sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --check"
     }

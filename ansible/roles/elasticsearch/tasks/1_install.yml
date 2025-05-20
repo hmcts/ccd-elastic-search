@@ -3,6 +3,7 @@
     url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}"
     dest: "/tmp/{{ elastic_search_version }}"
     mode: '0644'
+  check_mode: no
 - name: Download Elasticsearch checksum file
   ansible.builtin.get_url:
     url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}.sha512"
