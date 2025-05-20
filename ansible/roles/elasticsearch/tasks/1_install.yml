@@ -44,12 +44,14 @@
     regexp: "^#?-Xms.*"
     line: "-Xms2g"
     state: present
+  when: not ansible_check_mode
 - name: Enable memory locking
   ansible.builtin.lineinfile:
     path: "/etc/elasticsearch/elasticsearch.yml"
     regexp: "^#?bootstrap.memory_lock"
     line: "bootstrap.memory_lock: true"
     state: present
+  when: not ansible_check_mode
 
 # Create directory for systemd override
 - name: Create systemd override directory for Elasticsearch
@@ -57,7 +59,7 @@
     path: /etc/systemd/system/elasticsearch.service.d
     state: directory
     mode: '0755'
-
+  when: not ansible_check_mode
 # Create systemd override file
 - name: Set LimitMEMLOCK in systemd override
   ansible.builtin.copy:
@@ -83,7 +85,7 @@
     mode: '0644'
     owner: root
     group: root
-    
+  when: not ansible_check_mode
 - name: Restart Elasticsearch to apply changes
   ansible.builtin.systemd:
     name: elasticsearch
