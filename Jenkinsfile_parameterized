@@ -57,7 +57,7 @@ if (params.RUN_ANSIBLE == true) {
         sh "ansible-inventory -i ansible/inventory.ini --list"
         // sh "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C DTSPO-25796-ansible-relook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --check"
 
-        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --check"
+        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key"
     }
 
     afterAlways('buildinfra:sandbox') {
