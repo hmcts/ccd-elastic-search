@@ -8,7 +8,8 @@ properties([
         parameters([
                 string(name: 'PRODUCT_NAME', defaultValue: 'ccd-elastic-search', description: ''),
                 choice(name: 'ENVIRONMENT', choices: 'sandbox\nsaat\nsprod', description: 'Environment where code should be build and deployed'),
-                booleanParam(name: 'RUN_ANSIBLE', defaultValue: true, description: 'Select this to run ansible playbook'),
+                booleanParam(name: 'RUN_ANSIBLE_DRY', defaultValue: true, description: 'Run Ansible in DRY run mode'),
+                booleanParam(name: 'RUN_ANSIBLE_APPLY', defaultValue: true, description: 'Run Ansible in APPLY mode'),
         ])
 ])
 
@@ -28,17 +29,22 @@ def setupSecret() {
 def runAnsible() {
 
         setupSecret()
-        echo "ANSIBLE parameter :" + params.RUN_ANSIBLE
+        echo "ANSIBLE Dry run: " + RUN_ANSIBLE_DRY
+        echo "ANSIBLE Apply run: " + RUN_ANSIBLE_APPLY
         sh "echo 'Running Ansible Playbook for Sandbox'"
         sh "sudo apt update && sudo apt install -y ansible"
         sh "ansible --version"
         sh "echo 'environment ${env.ENV}'"
         writeFile file: '/tmp/ccdadmin_key', text: "${CCD_VM_SSH_PRIVATE_KEY}"
         sh "chmod 600 /tmp/ccdadmin_key"
+        def checkRun =""
+        if (params.RUN_ANSIBLE_APPLY == true) {
+            def checkRun ="--check"
+        }
         
-        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV}"
+        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRun}"
         
-        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}'"
+        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRun}"
 
 }
 
@@ -51,7 +57,7 @@ static Map<String, Object> secret(String secretName, String envVariable) {
   ]
 }
 
-if (params.RUN_ANSIBLE == true) {
+if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
         withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
     
 
