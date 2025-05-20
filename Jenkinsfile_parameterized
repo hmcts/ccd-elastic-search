@@ -29,8 +29,8 @@ def setupSecret() {
 def runAnsible() {
 
         setupSecret()
-        echo "ANSIBLE Dry run: " + RUN_ANSIBLE_DRY
-        echo "ANSIBLE Apply run: " + RUN_ANSIBLE_APPLY
+        echo "ANSIBLE Dry run: " + params.RUN_ANSIBLE_DRY
+        echo "ANSIBLE Apply run: " + params.RUN_ANSIBLE_APPLY
         sh "echo 'Running Ansible Playbook for Sandbox'"
         sh "sudo apt update && sudo apt install -y ansible"
         sh "ansible --version"
