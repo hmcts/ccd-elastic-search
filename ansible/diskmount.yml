@@ -74,9 +74,9 @@
         opts: defaults
         state: present
 
-    - name: Set ownership to elasticsearch
-      file:
-        path: "{{ mount_point }}"
-        owner: elasticsearch
-        group: elasticsearch
-        recurse: yes
+    # - name: Set ownership to elasticsearch
+    #   file:
+    #     path: "{{ mount_point }}"
+    #     owner: elasticsearch
+    #     group: elasticsearch
+    #     recurse: yes
