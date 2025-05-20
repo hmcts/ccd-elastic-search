@@ -1,6 +1,6 @@
 ---
 - name: Set up RAID0 from two datadisks and mount for Elasticsearch
-  hosts: all
+  hosts: remote
   become: true
 
   vars:
