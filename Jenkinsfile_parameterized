@@ -37,9 +37,9 @@ def runAnsible() {
         sh "echo 'environment ${env.ENV}'"
         writeFile file: '/tmp/ccdadmin_key', text: "${CCD_VM_SSH_PRIVATE_KEY}"
         sh "chmod 600 /tmp/ccdadmin_key"
-        def checkRunAnsible = ""
+        def checkRunAnsible = "--check"
         if (params.RUN_ANSIBLE_APPLY == true) {
-            checkRunAnsible = "--check"
+            checkRunAnsible = ""
         }
         
         sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
