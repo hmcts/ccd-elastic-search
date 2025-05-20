@@ -25,6 +25,24 @@ def setupSecret() {
     }
 }
 
+def runAnsible() {
+
+        setupSecret()
+        
+        sh "echo 'Running Ansible Playbook for Sandbox'"
+        sh "sudo apt update && sudo apt install -y ansible"
+        sh "ansible --version"
+        sh "echo 'environment ${env.ENV}'"
+        writeFile file: '/tmp/ccdadmin_key', text: "${CCD_VM_SSH_PRIVATE_KEY}"
+        sh "chmod 600 /tmp/ccdadmin_key"
+        
+        
+        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --extra-vars 'elastic_clustername=ccd-elastic-search-sandbox' --check"
+
+        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --check"
+
+}
+
 static Map<String, Object> secret(String secretName, String envVariable) {
   [
     $class     : 'AzureKeyVaultSecret',
@@ -38,26 +56,10 @@ if (params.RUN_ANSIBLE == true) {
         withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT, 'sandbox') {
     
 
-    before('buildinfra:sandbox') 
-    {
-        env.ENV = 'sandbox'
-        setupSecret()
-        
-        sh "echo 'Running Ansible Playbook for Sandbox'"
-        sh "sudo apt update && sudo apt install -y ansible"
-        sh "ansible --version"
-        sh "echo 'environment ${env.ENV}'"
-
-        // sh "echo ${CCD_VM_SSH_PRIVATE_KEY} > /tmp/ccdadmin_key"
-        writeFile file: '/tmp/ccdadmin_key', text: "${CCD_VM_SSH_PRIVATE_KEY}"
-
-        sh "chmod 600 /tmp/ccdadmin_key"
-        echo 'Pulling...' + env.BRANCH_NAME
-        
-        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --extra-vars 'elastic_clustername=ccd-elastic-search-sandbox' --check"
-
-        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --check"
-    }
+    // before('buildinfra:sandbox') 
+    // {
+      
+    // }
 
     afterAlways('buildinfra:sandbox') {
         echo 'Healthcheck in Sandbox'
@@ -68,8 +70,10 @@ if (params.RUN_ANSIBLE == true) {
         healthCheckStage('sandbox', 'saat')
     }
     afterAlways('buildinfra:sandbox') {
-        
-        sh "echo 'environment ${env.ENV}'"
+
+        env.ENV = 'sandbox'
+        runAnsible()
+
         echo 'Healthcheck in sprod'
         healthCheckStage('sandbox', 'sprod')
         
