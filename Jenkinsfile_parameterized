@@ -53,7 +53,7 @@ if (params.RUN_ANSIBLE == true) {
 
         sh "chmod 600 /tmp/ccdadmin_key"
 
-        sh "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C master -i ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --check"
+        sh "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C DTSPO-25796-ansible-relook -i ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --check"
     }
 
     afterAlways('buildinfra:sandbox') {
