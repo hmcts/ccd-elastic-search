@@ -7,7 +7,7 @@ import {
 
 import {
   id = "/subscriptions/${var.subscription_id}/resourceGroups/ccd-elastic-search-${var.subscription_id}"
-  to = "azurerm_resource_group.this"
+  to = azurerm_resource_group.this
 }
 
 ################## resources which are spicific to the environment ##################
