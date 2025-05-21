@@ -22,15 +22,10 @@ module "elastic2" {
   vm_admin_ssh_key  = tls_private_key.rsa.public_key_openssh
 }
 
-
-
 locals {
-  lin_password  = random_password.vm_password.result
-  linux         = "linux"
-  expiresAfter  = "3000-01-01"
-  nessus_server = "nessus-scanners-nonprod000005.platform.hmcts.net"
-  nessus_groups = "Nonprod-test"
-  nessus_key    = "nessus-agent-key-nonprod"
+  lin_password = random_password.vm_password.result
+  linux        = "linux"
+  expiresAfter = "3000-01-01"
 }
 
 module "ctags" {
