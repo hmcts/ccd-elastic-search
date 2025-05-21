@@ -111,3 +111,128 @@ import {
 }
 
 # ...existing code...
+
+
+# ...existing code...
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-0"
+  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-0"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-1"
+  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-1"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-2"
+  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-2"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-3"
+  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-3"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/loadBalancingRules/es-transport-internal"
+  to       = azurerm_lb_rule.this["transport"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/loadBalancingRules/es-http-internal"
+  to       = azurerm_lb_rule.this["http"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/ElasticClusterTransport"
+  to       = azurerm_network_security_rule.nsg_rules["ElasticClusterTransport"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/LB_To_ES"
+  to       = azurerm_network_security_rule.nsg_rules["LB_To_ES"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/AKS_To_ES"
+  to       = azurerm_network_security_rule.nsg_rules["AKS_To_ES"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/SSH"
+  to       = azurerm_network_security_rule.nsg_rules["SSH"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/Bastion_To_ES"
+  to       = azurerm_network_security_rule.nsg_rules["Bastion_To_ES"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/DenyAllOtherTraffic"
+  to       = azurerm_network_security_rule.nsg_rules["DenyAllOtherTraffic"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/Bastion_To_VMs"
+  to       = azurerm_network_security_rule.nsg_rules["Bastion_To_VMs"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/App_To_ES"
+  to       = azurerm_network_security_rule.nsg_rules["App_To_ES"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/Jenkins_To_ES"
+  to       = azurerm_network_security_rule.nsg_rules["Jenkins_To_ES"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/cft-ptlsbox"
+  to       = azurerm_network_security_rule.nsg_rules["cft-ptlsbox"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0"
+  to       = module.elastic2["ccd-data-0"].module.virtual-machines.azurerm_linux_virtual_machine.linvm[0]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1"
+  to       = module.elastic2["ccd-data-1"].module.virtual-machines.azurerm_linux_virtual_machine.linvm[0]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2"
+  to       = module.elastic2["ccd-data-2"].module.virtual-machines.azurerm_linux_virtual_machine.linvm[0]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3"
+  to       = module.elastic2["ccd-data-3"].module.virtual-machines.azurerm_linux_virtual_machine.linvm[0]
+}
+
+# ...existing code...
