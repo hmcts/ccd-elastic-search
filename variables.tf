@@ -97,6 +97,7 @@ variable "dynatrace_hostgroup" {
 variable "mgmt_subscription_id" {}
 
 variable "aks_subscription_id" {}
+# variable "subscription_id" {}
 
 variable "vm_names" {
   type    = list(string)
