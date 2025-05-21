@@ -12,7 +12,7 @@ locals {
 
   // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200","http://ccd-data-2:9200"
   es_data_nodes_url = join(",", data.template_file.es_data_nodes_url_template.*.rendered)
- 
+
 }
 
 data "azurerm_virtual_network" "core_infra_vnet" {

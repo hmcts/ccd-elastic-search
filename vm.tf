@@ -19,6 +19,7 @@ module "elastic2" {
   managed_disks     = each.value.managed_disks
   soc_vault_name    = var.soc_vault_name
   soc_vault_rg      = var.soc_vault_rg
+  vm_admin_ssh_key  = tls_private_key.rsa.public_key_openssh
 }
 
 
@@ -67,30 +68,21 @@ resource "azurerm_key_vault_secret" "password" {
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
-resource "terraform_data" "vm" {
-  for_each = var.env == "sandbox" ? var.vms : {}
-  triggers_replace = [
-    local.defaults_main_hash,
-    local.task_install_hash,
-    local.disk_mount_hash,
-    local.config_template,
-  ]
-  connection {
-    type     = "ssh"
-    host     = each.value.ip
-    user     = azurerm_key_vault_secret.admin_name.value
-    password = local.lin_password
-    timeout  = "15m"
-  }
+resource "tls_private_key" "rsa" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
 
-  provisioner "remote-exec" {
-    inline = [
-      "echo Hello from $(hostname)",
-      "sudo apt update && sudo apt install -y ansible",
-      # IF you have done changes on the Ansible, , in order to test the changes before merging to master, make sure to change the branch name for below 2 lines
-      "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C master -i ansible/inventory.ini ansible/diskmount.yml",
-      "ansible-pull -U https://github.com/hmcts/ccd-elastic-search.git -C master -i ansible/inventory.ini ansible/main.yml --extra-vars 'ansible_hostname=${each.value.name} elastic_clustername=ccd-elastic-search-${var.env}'",
-    ]
-  }
 
+# Write to key vault
+resource "azurerm_key_vault_secret" "ssh_public_key" {
+  name         = "ccd-vm-ssh-public-key"
+  value        = tls_private_key.rsa.public_key_openssh
+  key_vault_id = data.azurerm_key_vault.key_vault.id
+}
+
+resource "azurerm_key_vault_secret" "ssh_private_key" {
+  name         = "ccd-vm-ssh-private-key"
+  value        = tls_private_key.rsa.private_key_pem
+  key_vault_id = data.azurerm_key_vault.key_vault.id
 }
