@@ -30,13 +30,6 @@ import {
 }
 
 
-
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
-  id       = "https://ccd-${each.key}.vault.azure.net/secrets/ccd-vm-admin-password/b0a81ee0f879474aab47939e83bbb42a"
-  to       = azurerm_key_vault_secret.password
-}
-
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
   id       = "https://ccd-${each.key}.vault.azure.net/secrets/ccd-vm-ssh-public-key/e260330fd08e48608ebc5f2a055a83ae"
