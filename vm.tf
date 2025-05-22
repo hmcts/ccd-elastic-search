@@ -23,7 +23,6 @@ module "elastic2" {
 }
 
 locals {
-  lin_password = random_password.vm_password.result
   linux        = "linux"
   expiresAfter = "3000-01-01"
 }
@@ -35,15 +34,7 @@ module "ctags" {
   environment = var.env
   product     = "ccd"
 }
-resource "random_password" "vm_password" {
-  length           = 16
-  special          = true
-  override_special = "#$%&@()_[]{}<>:?"
-  min_upper        = 1
-  min_lower        = 1
-  min_numeric      = 1
 
-}
 
 resource "azurerm_resource_group" "this" {
   name     = "ccd-elastic-search-${var.env}"
@@ -57,11 +48,7 @@ resource "azurerm_key_vault_secret" "admin_name" {
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
-resource "azurerm_key_vault_secret" "password" {
-  name         = "ccd-vm-admin-password"
-  value        = local.lin_password
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
+
 
 resource "tls_private_key" "rsa" {
   algorithm = "RSA"
@@ -92,7 +79,3 @@ data "azurerm_key_vault_secret" "ssh_private_key" {
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
-data "azurerm_key_vault_secret" "vm_password" {
-  name         = "ccd-ELASTIC-SEARCH-password"
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
