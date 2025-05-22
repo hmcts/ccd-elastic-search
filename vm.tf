@@ -11,7 +11,7 @@ module "elastic2" {
   env               = var.env
   vm_name           = each.value.name
   vm_resource_group = azurerm_resource_group.this.name
-  vm_admin_password = data.azurerm_key_vault_secret.vm_password.value
+  vm_admin_password = null
   vm_subnet_id      = data.azurerm_subnet.elastic-subnet.id
   vm_private_ip     = each.value.ip
   os_disk_name      = "${each.value.name}-osdisk"
