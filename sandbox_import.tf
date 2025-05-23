@@ -302,29 +302,7 @@ import {
   to       = module.elastic2["ccd-data-3"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.dynatrace_oneagent[0]
 }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/extensions/AADSSHLoginForLinux"
-  to       = module.elastic2["ccd-data-0"].module.virtual-machines.azurerm_virtual_machine_extension.entra[0]
-}
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/extensions/AADSSHLoginForLinux"
-  to       = module.elastic2["ccd-data-1"].module.virtual-machines.azurerm_virtual_machine_extension.entra[0]
-}
-
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/extensions/AADSSHLoginForLinux"
-  to       = module.elastic2["ccd-data-2"].module.virtual-machines.azurerm_virtual_machine_extension.entra[0]
-}
-
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/extensions/AADSSHLoginForLinux"
-  to       = module.elastic2["ccd-data-3"].module.virtual-machines.azurerm_virtual_machine_extension.entra[0]
-}
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
