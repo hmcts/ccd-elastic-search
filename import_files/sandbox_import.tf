@@ -1,3 +1,9 @@
+locals {
+  env_subs = {
+    "sandbox" = "bf308a5c-0624-4334-8ff8-8dca9fd43783"
+
+  }
+}
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "sandbox" }
