@@ -157,3 +157,50 @@ variable "nsg_security_rules" {
   }))
   default = {}
 }
+
+variable "vm_publisher_name" {
+  type    = string
+  default = "Canonical"
+}
+variable "vm_offer" {
+  type    = string
+  default = "0001-com-ubuntu-server-focal"
+}
+variable "vm_sku" {
+  type    = string
+  default = "20_04-lts"
+}
+variable "vm_version" {
+  type    = string
+  default = "latest"
+}
+
+variable "vm_size" {
+  type    = string
+  default = "Standard_D4s_v3"
+}
+
+variable "vm_admin_name" {
+  description = "The name of the administrator account for the VM"
+  type        = string
+  default     = "elkadmin"
+
+}
+
+variable "enable_availability_set" {
+  description = "Enable availability set for VMs"
+  type        = bool
+  default     = true
+}
+
+variable "availability_set_name" {
+  description = "Name of the availability set"
+  type        = string
+  default     = ""
+}
+
+variable "platform_update_domain_count" {
+  description = "Number of update domains for the availability set"
+  type        = number
+  default     = 20
+}

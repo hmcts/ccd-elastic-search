@@ -1,3 +1,10 @@
+vm_publisher_name = "Canonical"
+vm_offer = "UbuntuServer"
+vm_sku = "16.04.0-LTS"
+vm_version = "latest"
+availability_set_name = "CCD-DATA-0-AV-SET"
+
+
 vms = {
   ccd-data-0 = {
     name = "ccd-data-0"
@@ -71,6 +78,9 @@ vms = {
 
 lb_private_ip_address = "10.96.216.253"
 
+soc_vault_name = "soc-prod"
+
+soc_vault_rg = "soc-core-infra-prod-rg"
 nsg_security_rules = {
   SSH = {
     name                                       = "SSH"

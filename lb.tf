@@ -1,5 +1,5 @@
 locals {
-  enabled_lb_envs = ["sandbox","nonprod"]
+  enabled_lb_envs = var.env == "sandbox" || var.env == "demo" ? var.vms : {}
   is_enabled_env  = contains(local.enabled_lb_envs, var.env)
   env_map         = local.is_enabled_env ? { (var.env) = true } : {}
 

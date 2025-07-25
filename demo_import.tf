@@ -5,6 +5,11 @@ locals {
   }
 }
 
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.KeyVault/vaults/ccd-${each.key}"
+#   to       = azurerm_key_vault.key_vault.
+# }
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb"
@@ -29,12 +34,17 @@ import {
   to       = azurerm_key_vault_secret.es_data_nodes_url
 }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "https://ccd-${each.key}.vault.azure.net/secrets/ccd-vm-admin-name/e520dc97ca0a40abbba3c151d815700d"
-  to       = azurerm_key_vault_secret.admin_name
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "https://ccd-${each.key}.vault.azure.net/secrets/ccd-vm-admin-name/e520dc97ca0a40abbba3c151d815700d"
+#   to       = azurerm_key_vault_secret.admin_name
+# }
 
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "https://ccd-${each.key}.vault.azure.net/secrets/ccd-ELASTIC-SEARCH-PASSWORD/e437d1d758054bd2848f3e5767b36784"
+#   to       = azurerm_key_vault_secret.elastic_search_pwd_key_setting
+# }
 
 # import {
 #   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
@@ -42,11 +52,11 @@ import {
 #   to       = azurerm_key_vault_secret.ssh_public_key
 # }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "https://ccd-${each.key}.vault.azure.net/secrets/ccd-vm-ssh-private-key-new/04b392fee11a4ddcba6350ddf77f4468"
-  to       = azurerm_key_vault_secret.ssh_private_key
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "https://ccd-${each.key}.vault.azure.net/secrets/ccd-vm-ssh-private-key-new/04b392fee11a4ddcba6350ddf77f4468"
+#   to       = azurerm_key_vault_secret.ssh_private_key
+# }
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
@@ -222,107 +232,107 @@ import {
   to       = module.elastic2["ccd-data-3"].module.virtual-machines.azurerm_linux_virtual_machine.linvm[0]
 }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/extensions/AMALinux"
-  to       = module.elastic2["ccd-data-0"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.azure_monitor[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/extensions/AMALinux"
+#   to       = module.elastic2["ccd-data-0"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.azure_monitor[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/extensions/AMALinux"
-  to       = module.elastic2["ccd-data-1"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.azure_monitor[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/extensions/AMALinux"
+#   to       = module.elastic2["ccd-data-1"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.azure_monitor[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/extensions/AMALinux"
-  to       = module.elastic2["ccd-data-2"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.azure_monitor[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/extensions/AMALinux"
+#   to       = module.elastic2["ccd-data-2"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.azure_monitor[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/extensions/AMALinux"
-  to       = module.elastic2["ccd-data-3"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.azure_monitor[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/extensions/AMALinux"
+#   to       = module.elastic2["ccd-data-3"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.azure_monitor[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/extensions/HMCTSBootstrapScript"
-  to       = module.elastic2["ccd-data-0"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.custom_script[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/extensions/HMCTSBootstrapScript"
+#   to       = module.elastic2["ccd-data-0"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.custom_script[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/extensions/HMCTSBootstrapScript"
-  to       = module.elastic2["ccd-data-1"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.custom_script[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/extensions/HMCTSBootstrapScript"
+#   to       = module.elastic2["ccd-data-1"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.custom_script[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/extensions/HMCTSBootstrapScript"
-  to       = module.elastic2["ccd-data-2"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.custom_script[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/extensions/HMCTSBootstrapScript"
+#   to       = module.elastic2["ccd-data-2"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.custom_script[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/extensions/HMCTSBootstrapScript"
-  to       = module.elastic2["ccd-data-3"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.custom_script[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/extensions/HMCTSBootstrapScript"
+#   to       = module.elastic2["ccd-data-3"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.custom_script[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/extensions/Dynatrace"
-  to       = module.elastic2["ccd-data-0"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.dynatrace_oneagent[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/extensions/Dynatrace"
+#   to       = module.elastic2["ccd-data-0"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.dynatrace_oneagent[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/extensions/Dynatrace"
-  to       = module.elastic2["ccd-data-1"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.dynatrace_oneagent[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/extensions/Dynatrace"
+#   to       = module.elastic2["ccd-data-1"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.dynatrace_oneagent[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/extensions/Dynatrace"
-  to       = module.elastic2["ccd-data-2"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.dynatrace_oneagent[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/extensions/Dynatrace"
+#   to       = module.elastic2["ccd-data-2"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.dynatrace_oneagent[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/extensions/Dynatrace"
-  to       = module.elastic2["ccd-data-3"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.dynatrace_oneagent[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/extensions/Dynatrace"
+#   to       = module.elastic2["ccd-data-3"].module.virtual-machines.module.vm-bootstrap[0].azurerm_virtual_machine_extension.dynatrace_oneagent[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/extensions/AADSSHLoginForLinux"
-  to       = module.elastic2["ccd-data-1"].module.virtual-machines.azurerm_virtual_machine_extension.entra[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/extensions/AADSSHLoginForLinux"
+#   to       = module.elastic2["ccd-data-1"].module.virtual-machines.azurerm_virtual_machine_extension.entra[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-0-dcra"
-  to       = module.elastic2["ccd-data-0"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-0-dcra"
+#   to       = module.elastic2["ccd-data-0"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-1-dcra"
-  to       = module.elastic2["ccd-data-1"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-1-dcra"
+#   to       = module.elastic2["ccd-data-1"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-2-dcra"
-  to       = module.elastic2["ccd-data-2"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-2-dcra"
+#   to       = module.elastic2["ccd-data-2"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-3-dcra"
-  to       = module.elastic2["ccd-data-3"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-3-dcra"
+#   to       = module.elastic2["ccd-data-3"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
+# }
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
@@ -418,4 +428,28 @@ import {
   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/dataDisks/ccd-data-3-datadisk2"
   to       = module.elastic2["ccd-data-3"].module.virtual-machines.azurerm_virtual_machine_data_disk_attachment.data_disk_attachments["disk2"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/availabilitySets/CCD-DATA-0-AV-SET"
+  to       = module.elastic2["ccd-data-0"].module.virtual-machines.azurerm_availability_set.set[0]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/availabilitySets/CCD-DATA-0-AV-SET"
+  to       = module.elastic2["ccd-data-1"].module.virtual-machines.azurerm_availability_set.set[0]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/availabilitySets/CCD-DATA-0-AV-SET"
+  to       = module.elastic2["ccd-data-2"].module.virtual-machines.azurerm_availability_set.set[0]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/availabilitySets/CCD-DATA-0-AV-SET"
+  to       = module.elastic2["ccd-data-3"].module.virtual-machines.azurerm_availability_set.set[0]
 }
