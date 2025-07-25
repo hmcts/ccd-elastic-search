@@ -19,7 +19,7 @@ def setupSecret() {
     keyVaultURL: "https://ccd-${bootstap_env}.vault.azure.net/",
     secrets: [
       secret("ccd-vm-admin-name", 'CCD_VM_ADMIN_NAME'),
-      secret("ccd-vm-ssh-private-key", 'CCD_VM_SSH_PRIVATE_KEY'),
+      secret("ccd-ELASTIC-SEARCH-PRIVATE-KEY", 'CCD_VM_SSH_PRIVATE_KEY'),
     ]) {
       env.CCD_VM_ADMIN_NAME = "${CCD_VM_ADMIN_NAME}"
       env.CCD_VM_SSH_PRIVATE_KEY = "${CCD_VM_SSH_PRIVATE_KEY}"
