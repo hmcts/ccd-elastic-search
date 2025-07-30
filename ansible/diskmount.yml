@@ -7,7 +7,7 @@
     datadisks:
       - /dev/sdc
       - /dev/sdd
-    raid_device: /dev/md0
+    raid_device: /dev/md127
     mount_point: /datadisks/disk1
     filesystem: ext4
 
@@ -34,6 +34,7 @@
         --level=0 --raid-devices=2 {{ datadisks[0] }}1 {{ datadisks[1] }}1
       args:
         creates: "{{ raid_device }}"
+      # check_mode: no
 
     - name: Create mdadm.conf for RAID persistence
       shell: |
@@ -49,6 +50,7 @@
       filesystem:
         fstype: "{{ filesystem }}"
         dev: "{{ raid_device }}"
+      # check_mode: no
 
     - name: Create mount point
       file:
@@ -72,9 +74,9 @@
         opts: defaults
         state: present
 
-    - name: Set ownership to elasticsearch
-      file:
-        path: "{{ mount_point }}"
-        owner: elasticsearch
-        group: elasticsearch
-        recurse: yes
+    # - name: Set ownership to elasticsearch
+    #   file:
+    #     path: "{{ mount_point }}"
+    #     owner: elasticsearch
+    #     group: elasticsearch
+    #     recurse: yes

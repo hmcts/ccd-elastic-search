@@ -9,8 +9,54 @@ properties([
         parameters([
                 string(name: 'PRODUCT_NAME', defaultValue: 'ccd-elastic-search', description: ''),
                 booleanParam(name: 'DEPLOY_ES_CLUSTER', defaultValue: false, description: 'Select to deploy ElasticSearch'),
+                booleanParam(name: 'RUN_ANSIBLE_DRY', defaultValue: false, description: 'Run Ansible in DRY run mode'),
+                booleanParam(name: 'RUN_ANSIBLE_APPLY', defaultValue: false, description: 'Run Ansible in APPLY mode'),
         ])
 ])
+
+def setupSecret() {
+  def bootstap_env = env.ENV 
+  azureKeyVault(
+    keyVaultURL: "https://ccd-${bootstap_env}.vault.azure.net/",
+    secrets: [
+      secret("ccd-vm-admin-name", 'CCD_VM_ADMIN_NAME'),
+      secret("ccd-ELASTIC-SEARCH-PRIVATE-KEY", 'CCD_VM_SSH_PRIVATE_KEY'),
+    ]) {
+      env.CCD_VM_ADMIN_NAME = "${CCD_VM_ADMIN_NAME}"
+      env.CCD_VM_SSH_PRIVATE_KEY = "${CCD_VM_SSH_PRIVATE_KEY}"
+    }
+}
+
+def runAnsible() {
+
+        setupSecret()
+        echo "ANSIBLE Dry run: " + params.RUN_ANSIBLE_DRY
+        echo "ANSIBLE Apply run: " + params.RUN_ANSIBLE_APPLY
+        sh "echo 'Running Ansible Playbook for Sandbox'"
+        sh "sudo apt update && sudo apt install -y ansible"
+        sh "ansible --version"
+        sh "echo 'environment ${env.ENV}'"
+        writeFile file: '/tmp/ccdadmin_key', text: "${CCD_VM_SSH_PRIVATE_KEY}"
+        sh "chmod 600 /tmp/ccdadmin_key"
+        def checkRunAnsible = "--check"
+        if (params.RUN_ANSIBLE_APPLY == true) {
+            checkRunAnsible = ""
+        }
+        
+        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
+        
+        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
+
+}
+
+static Map<String, Object> secret(String secretName, String envVariable) {
+  [
+    $class     : 'AzureKeyVaultSecret',
+    secretType : 'Secret',
+    name       : secretName,
+    envVariable: envVariable
+  ]
+}
 
 if (params.DEPLOY_ES_CLUSTER == true) {
    withInfraPipeline(params.PRODUCT_NAME) {
@@ -20,6 +66,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
        onDemo {
            enableSlackNotifications('#ccd-demo-builds')
        }
+
 
        // TODO: Healthcheck per env
 //        afterAlways('buildinfra:aat') {
@@ -42,6 +89,15 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 //            echo 'Healthcheck in Perftest'
 //            healthCheckStage('qa', 'ithc')
 //        }
+
+   }
+
+   if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
+
+        afterAlways('buildinfra:demo') {
+            env.ENV = 'demo'
+            runAnsible()
+        }
    }
 }
 

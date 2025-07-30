@@ -1,21 +1,27 @@
-storageAccountType     = "Default"
-dataStorageAccountType = "Standard"
-vmDataDiskCount        = "2"
-vmDataNodeCount        = "4"
+vm_publisher_name     = "Canonical"
+vm_offer              = "UbuntuServer"
+vm_sku                = "16.04.0-LTS"
+vm_version            = "latest"
+availability_set_name = "CCD-DATA-0-AV-SET"
 
+lb_private_ip_address = "10.96.216.253"
+soc_vault_name        = "soc-prod"
+soc_vault_rg          = "soc-core-infra-prod-rg"
+
+ipconfig_name = "ipconfig1"
 vms = {
   ccd-data-0 = {
     name = "ccd-data-0"
-    ip   = "10.96.216.100"
+    ip   = "10.96.216.4"
     managed_disks = {
       disk1 = {
         name                = "ccd-data-0-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo-int"
+        resource_group_name = "ccd-elastic-search-demo"
         disk_lun            = "0"
       }
       disk2 = {
         name                = "ccd-data-0-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo-int"
+        resource_group_name = "ccd-elastic-search-demo"
         disk_lun            = "1"
       }
     }
@@ -23,16 +29,16 @@ vms = {
   }
   ccd-data-1 = {
     name = "ccd-data-1"
-    ip   = "10.96.216.101"
+    ip   = "10.96.216.7"
     managed_disks = {
       disk1 = {
         name                = "ccd-data-1-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo-int"
+        resource_group_name = "ccd-elastic-search-demo"
         disk_lun            = "0"
       }
       disk2 = {
         name                = "ccd-data-1-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo-int"
+        resource_group_name = "ccd-elastic-search-demo"
         disk_lun            = "1"
       }
     }
@@ -40,16 +46,16 @@ vms = {
   }
   ccd-data-2 = {
     name = "ccd-data-2"
-    ip   = "10.96.216.102"
+    ip   = "10.96.216.5"
     managed_disks = {
       disk1 = {
         name                = "ccd-data-2-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo-int"
+        resource_group_name = "ccd-elastic-search-demo"
         disk_lun            = "0"
       }
       disk2 = {
         name                = "ccd-data-2-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo-int"
+        resource_group_name = "ccd-elastic-search-demo"
         disk_lun            = "1"
       }
     }
@@ -57,29 +63,22 @@ vms = {
   }
   ccd-data-3 = {
     name = "ccd-data-3"
-    ip   = "10.96.216.103"
+    ip   = "10.96.216.6"
     managed_disks = {
       disk1 = {
         name                = "ccd-data-3-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo-int"
+        resource_group_name = "ccd-elastic-search-demo"
         disk_lun            = "0"
       }
       disk2 = {
         name                = "ccd-data-3-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo-int"
+        resource_group_name = "ccd-elastic-search-demo"
         disk_lun            = "1"
       }
     }
 
   }
 }
-
-lb_private_ip_address = "10.96.216.154"
-
-soc_vault_name = "soc-prod"
-
-soc_vault_rg = "soc-core-infra-prod-rg"
-
 
 nsg_security_rules = {
   SSH = {

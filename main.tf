@@ -13,7 +13,6 @@ locals {
   // generate an url consisting of the data nodes e.g. "http://ccd-data-1:9200","http://ccd-data-2:9200"
   es_data_nodes_url = join(",", data.template_file.es_data_nodes_url_template.*.rendered)
 
-  vNetLoadBalancerIp = cidrhost(data.azurerm_subnet.elastic-subnet.address_prefix, -2)
 }
 
 data "azurerm_virtual_network" "core_infra_vnet" {
@@ -32,11 +31,6 @@ data "azurerm_key_vault" "key_vault" {
   resource_group_name = local.sharedResourceGroup
 }
 
-data "azurerm_log_analytics_workspace" "log_analytics" {
-  name                = "hmcts-${var.subscription}"
-  resource_group_name = "oms-automation"
-}
-
 data "azurerm_key_vault_secret" "ccd_elastic_search_public_key" {
   name         = "${var.raw_product}-ELASTIC-SEARCH-PUB-KEY"
   key_vault_id = data.azurerm_key_vault.key_vault.id
@@ -49,7 +43,7 @@ data "azurerm_key_vault_secret" "dynatrace_token" {
 
 resource "azurerm_key_vault_secret" "elastic_search_url_key_setting" {
   name         = "${var.raw_product}-ELASTIC-SEARCH-URL"
-  value        = local.vNetLoadBalancerIp
+  value        = var.lb_private_ip_address
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
