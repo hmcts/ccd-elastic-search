@@ -48,7 +48,7 @@ module "ctags" {
 
 
 resource "azurerm_resource_group" "this" {
-  name     = "ccd-elastic-search-${var.env}-int"
+  name     = "ccd-elastic-search-${var.env}"
   location = var.location
   tags     = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
 }
