@@ -31,11 +31,6 @@ data "azurerm_key_vault" "key_vault" {
   resource_group_name = local.sharedResourceGroup
 }
 
-data "azurerm_log_analytics_workspace" "log_analytics" {
-  name                = "hmcts-${var.subscription}"
-  resource_group_name = "oms-automation"
-}
-
 data "azurerm_key_vault_secret" "ccd_elastic_search_public_key" {
   name         = "${var.raw_product}-ELASTIC-SEARCH-PUB-KEY"
   key_vault_id = data.azurerm_key_vault.key_vault.id
