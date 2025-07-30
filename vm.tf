@@ -48,7 +48,7 @@ module "ctags" {
 
 
 resource "azurerm_resource_group" "this" {
-  name     = "ccd-elastic-search-${var.env}"
+  name     = "ccd-elastic-search-${var.env}-int"
   location = var.location
   tags     = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
 }
@@ -58,6 +58,7 @@ resource "azurerm_key_vault_secret" "admin_name" {
   value        = "ccdadmin"
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
+
 
 
 # Only need this blocks when redeploying the resources from scratch
@@ -84,6 +85,7 @@ resource "azurerm_key_vault_secret" "admin_name" {
 data "azurerm_key_vault_secret" "ssh_public_key" {
   name         = "ccd-ELASTIC-SEARCH-PUB-KEY"
   key_vault_id = data.azurerm_key_vault.key_vault.id
+
 }
 
 data "azurerm_key_vault_secret" "ssh_private_key" {
