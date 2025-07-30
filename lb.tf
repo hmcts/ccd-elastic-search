@@ -2,8 +2,8 @@ locals {
 
   enabled_lb_envs = ["sandbox", "demo"]
 
-  is_enabled_env  = contains(local.enabled_lb_envs, var.env)
-  env_map         = local.is_enabled_env ? { (var.env) = true } : {}
+  is_enabled_env = contains(local.enabled_lb_envs, var.env)
+  env_map        = local.is_enabled_env ? { (var.env) = true } : {}
 
   lb_ports = {
     "http" = {
@@ -21,13 +21,13 @@ locals {
 }
 
 resource "azurerm_lb" "this" {
-  for_each            = local.env_map
+  for_each = local.env_map
 
   name                = "ccd-internal-${var.env}-lb"
   location            = var.location
   resource_group_name = "ccd-elastic-search-${var.env}"
 
-  sku                 = "Standard"
+  sku = "Standard"
 
   frontend_ip_configuration {
     name                          = "LBFE"
@@ -35,9 +35,10 @@ resource "azurerm_lb" "this" {
     private_ip_address_allocation = "Static"
     private_ip_address            = var.lb_private_ip_address
 
-    zones                         = ["1", "2", "3"]
+    zones = ["1", "2", "3"]
 
   }
+  tags = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
 }
 
 resource "azurerm_lb_backend_address_pool" "this" {
@@ -77,7 +78,7 @@ resource "azurerm_lb_rule" "this" {
   probe_id                       = azurerm_lb_probe.this[each.key].id
   loadbalancer_id                = azurerm_lb.this[var.env].id
 
-  disable_outbound_snat          = true
+  disable_outbound_snat = true
 }
 
 
