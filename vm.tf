@@ -60,13 +60,14 @@ resource "azurerm_key_vault_secret" "admin_name" {
 }
 
 
-
-resource "tls_private_key" "rsa" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
 # Only need this blocks when redeploying the resources from scratch
+
+# resource "tls_private_key" "rsa" {
+#   algorithm = "RSA"
+#   rsa_bits  = 4096
+# }
+
+
 # Write to key vault
 # resource "azurerm_key_vault_secret" "ssh_public_key" {
 #   name         = "ccd-ELASTIC-SEARCH-PUB-KEY"
