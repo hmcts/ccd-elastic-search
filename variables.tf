@@ -209,3 +209,8 @@ variable "platform_update_domain_count" {
   type        = number
   default     = 20
 }
+variable "ipconfig_name" {
+  type        = string
+  description = "The name of the IPConfig to asssoicate with the NIC."
+  default     = null
+}

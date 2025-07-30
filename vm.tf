@@ -7,7 +7,7 @@ module "elastic2" {
     azurerm.soc = azurerm.soc
     azurerm.dcr = azurerm.dcr
   }
-  source                       = "github.com/hmcts/ccd-module-elastic-search.git?ref=import-fixes"
+  source                       = "github.com/hmcts/ccd-module-elastic-search.git?ref=main"
   env                          = var.env
   vm_name                      = each.value.name
   vm_resource_group            = azurerm_resource_group.this.name
@@ -29,6 +29,7 @@ module "elastic2" {
   enable_availability_set      = var.enable_availability_set
   availability_set_name        = var.availability_set_name
   platform_update_domain_count = var.platform_update_domain_count
+  ipconfig_name                = var.ipconfig_name
 }
 
 locals {
@@ -39,9 +40,10 @@ locals {
 module "ctags" {
   source = "github.com/hmcts/terraform-module-common-tags.git?ref=master"
 
-  builtFrom   = "github.com/hmcts/ccd-module-elastic-search"
-  environment = var.env
-  product     = "ccd"
+  builtFrom    = "https://github.com/HMCTS/ccd-elastic-search.git"
+  environment  = var.env
+  product      = "ccd"
+  autoShutdown = var.env == "prod" || var.env == "production" ? false : true
 }
 
 
@@ -64,7 +66,7 @@ resource "tls_private_key" "rsa" {
   rsa_bits  = 4096
 }
 
-
+# Only need this blocks when redeploying the resources from scratch
 # Write to key vault
 # resource "azurerm_key_vault_secret" "ssh_public_key" {
 #   name         = "ccd-ELASTIC-SEARCH-PUB-KEY"

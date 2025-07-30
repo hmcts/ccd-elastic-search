@@ -4,10 +4,11 @@ vm_sku                = "16.04.0-LTS"
 vm_version            = "latest"
 availability_set_name = "CCD-DATA-0-AV-SET"
 
-lb_private_ip_address        = "10.96.216.253"
-soc_vault_name               = "soc-prod"
-soc_vault_rg                 = "soc-core-infra-prod-rg"
+lb_private_ip_address = "10.96.216.253"
+soc_vault_name        = "soc-prod"
+soc_vault_rg          = "soc-core-infra-prod-rg"
 
+ipconfig_name = "ipconfig1"
 vms = {
   ccd-data-0 = {
     name = "ccd-data-0"
