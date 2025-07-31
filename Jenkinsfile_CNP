@@ -95,6 +95,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
    if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
 
         afterAlways('buildinfra:demo') {
+            echo 'running Ansible in Demo '
             env.ENV = 'demo'
             runAnsible()
         }
