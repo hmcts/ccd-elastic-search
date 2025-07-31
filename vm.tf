@@ -55,7 +55,7 @@ resource "azurerm_resource_group" "this" {
 
 resource "azurerm_key_vault_secret" "admin_name" {
   name         = "ccd-vm-admin-name"
-  value        = "ccdadmin"
+  value        = var.vm_admin_name
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
