@@ -101,6 +101,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
             runAnsible()
         }
    }
+ }
 }
 
 def healthCheckStage(subscription, environmentName) {
