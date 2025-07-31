@@ -7,111 +7,74 @@
     raid_device: /dev/md0
     mount_point: /datadisks/disk1
     filesystem: ext4
-    # Size range for 1TB disks (in bytes) - allowing for slight variations
-    min_disk_size: 900000000000  # 900GB
-    max_disk_size: 1200000000000 # 1.2TB
 
   tasks:
-    - name: Get all disk information
-      shell: |
-        lsblk -bndo NAME,SIZE,TYPE,MOUNTPOINT | grep disk
-      register: all_disks
+    - name: Get all available disks for debugging
+      shell: lsblk -do NAME,SIZE,TYPE,MOUNTPOINT
+      register: all_disks_debug
       changed_when: false
 
     - name: Debug all available disks
       debug:
-        msg: "All available disks: {{ all_disks.stdout_lines }}"
+        msg: "{{ all_disks_debug.stdout }}"
 
-    - name: Detect 1TB unmounted disks (primary method)
-      shell: |
-        lsblk -bndo NAME,SIZE,TYPE,MOUNTPOINT | awk '$3=="disk" && $2 >= {{ min_disk_size }} && $2 <= {{ max_disk_size }} && $4=="" {print "/dev/"$1}'
-      register: primary_disk_detection
+    - name: Auto-detect 1TB data disks
+      shell: lsblk -bndo NAME,SIZE,TYPE,MOUNTPOINT | awk '$3=="disk" && $2>=900000000000 && $2<=1200000000000 && ($4=="" || $4=="/mnt") {print "/dev/"$1}'
+      register: disk_detection
       changed_when: false
+      check_mode: no  # Allow auto-detect in dry-run
 
-    - name: Detect 1TB disks that only have temporary mounts (fallback method)
-      shell: |
-        lsblk -bndo NAME,SIZE,TYPE,MOUNTPOINT | awk '$3=="disk" && $2 >= {{ min_disk_size }} && $2 <= {{ max_disk_size }} && ($4=="" || $4=="/mnt") {print "/dev/"$1}'
-      register: fallback_disk_detection
-      changed_when: false
-      when: primary_disk_detection.stdout_lines | length < 2
-
-    - name: Set data disks from primary detection
-      set_fact:
-        datadisks: "{{ primary_disk_detection.stdout_lines }}"
-      when: primary_disk_detection.stdout_lines | length >= 2
-
-    - name: Set data disks from fallback detection
-      set_fact:
-        datadisks: "{{ fallback_disk_detection.stdout_lines }}"
-      when: 
-        - primary_disk_detection.stdout_lines | length < 2
-        - fallback_disk_detection.stdout_lines | length >= 2
-
-    - name: Manual disk specification as last resort
-      set_fact:
-        datadisks: []
-      when: datadisks is not defined
-
-    - name: Debug detected data disks
+    - name: Debug disk detection output
       debug:
-        msg: "Data disks detected: {{ datadisks }}"
+        msg: 
+          - "Detected disks: {{ disk_detection.stdout_lines }}"
+          - "Count: {{ disk_detection.stdout_lines | length }}"
 
-    - name: Show disk detection suggestions if no disks found
+    - name: Set data disks from auto-detection
+      set_fact:
+        datadisks: "{{ disk_detection.stdout_lines }}"
+      when: disk_detection.stdout_lines | length == 2
+
+    - name: Manual override message if auto-detection fails
       debug:
         msg: |
-          No suitable 1TB data disks found automatically.
-          Available disks:
-          {{ all_disks.stdout_lines | join('\n') }}
-          
-          You may need to manually specify the datadisks variable.
-          Example: ansible-playbook -e "datadisks=['/dev/sdb','/dev/sdc']" diskmount.yml
-      when: datadisks | length == 0
+          Auto-detection found {{ disk_detection.stdout_lines | length }} suitable disks: {{ disk_detection.stdout_lines }}
+          If this is incorrect, override with: ansible-playbook -e "datadisks=['/dev/sdX','/dev/sdY']" diskmount.yml
+      when: disk_detection.stdout_lines | length != 2
 
-    - name: Verify we have exactly 2 data disks
+    - name: Fail if no suitable disks found and no manual override
       fail:
         msg: |
-          Expected exactly 2 data disks of ~1TB, found {{ datadisks | length }}: {{ datadisks }}
-          Available disks: {{ all_disks.stdout_lines }}
-          
-          To override, run with: ansible-playbook -e "datadisks=['/dev/sdX','/dev/sdY']" diskmount.yml
-      when: datadisks | length != 2
+          Could not auto-detect exactly 2 suitable 1TB data disks.
+          Found: {{ disk_detection.stdout_lines | length }} disks: {{ disk_detection.stdout_lines }}
+          Please specify manually: ansible-playbook -e "datadisks=['/dev/sdX','/dev/sdY']" diskmount.yml
+      when: 
+        - disk_detection.stdout_lines | length != 2
+        - datadisks is not defined
+
+    - name: Debug final data disks selection
+      debug:
+        msg: "Using data disks: {{ datadisks }}"
 
     - name: Check if RAID already exists
       stat:
         path: "{{ raid_device }}"
       register: raid_exists
-
-    - name: Check if RAID is already active
-      command: cat /proc/mdstat
-      register: mdstat_check
-      changed_when: false
-      when: raid_exists.stat.exists
-
-    - name: Debug RAID status
-      debug:
-        msg: "RAID device {{ raid_device }} exists: {{ raid_exists.stat.exists }}"
-
     - name: Install required package for RAID
       apt:
         name: mdadm
         state: present
         update_cache: true
 
-    - name: Unmount any temporary mounts on data disks
-      mount:
-        path: /mnt
-        state: unmounted
-      ignore_errors: true
-      when: 
-        - not raid_exists.stat.exists
-        - datadisks | select('match', '.*/mnt.*') | list | length > 0
-
-    - name: Check if data disks already have partitions
-      command: "lsblk -no NAME {{ item }}"
-      register: partition_check
-      loop: "{{ datadisks }}"
-      changed_when: false
+    - name: Unmount temporary /mnt if mounted on our data disks
+      shell: |
+        for disk in {{ datadisks | join(' ') }}; do
+          if mount | grep -q "${disk}.*\/mnt"; then
+            umount /mnt || true
+          fi
+        done
       when: not raid_exists.stat.exists
+      ignore_errors: true
 
     - name: Create partitions on data disks
       parted:
@@ -122,9 +85,7 @@
         part_start: 0%
         part_end: 100%
       loop: "{{ datadisks }}"
-      when: 
-        - not raid_exists.stat.exists
-        - partition_check.results[ansible_loop.index0].stdout_lines | length <= 1
+      when: not raid_exists.stat.exists
 
     - name: Create RAID0 array
       command: >
@@ -133,12 +94,7 @@
       args:
         creates: "{{ raid_device }}"
       when: not raid_exists.stat.exists
-
-    - name: Wait for RAID device to be ready
-      wait_for:
-        path: "{{ raid_device }}"
-        timeout: 30
-      when: not raid_exists.stat.exists
+      # check_mode: no
 
     - name: Create mdadm.conf for RAID persistence
       shell: |
@@ -191,15 +147,6 @@
         fstype: "{{ filesystem }}"
         opts: defaults
         state: present
-
-    - name: Verify final mount status
-      command: df -h "{{ mount_point }}"
-      register: final_status
-      changed_when: false
-
-    - name: Display final status
-      debug:
-        msg: "RAID setup complete. Mount status: {{ final_status.stdout_lines }}"
 
     # - name: Set ownership to elasticsearch
     #   file:
