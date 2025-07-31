@@ -341,29 +341,29 @@ import {
 
 
 
-# import {
-#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-0-dcra"
-#   to       = module.elastic2["ccd-data-0"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
-# }
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-0-dcra"
+  to       = module.elastic2["ccd-data-0"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
+}
 
-# import {
-#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-1-dcra"
-#   to       = module.elastic2["ccd-data-1"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
-# }
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-1-dcra"
+  to       = module.elastic2["ccd-data-1"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
+}
 
-# import {
-#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-2-dcra"
-#   to       = module.elastic2["ccd-data-2"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
-# }
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-2-dcra"
+  to       = module.elastic2["ccd-data-2"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
+}
 
-# import {
-#   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
-#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-3-dcra"
-#   to       = module.elastic2["ccd-data-3"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
-# }
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-3-dcra"
+  to       = module.elastic2["ccd-data-3"].module.virtual-machines.module.vm-bootstrap[0].azurerm_monitor_data_collection_rule_association.linux_vm_dcra[0]
+}
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
@@ -490,3 +490,72 @@ import {
 }
 
 # ...existing code...
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkInterfaces/ccd-data-0-nic|/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/applicationSecurityGroups/ccd-data-asg"
+  to       = azurerm_network_interface_application_security_group_association.this["ccd-data-0"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkInterfaces/ccd-data-1-nic|/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/applicationSecurityGroups/ccd-data-asg"
+  to       = azurerm_network_interface_application_security_group_association.this["ccd-data-1"]
+}
+
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkInterfaces/ccd-data-2-nic|/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/applicationSecurityGroups/ccd-data-asg"
+  to       = azurerm_network_interface_application_security_group_association.this["ccd-data-2"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkInterfaces/ccd-data-3-nic|/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/applicationSecurityGroups/ccd-data-asg"
+  to       = azurerm_network_interface_application_security_group_association.this["ccd-data-3"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkInterfaces/ccd-data-0-nic|/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg"
+  to       = azurerm_network_interface_security_group_association.association["ccd-data-0"]
+}
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkInterfaces/ccd-data-1-nic|/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg"
+  to       = azurerm_network_interface_security_group_association.association["ccd-data-1"]
+}
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkInterfaces/ccd-data-2-nic|/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg"
+  to       = azurerm_network_interface_security_group_association.association["ccd-data-2"]
+}
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkInterfaces/ccd-data-3-nic|/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg"
+  to       = azurerm_network_interface_security_group_association.association["ccd-data-3"]
+}
+
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-0-${each.key}-dcra"
+  to       = azurerm_monitor_data_collection_rule_association.linux_vm_dcra["ccd-data-0"]
+}
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-1/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-1-${each.key}-dcra"
+  to       = azurerm_monitor_data_collection_rule_association.linux_vm_dcra["ccd-data-1"]
+}
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-2/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-2-${each.key}-dcra"
+  to       = azurerm_monitor_data_collection_rule_association.linux_vm_dcra["ccd-data-2"]
+}
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "demo" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-3/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-3-${each.key}-dcra"
+  to       = azurerm_monitor_data_collection_rule_association.linux_vm_dcra["ccd-data-3"]
+}

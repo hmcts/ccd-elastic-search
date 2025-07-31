@@ -55,9 +55,10 @@ resource "azurerm_resource_group" "this" {
 
 resource "azurerm_key_vault_secret" "admin_name" {
   name         = "ccd-vm-admin-name"
-  value        = "ccdadmin"
+  value        = var.vm_admin_name
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
+
 
 
 # Only need this blocks when redeploying the resources from scratch
@@ -84,6 +85,7 @@ resource "azurerm_key_vault_secret" "admin_name" {
 data "azurerm_key_vault_secret" "ssh_public_key" {
   name         = "ccd-ELASTIC-SEARCH-PUB-KEY"
   key_vault_id = data.azurerm_key_vault.key_vault.id
+
 }
 
 data "azurerm_key_vault_secret" "ssh_private_key" {
