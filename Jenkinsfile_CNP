@@ -59,7 +59,7 @@ static Map<String, Object> secret(String secretName, String envVariable) {
 }
 
 if (params.DEPLOY_ES_CLUSTER == true) {
-   withPipeline(type , product, component) {
+   withInfraPipeline(params.PRODUCT_NAME) {
      onMaster {
            enableSlackNotifications('#ccd-master-builds')
        }
@@ -95,7 +95,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 
    if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
 
-        afterAlways('buildinfra:demo') {
+        afterSuccess('buildinfra:demo') {
             echo 'running Ansible in Demo '
             env.ENV = 'demo'
             runAnsible()
