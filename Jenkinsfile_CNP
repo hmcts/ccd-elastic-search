@@ -59,13 +59,14 @@ static Map<String, Object> secret(String secretName, String envVariable) {
 }
 
 if (params.DEPLOY_ES_CLUSTER == true) {
-   withInfraPipeline(params.PRODUCT_NAME) {
-       onMaster {
+   withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT) {
+     onMaster {
            enableSlackNotifications('#ccd-master-builds')
        }
        onDemo {
            enableSlackNotifications('#ccd-demo-builds')
        }
+  
 
 
        // TODO: Healthcheck per env
@@ -90,7 +91,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 //            healthCheckStage('qa', 'ithc')
 //        }
 
-   }
+   
 
    if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
 
