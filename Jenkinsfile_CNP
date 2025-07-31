@@ -59,7 +59,7 @@ static Map<String, Object> secret(String secretName, String envVariable) {
 }
 
 if (params.DEPLOY_ES_CLUSTER == true) {
-   withParameterizedInfraPipeline(params.PRODUCT_NAME, params.ENVIRONMENT) {
+   withPipeline(type , product, component) {
      onMaster {
            enableSlackNotifications('#ccd-master-builds')
        }
