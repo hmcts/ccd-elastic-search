@@ -176,20 +176,6 @@ nsg_security_rules = {
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
-  cft-ptlsbox = {
-    name                                       = "cft-ptlsbox"
-    description                                = "Allow AKS to access the ElasticSearch cluster"
-    priority                                   = 225
-    direction                                  = "Inbound"
-    access                                     = "Allow"
-    protocol                                   = "Tcp"
-    source_port_range                          = "*"
-    destination_port_range                     = "22"
-    source_address_prefix                      = null
-    source_address_prefixes                    = ["10.70.28.0/24"]
-    destination_address_prefix                 = null
-    destination_application_security_group_ids = "id"
-  },
   Bastion_To_VMs = {
     name                       = "Bastion_To_VMs"
     description                = "Allow Bastion SSH access overridding templates broad SSH access"
@@ -215,4 +201,3 @@ nsg_security_rules = {
     destination_address_prefix = "*"
   }
 }
-

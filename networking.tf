@@ -2,6 +2,7 @@ resource "azurerm_application_security_group" "this" {
   name                = "ccd-data-asg"
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
+  tags                = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
 }
 
 resource "azurerm_network_interface_application_security_group_association" "this" {
