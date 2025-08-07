@@ -132,7 +132,7 @@ nsg_security_rules = {
     protocol                                   = "Tcp"
     source_port_range                          = "*"
     destination_port_range                     = "9200"
-    source_address_prefix                      = "10.112.53.0/24"
+    source_address_prefix                      = "10.11.72.32/27"
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
@@ -145,7 +145,7 @@ nsg_security_rules = {
     protocol                                   = "Tcp"
     source_port_range                          = "*"
     destination_port_range                     = "9200"
-    source_address_prefix                      = "10.112.0.0/16"
+    source_address_prefix                      = "10.112.12.0/22"
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
@@ -158,7 +158,7 @@ nsg_security_rules = {
     protocol                                   = "Tcp"
     source_port_range                          = "*"
     destination_port_range                     = "9200"
-    source_address_prefix                      = "10.112.0.0/16"
+    source_address_prefix                      = ["10.11.192.0/20", "10.11.208.0/20"]
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
@@ -171,7 +171,7 @@ nsg_security_rules = {
     protocol                                   = "Tcp"
     source_port_range                          = "*"
     destination_port_range                     = "9200"
-    source_address_prefix                      = "10.112.0.0/16"
+    source_address_prefix                      = "10.10.76.0/23"
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
@@ -184,7 +184,7 @@ nsg_security_rules = {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = "10.112.53.0/24"
+    source_address_prefix      = "10.11.72.32/27"
     destination_address_prefix = "10.112.53.0/24"
   },
   DenyAllOtherTraffic = {
