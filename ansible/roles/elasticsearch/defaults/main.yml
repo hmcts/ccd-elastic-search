@@ -1,2 +1,2 @@
 # Elasticsearch default vars
-elastic_search_version: "elasticsearch-9.0.4-amd64.deb"
+elastic_search_version: "elasticsearch-9.1.3-amd64.deb"

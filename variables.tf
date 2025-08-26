@@ -47,7 +47,7 @@ variable "vmSizeAllNodes" {
 variable "esVersion" {
   description = "ES version"
   type        = string
-  default     = "9.0.4"
+  default     = "9.1.3"
 }
 
 variable "storageAccountType" {
