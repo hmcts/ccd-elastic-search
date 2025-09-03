@@ -148,7 +148,7 @@ variable "nsg_security_rules" {
     protocol                                   = string,
     source_port_range                          = string,
     destination_port_range                     = string,
-    source_address_prefix                      = string,
+    source_address_prefix                      = optional(string, null),
     destination_address_prefix                 = string,
     source_application_security_group_ids      = optional(string, null),
     destination_application_security_group_ids = optional(string, null),
