@@ -4,19 +4,77 @@
   become: true
 
   vars:
-    datadisks:
-      - /dev/sdc
-      - /dev/sdd
     raid_device: /dev/md0
     mount_point: /datadisks/disk1
     filesystem: ext4
 
   tasks:
+    - name: Get all available disks for debugging
+      shell: lsblk -do NAME,SIZE,TYPE,MOUNTPOINT
+      register: all_disks_debug
+      changed_when: false
+
+    - name: Debug all available disks
+      debug:
+        msg: "{{ all_disks_debug.stdout }}"
+
+    - name: Auto-detect 1TB data disks
+      shell: lsblk -bndo NAME,SIZE,TYPE,MOUNTPOINT | awk '$3=="disk" && $2>=900000000000 && $2<=1200000000000 && ($4=="" || $4=="/mnt") {print "/dev/"$1}'
+      register: disk_detection
+      changed_when: false
+      check_mode: no  # Allow auto-detect in dry-run
+
+    - name: Debug disk detection output
+      debug:
+        msg: 
+          - "Detected disks: {{ disk_detection.stdout_lines }}"
+          - "Count: {{ disk_detection.stdout_lines | length }}"
+
+    - name: Set data disks from auto-detection
+      set_fact:
+        datadisks: "{{ disk_detection.stdout_lines }}"
+      when: disk_detection.stdout_lines | length == 2
+
+    - name: Manual override message if auto-detection fails
+      debug:
+        msg: |
+          Auto-detection found {{ disk_detection.stdout_lines | length }} suitable disks: {{ disk_detection.stdout_lines }}
+          If this is incorrect, override with: ansible-playbook -e "datadisks=['/dev/sdX','/dev/sdY']" diskmount.yml
+      when: disk_detection.stdout_lines | length != 2
+
+    - name: Fail if no suitable disks found and no manual override
+      fail:
+        msg: |
+          Could not auto-detect exactly 2 suitable 1TB data disks.
+          Found: {{ disk_detection.stdout_lines | length }} disks: {{ disk_detection.stdout_lines }}
+          Please specify manually: ansible-playbook -e "datadisks=['/dev/sdX','/dev/sdY']" diskmount.yml
+      when: 
+        - disk_detection.stdout_lines | length != 2
+        - datadisks is not defined
+
+    - name: Debug final data disks selection
+      debug:
+        msg: "Using data disks: {{ datadisks }}"
+
+    - name: Check if RAID already exists
+      stat:
+        path: "{{ raid_device }}"
+      register: raid_exists
     - name: Install required package for RAID
       apt:
         name: mdadm
         state: present
         update_cache: true
+
+    - name: Unmount temporary /mnt if mounted on our data disks
+      shell: |
+        for disk in {{ datadisks | join(' ') }}; do
+          if mount | grep -q "${disk}.*\/mnt"; then
+            umount /mnt || true
+          fi
+        done
+      when: not raid_exists.stat.exists
+      ignore_errors: true
 
     - name: Create partitions on data disks
       parted:
@@ -27,6 +85,7 @@
         part_start: 0%
         part_end: 100%
       loop: "{{ datadisks }}"
+      when: not raid_exists.stat.exists
 
     - name: Create RAID0 array
       command: >
@@ -34,6 +93,8 @@
         --level=0 --raid-devices=2 {{ datadisks[0] }}1 {{ datadisks[1] }}1
       args:
         creates: "{{ raid_device }}"
+      when: not raid_exists.stat.exists
+      # check_mode: no
 
     - name: Create mdadm.conf for RAID persistence
       shell: |
@@ -44,17 +105,31 @@
 
     - name: Update initramfs to include RAID config
       command: update-initramfs -u
+      when: not raid_exists.stat.exists
+
+    - name: Check if filesystem exists on RAID device
+      command: blkid {{ raid_device }}
+      register: filesystem_check
+      failed_when: false
+      changed_when: false
 
     - name: Create filesystem on RAID device
       filesystem:
         fstype: "{{ filesystem }}"
         dev: "{{ raid_device }}"
+      when: filesystem_check.rc != 0
 
     - name: Create mount point
       file:
         path: "{{ mount_point }}"
         state: directory
         mode: '0755'
+
+    - name: Check if already mounted
+      command: mountpoint -q "{{ mount_point }}"
+      register: mount_check
+      failed_when: false
+      changed_when: false
 
     - name: Mount RAID device
       mount:
@@ -63,6 +138,7 @@
         fstype: "{{ filesystem }}"
         opts: defaults
         state: mounted
+      when: mount_check.rc != 0
 
     - name: Ensure fstab entry for RAID device
       mount:
@@ -72,9 +148,9 @@
         opts: defaults
         state: present
 
-    - name: Set ownership to elasticsearch
-      file:
-        path: "{{ mount_point }}"
-        owner: elasticsearch
-        group: elasticsearch
-        recurse: yes
+    # - name: Set ownership to elasticsearch
+    #   file:
+    #     path: "{{ mount_point }}"
+    #     owner: elasticsearch
+    #     group: elasticsearch
+    #     recurse: yes
