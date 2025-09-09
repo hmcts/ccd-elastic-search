@@ -232,9 +232,6 @@ import {
 
 # ...existing code...
 
-
-# ...existing code...
-
 # import {
 #   for_each = { for k, v in local.env_subs : k => v if k == "demo" }
 #   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/extensions/AMALinux"
@@ -467,4 +464,3 @@ import {
   to       = module.elastic2["ccd-data-3"].module.virtual-machines.azurerm_availability_set.set[0]
 }
 
-# ...existing code...
