@@ -158,6 +158,7 @@ nsg_security_rules = {
     protocol                                   = "Tcp"
     source_port_range                          = "*"
     destination_port_range                     = "9200"
+    source_address_prefix                      = null
     source_address_prefixes                    = ["10.11.192.0/20", "10.11.208.0/20"]
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
