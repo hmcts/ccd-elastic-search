@@ -32,9 +32,7 @@ vms = {
         disk_lun            = "1"
       }
     }
-
-  }
-
+  },
   ccd-data-1 = {
     name = "ccd-data-1"
     ip   = "10.96.149.5"

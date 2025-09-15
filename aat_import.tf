@@ -1,6 +1,6 @@
 locals {
   env_subs = {
-    "aat" = "7a4e3bd5-ae3a-4d0c-b441-2188fee3ff1c"
+    "aat" = "1c4f0704-a29e-403d-b719-b90c34ef14c9"
   }
 }
 
@@ -392,7 +392,7 @@ import {
 # data disk attachments each VM
 
 import {
-  for_each = { for k, v in local.env_subs : k => v if k == "aar" }
+  for_each = { for k, v in local.env_subs : k => v if k == "aat" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/virtualMachines/ccd-data-0/dataDisks/ccd-data-0-datadisk1"
   to       = module.elastic2["ccd-data-0"].module.virtual-machines.azurerm_virtual_machine_data_disk_attachment.data_disk_attachments["disk1"]
 }
