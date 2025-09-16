@@ -1,3 +1,4 @@
+availability_set_name = "CCD-DATA-0-AV-SET"
 vms = {
   ccd-data-0 = {
     name = "ccd-data-0"
