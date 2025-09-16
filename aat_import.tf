@@ -56,11 +56,12 @@ import {
   to       = azurerm_lb_backend_address_pool.this["${each.key}"]
 }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "aat" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/probes/es-probe-http-internal"
-  to       = azurerm_lb_probe.this["http"]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "aat" }
+#   /subscriptions/1c4f0704-a29e-403d-b719-b90c34ef14c9/resourceGroups/ccd-elastic-search-aat/providers/Microsoft.Network/loadBalancers/ccd-internal-aat-lb
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/probes/es-probe-http-internal"
+#   to       = azurerm_lb_probe.this["http"]
+# }
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "aat" }
@@ -111,29 +112,25 @@ import {
 
 #BEP VM 0-3
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "aat" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-0"
-  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-0"]
-}
+# azurerm_lb_backend_address_pool_address.elastic_vm
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "aat" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-1"
-  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-1"]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "aat" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-1"
+#   to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-1"]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "aat" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-2"
-  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-2"]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "aat" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-2"
+#   to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-2"]
+# }
 
-import {
-  for_each = { for k, v in local.env_subs : k => v if k == "aat" }
-  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-3"
-  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-3"]
-}
+# import {
+#   for_each = { for k, v in local.env_subs : k => v if k == "aat" }
+#   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-3"
+#   to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-3"]
+# }
 
 #LB Rules
 

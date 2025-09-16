@@ -128,7 +128,7 @@ nsg_security_rules = {
   },
   Bastion_To_ES = {
     name                                       = "Bastion_To_ES"
-    description                                = "Allow Bastion access for debugging elastic queries on ITHC platform"
+    description                                = "Allow Bastion access for debugging elastic queries on development platforms"
     priority                                   = 200
     direction                                  = "Inbound"
     access                                     = "Allow"
