@@ -1,5 +1,5 @@
 module "elastic2" {
-  for_each = var.env == "sandbox" || var.env == "demo" || var.env == "ithc" || var.env == "aat" ? var.vms : {}
+  for_each = var.env == "sandbox" || var.env == "demo" || var.env == "ithc" || var.env == "aat" || var.env == "perftest" ? var.vms : {}
 
   providers = {
     azurerm     = azurerm
