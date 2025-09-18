@@ -4,8 +4,8 @@ vm_sku                = "16.04.0-LTS"
 vm_version            = "latest"
 availability_set_name = "CCD-DATA-0-AV-SET"
 
-storageAccountType     = "Default"
-dataStorageAccountType = "Default"
+storageAccountType     = "Premium_LRS"
+dataStorageAccountType = "Premium_LRS"
 vmDataDiskCount        = "2"
 dynatrace_instance     = "ebe20728"
 dynatrace_hostgroup    = "prod_CFT"
@@ -22,14 +22,16 @@ vms = {
     ip   = "10.96.85.7"
     managed_disks = {
       disk1 = {
-        name                = "ccd-data-0-datadisk1"
-        resource_group_name = "ccd-elastic-search-prod"
-        disk_lun            = "0"
+        name                 = "ccd-data-0-datadisk1"
+        resource_group_name  = "ccd-elastic-search-prod"
+        storage_account_type = "Premium_LRS"
+        disk_lun             = "0"
       }
       disk2 = {
-        name                = "ccd-data-0-datadisk2"
-        resource_group_name = "ccd-elastic-search-prod"
-        disk_lun            = "1"
+        name                 = "ccd-data-0-datadisk2"
+        resource_group_name  = "ccd-elastic-search-prod"
+        storage_account_type = "Premium_LRS"
+        disk_lun             = "1"
       }
     }
   },
@@ -38,14 +40,16 @@ vms = {
     ip   = "10.96.85.10"
     managed_disks = {
       disk1 = {
-        name                = "ccd-data-1-datadisk1"
-        resource_group_name = "ccd-elastic-search-prod"
-        disk_lun            = "0"
+        name                 = "ccd-data-1-datadisk1"
+        resource_group_name  = "ccd-elastic-search-prod"
+        storage_account_type = "Premium_LRS"
+        disk_lun             = "0"
       }
       disk2 = {
-        name                = "ccd-data-1-datadisk2"
-        resource_group_name = "ccd-elastic-search-prod"
-        disk_lun            = "1"
+        name                 = "ccd-data-1-datadisk2"
+        resource_group_name  = "ccd-elastic-search-prod"
+        storage_account_type = "Premium_LRS"
+        disk_lun             = "1"
       }
     }
   },
@@ -54,14 +58,16 @@ vms = {
     ip   = "10.96.85.6"
     managed_disks = {
       disk1 = {
-        name                = "ccd-data-2-datadisk1"
-        resource_group_name = "ccd-elastic-search-prod"
-        disk_lun            = "0"
+        name                 = "ccd-data-2-datadisk1"
+        resource_group_name  = "ccd-elastic-search-prod"
+        storage_account_type = "Premium_LRS"
+        disk_lun             = "0"
       }
       disk2 = {
-        name                = "ccd-data-2-datadisk2"
-        resource_group_name = "ccd-elastic-search-prod"
-        disk_lun            = "1"
+        name                 = "ccd-data-2-datadisk2"
+        resource_group_name  = "ccd-elastic-search-prod"
+        storage_account_type = "Premium_LRS"
+        disk_lun             = "1"
       }
     }
   },
@@ -70,14 +76,16 @@ vms = {
     ip   = "10.96.85.5"
     managed_disks = {
       disk1 = {
-        name                = "ccd-data-3-datadisk1"
-        resource_group_name = "ccd-elastic-search-prod"
-        disk_lun            = "0"
+        name                 = "ccd-data-3-datadisk1"
+        resource_group_name  = "ccd-elastic-search-prod"
+        storage_account_type = "Premium_LRS"
+        disk_lun             = "0"
       }
       disk2 = {
-        name                = "ccd-data-3-datadisk2"
-        resource_group_name = "ccd-elastic-search-prod"
-        disk_lun            = "1"
+        name                 = "ccd-data-3-datadisk2"
+        resource_group_name  = "ccd-elastic-search-prod"
+        storage_account_type = "Premium_LRS"
+        disk_lun             = "1"
       }
     }
   }
