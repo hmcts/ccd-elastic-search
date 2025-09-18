@@ -199,6 +199,13 @@ import {
   to       = azurerm_network_security_rule.nsg_rules["App_To_ES"]
 }
 
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "perftest" }
+  id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/Mgmt_Perf_Test_To_ES"
+  to       = azurerm_network_security_rule.nsg_rules["Mgmt_Perf_Test_To_ES"]
+}
+
+
 # import {
 #   for_each = { for k, v in local.env_subs : k => v if k == "perftest" }
 #   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg/securityRules/Jenkins_To_ES"
