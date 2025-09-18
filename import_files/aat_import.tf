@@ -461,4 +461,3 @@
 #   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Compute/availabilitySets/CCD-DATA-0-AV-SET"
 #   to       = module.elastic2["ccd-data-3"].module.virtual-machines.azurerm_availability_set.set[0]
 # }
-
