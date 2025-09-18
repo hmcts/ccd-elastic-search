@@ -19,7 +19,7 @@ nsg_security_rules = {
     source_port_range                          = "*"
     destination_port_range                     = "22"
     source_address_prefix                      = "VirtualNetwork"
-    destination_address_prefix                 = "10.112.153.0/24"
+    destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
   ElasticClusterTransport = {
