@@ -5,7 +5,7 @@ locals {
 }
 
 import {
-  for_each = { for k, v in local.env_subs : k => v if k == "prod" }
+  for_each = var.env == "prod" ? { for k, v in local.env_subs : k => v if k == "prod" } : {}
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb"
   to       = azurerm_lb.this["${each.key}"]
 }
