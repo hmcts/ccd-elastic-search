@@ -167,7 +167,7 @@ variable "demo_int_subnet_name" {
 }
 
 variable "demo_int_vnet_resource_group" {
-  description = "RG demo-int env"
+  description = "RG demo-int env placed"
   type        = string
   default     = "core-infra-demo"
 }
