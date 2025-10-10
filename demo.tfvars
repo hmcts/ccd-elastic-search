@@ -207,16 +207,16 @@ nsg_security_rules = {
 # Feature flag to enable demo-int env
 enable_demo_int = true
 
-demo_int_rg_name = "demo-int"
-demo_int_vnet_name = "core-infra-vnet-demo"
-demo_int_subnet_name = "elasticsearch"
+demo_int_rg_name             = "demo-int"
+demo_int_vnet_name           = "core-infra-vnet-demo"
+demo_int_subnet_name         = "elasticsearch"
 demo_int_vnet_resource_group = "core-infra-demo"
 
-lb_private_ip_address = "10.96.216.154"
-soc_vault_name        = "soc-prod"
-soc_vault_rg          = "soc-core-infra-prod-rg"
+lb_private_ip_address_demo_int = "10.96.216.154"
+# soc_vault_name        = "soc-prod"
+# soc_vault_rg          = "soc-core-infra-prod-rg"
 
-ipconfig_name = "ipconfig1"
+# ipconfig_name = "ipconfig1"
 
 vms_demo_int = {
   ccd-data-0 = {
