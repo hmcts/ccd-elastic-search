@@ -15,6 +15,12 @@ variable "env" {
   type = string
 }
 
+variable "enable_demo_int_deployment" {
+  description = "Boolean flag to enable demo-int infrastructure deployment"
+  type        = bool
+  default     = false
+}
+
 variable "subscription" {
   type = string
 }
@@ -118,6 +124,52 @@ variable "vms" {
   }))
   default = {
   }
+}
+
+variable "vms_demo_int" {
+  type = map(object({
+    name = optional(string)
+    ip   = optional(string)
+    managed_disks = map(object({
+      name                 = string,
+      resource_group_name  = string,
+      storage_account_type = optional(string, "StandardSSD_LRS"),
+      disk_lun             = string
+    }))
+  }))
+  default = {
+  }
+  description = "VM configuration for demo-int env"
+}
+
+variable "enable_demo_int" {
+  description = "Enable demo-int flag"
+  type        = bool
+  default     = false
+}
+
+variable "demo_int_rg_name" {
+  description = "Demo-int RG"
+  type        = string
+  default     = "demo-int"
+}
+
+variable "demo_int_vnet_name" {
+  description = "VNet demo-int env"
+  type        = string
+  default     = "core-infra-vnet-demo"
+}
+
+variable "demo_int_subnet_name" {
+  description = "Subnet demo-int env"
+  type        = string
+  default     = "demo_int_subnet"
+}
+
+variable "demo_int_vnet_resource_group" {
+  description = "RG demo-int env"
+  type        = string
+  default     = "core-infra-demo"
 }
 
 variable "lb_private_ip_address" {
