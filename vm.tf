@@ -1,5 +1,4 @@
 module "elastic2" {
-  # Demo module always runs
   for_each = var.vms
 
   providers = {
@@ -34,7 +33,6 @@ module "elastic2" {
 }
 
 module "elastic2_demo_int" {
-  # Demo-int module runs when enabled
   for_each = var.enable_demo_int ? var.vms_demo_int : {}
 
   providers = {

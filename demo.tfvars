@@ -4,12 +4,6 @@ vm_sku                = "16.04.0-LTS"
 vm_version            = "latest"
 availability_set_name = "CCD-DATA-0-AV-SET"
 
-# Enable demo-int infrastructure deployment
-enable_demo_int_deployment = true
-
-# Enable demo-int infrastructure deployment alongside demo
-enable_demo_int = true
-
 lb_private_ip_address = "10.96.216.253"
 soc_vault_name        = "soc-prod"
 soc_vault_rg          = "soc-core-infra-prod-rg"
@@ -216,14 +210,10 @@ vm_sku                = "16.04.0-LTS"
 vm_version            = "latest"
 availability_set_name = "CCD-DATA-0-AV-SET"
 
-# Feature flag to enable demo-int deployment
-deploy_demo_int = true
+# Feature flag to enable demo-int env
 enable_demo_int = true
 
-# Demo-int resource group configuration
 demo_int_rg_name = "demo-int"
-
-# Demo-int network configuration
 demo_int_vnet_name = "core-infra-vnet-demo"
 demo_int_subnet_name = "demo_int_subnet"
 demo_int_vnet_resource_group = "core-infra-demo"
@@ -234,7 +224,6 @@ soc_vault_rg          = "soc-core-infra-prod-rg"
 
 ipconfig_name = "ipconfig1"
 
-# Demo-int VMs configuration - separate from demo VMs
 vms_demo_int = {
   ccd-data-0 = {
     name = "ccd-data-0"
