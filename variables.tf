@@ -163,7 +163,7 @@ variable "demo_int_vnet_name" {
 variable "demo_int_subnet_name" {
   description = "Subnet demo-int env"
   type        = string
-  default     = "demo_int_subnet"
+  default     = "elasticsearch"
 }
 
 variable "demo_int_vnet_resource_group" {
