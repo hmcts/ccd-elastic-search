@@ -177,6 +177,12 @@ variable "lb_private_ip_address" {
   type        = string
 }
 
+variable "lb_private_ip_address_demo_int" {
+  description = "The private IP address for the demo-int load balancer."
+  type        = string
+  default     = null
+}
+
 variable "soc_vault_name" {
   description = "The name of the SOC Key Vault."
   type        = string

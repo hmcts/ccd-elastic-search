@@ -26,12 +26,6 @@ data "azurerm_subnet" "elastic-subnet" {
   resource_group_name  = data.azurerm_virtual_network.core_infra_vnet.resource_group_name
 }
 
-data "azurerm_subnet" "elastic-subnet-demo-int" {
-  name                 = var.demo_int_subnet_name
-  virtual_network_name = var.demo_int_vnet_name
-  resource_group_name  = var.demo_int_vnet_resource_group
-}
-
 data "azurerm_key_vault" "key_vault" {
   name                = local.vaultName
   resource_group_name = local.sharedResourceGroup

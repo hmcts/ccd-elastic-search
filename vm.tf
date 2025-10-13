@@ -47,7 +47,7 @@ module "elastic2_demo_int" {
   vm_resource_group            = "${azurerm_resource_group.this.name}-${var.demo_int_rg_name}"
   vm_admin_password            = null
   vm_admin_name                = var.vm_admin_name
-  vm_subnet_id                 = data.azurerm_subnet.elastic-subnet-demo-int.id
+  vm_subnet_id                 = data.azurerm_subnet.elastic-subnet.id
   vm_private_ip                = each.value.ip
   os_disk_name                 = "${each.value.name}-osdisk"
   tags                         = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
