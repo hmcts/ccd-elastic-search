@@ -33,7 +33,8 @@ provider "azurerm" {
 provider "azurerm" {
   alias = "soc"
   features {}
-  subscription_id = var.env == "prod" || var.env == "production" ? "8ae5b3b6-0b12-4888-b894-4cec33c92292" : var.env == "sbox" || var.env == "sandbox" ? "2307d175-7e49-434b-9ac2-515529b845f2" : "8ae5b3b6-0b12-4888-b894-4cec33c92292"
+  subscription_id                 = var.env == "prod" || var.env == "production" ? "8ae5b3b6-0b12-4888-b894-4cec33c92292" : var.env == "sbox" || var.env == "sandbox" ? "2307d175-7e49-434b-9ac2-515529b845f2" : "8ae5b3b6-0b12-4888-b894-4cec33c92292"
+  resource_provider_registrations = "none"
 }
 
 provider "azurerm" {

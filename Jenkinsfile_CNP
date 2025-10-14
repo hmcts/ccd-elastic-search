@@ -1,5 +1,5 @@
 #!groovy
-@Library('Infrastructure@allow-plan-only') _
+@Library('Infrastructure@allow-plan-only')
 
 import uk.gov.hmcts.contino.Environment
 import uk.gov.hmcts.contino.HealthChecker
