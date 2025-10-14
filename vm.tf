@@ -44,7 +44,7 @@ module "elastic2_demo_int" {
   source                       = "github.com/hmcts/ccd-module-elastic-search.git?ref=main"
   env                          = var.env
   vm_name                      = each.value.name
-  vm_resource_group            = "ccd-elastic-search-${var.demo_int_rg_name}"
+  vm_resource_group            = var.demo_int_rg_name
   vm_admin_password            = null
   vm_admin_name                = var.vm_admin_name
   vm_subnet_id                 = data.azurerm_subnet.elastic-subnet.id
@@ -89,7 +89,7 @@ resource "azurerm_resource_group" "this" {
 
 resource "azurerm_resource_group" "demo_int" {
   count    = var.enable_demo_int ? 1 : 0
-  name     = "ccd-elastic-search-${var.demo_int_rg_name}"
+  name     = var.demo_int_rg_name
   location = var.location
   tags     = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
 }

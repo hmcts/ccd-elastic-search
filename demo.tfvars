@@ -207,7 +207,7 @@ nsg_security_rules = {
 # Feature flag to enable demo-int env
 enable_demo_int = true
 
-demo_int_rg_name             = "demo-int"
+demo_int_rg_name             = "ccd-elastic-search-demo-int"
 demo_int_vnet_name           = "core-infra-vnet-demo"
 demo_int_subnet_name         = "elasticsearch"
 demo_int_vnet_resource_group = "core-infra-demo"
