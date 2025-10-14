@@ -1,5 +1,5 @@
 #!groovy
-@Library("Infrastructure") _
+@Library('Infrastructure@feat/disable-tf-apply-on-param') _
 
 import uk.gov.hmcts.contino.Environment
 import uk.gov.hmcts.contino.HealthChecker
@@ -15,12 +15,12 @@ properties([
 ])
 
 def setupSecret() {
-  def bootstap_env = env.ENV 
+  def bootstap_env = env.ENV
   azureKeyVault(
     keyVaultURL: "https://ccd-${bootstap_env}.vault.azure.net/",
     secrets: [
-      secret("ccd-vm-admin-name", 'CCD_VM_ADMIN_NAME'),
-      secret("ccd-ELASTIC-SEARCH-PRIVATE-KEY", 'CCD_VM_SSH_PRIVATE_KEY'),
+      secret('ccd-vm-admin-name', 'CCD_VM_ADMIN_NAME'),
+      secret('ccd-ELASTIC-SEARCH-PRIVATE-KEY', 'CCD_VM_SSH_PRIVATE_KEY'),
     ]) {
       env.CCD_VM_ADMIN_NAME = "${CCD_VM_ADMIN_NAME}"
       env.CCD_VM_SSH_PRIVATE_KEY = "${CCD_VM_SSH_PRIVATE_KEY}"
@@ -28,25 +28,23 @@ def setupSecret() {
 }
 
 def runAnsible() {
+  setupSecret()
+  echo 'ANSIBLE Dry run: ' + params.RUN_ANSIBLE_DRY
+  echo 'ANSIBLE Apply run: ' + params.RUN_ANSIBLE_APPLY
+  sh "echo 'Running Ansible Playbook for Sandbox'"
+  sh 'sudo apt update && sudo apt install -y ansible'
+  sh 'ansible --version'
+  sh "echo 'environment ${env.ENV}'"
+  writeFile file: '/tmp/ccdadmin_key', text: "${CCD_VM_SSH_PRIVATE_KEY}"
+  sh 'chmod 600 /tmp/ccdadmin_key'
+  def checkRunAnsible = '--check'
+  if (params.RUN_ANSIBLE_APPLY == true) {
+    checkRunAnsible = ''
+  }
 
-        setupSecret()
-        echo "ANSIBLE Dry run: " + params.RUN_ANSIBLE_DRY
-        echo "ANSIBLE Apply run: " + params.RUN_ANSIBLE_APPLY
-        sh "echo 'Running Ansible Playbook for Sandbox'"
-        sh "sudo apt update && sudo apt install -y ansible"
-        sh "ansible --version"
-        sh "echo 'environment ${env.ENV}'"
-        writeFile file: '/tmp/ccdadmin_key', text: "${CCD_VM_SSH_PRIVATE_KEY}"
-        sh "chmod 600 /tmp/ccdadmin_key"
-        def checkRunAnsible = "--check"
-        if (params.RUN_ANSIBLE_APPLY == true) {
-            checkRunAnsible = ""
-        }
-        
-        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
-        
-        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
+  sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
 
+  sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
 }
 
 static Map<String, Object> secret(String secretName, String envVariable) {
@@ -58,67 +56,59 @@ static Map<String, Object> secret(String secretName, String envVariable) {
   ]
 }
 
-if (params.DEPLOY_ES_CLUSTER == true) {
-   withInfraPipeline(params.PRODUCT_NAME) {
-     onMaster {
-           enableSlackNotifications('#ccd-master-builds')
-       }
-       onDemo {
-           enableSlackNotifications('#ccd-demo-builds')
-       }
-  
+withInfraPipeline(params.PRODUCT_NAME, null, !DEPLOY_ES_CLUSTER) {
+  onMaster {
+    enableSlackNotifications('#ccd-master-builds')
+  }
+  onDemo {
+    enableSlackNotifications('#ccd-demo-builds')
+  }
 
+    afterAlways('buildinfra:aat') {
+        echo 'Healthcheck in AAT'
+        healthCheckStage('nonprod', 'aat')
+    }
+    afterAlways('buildinfra:prod') {
+        echo 'Healthcheck in PROD'
+        healthCheckStage('prod', 'prod')
+    }
+    afterAlways('buildinfra:perftest') {
+        echo 'Healthcheck in Perftest'
+        healthCheckStage('qa', 'perftest')
+    }
+    afterAlways('buildinfra:demo') {
+        echo 'Healthcheck in Perftest'
+        healthCheckStage('nonprod', 'demo')
+    }
+    afterAlways('buildinfra:ithc') {
+        echo 'Healthcheck in Perftest'
+        healthCheckStage('qa', 'ithc')
+    }
 
-       // TODO: Healthcheck per env
-//        afterAlways('buildinfra:aat') {
-//            echo 'Healthcheck in AAT'
-//            healthCheckStage('nonprod', 'aat')
-//        }
-//        afterAlways('buildinfra:prod') {
-//            echo 'Healthcheck in PROD'
-//            healthCheckStage('prod', 'prod')
-//        }
-//        afterAlways('buildinfra:perftest') {
-//            echo 'Healthcheck in Perftest'
-//            healthCheckStage('qa', 'perftest')
-//        }
-//        afterAlways('buildinfra:demo') {
-//            echo 'Healthcheck in Perftest'
-//            healthCheckStage('nonprod', 'demo')
-//        }
-//        afterAlways('buildinfra:ithc') {
-//            echo 'Healthcheck in Perftest'
-//            healthCheckStage('qa', 'ithc')
-//        }
-
-   
-
-   if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
-
+  if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
         afterSuccess('buildinfra:demo') {
-            echo 'running Ansible in Demo '
-            env.ENV = 'demo'
-            runAnsible()
+      echo 'running Ansible in Demo '
+      env.ENV = 'demo'
+      runAnsible()
         }
-   }
- }
+  }
 }
 
 def healthCheckStage(subscription, environmentName) {
-    stage('HealthCheck') {
+  stage('HealthCheck') {
         def healthChecker = new HealthChecker(this)
         healthChecker.check(healthCheckUrl(subscription, environmentName), 10, 40) { response ->
-            if (response.content.contains("yellow")) {
-                currentBuild.result = "UNSTABLE"
-            }
-            !response.content.contains("red")
+      if (response.content.contains('yellow')) {
+        currentBuild.result = 'UNSTABLE'
+      }
+      !response.content.contains('red')
         }
-    }
+  }
 }
 
 def healthCheckUrl(subscription, environmentName) {
-    KeyVault keyVault = new KeyVault(this, subscription, "ccd-$environmentName")
-    es_url = keyVault.find("ccd-ELASTIC-SEARCH-URL").trim()
-    echo "retrieved ES URL: ${es_url}"
-    "http://" + es_url + ":9200/_cluster/health"
+  KeyVault keyVault = new KeyVault(this, subscription, "ccd-$environmentName")
+  es_url = keyVault.find('ccd-ELASTIC-SEARCH-URL').trim()
+  echo "retrieved ES URL: ${es_url}"
+  'http://' + es_url + ':9200/_cluster/health'
 }
