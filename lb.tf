@@ -75,7 +75,7 @@ resource "azurerm_lb_rule" "this" {
 # demo-int lb
 resource "azurerm_lb" "demo_int" {
   count               = var.enable_demo_int ? 1 : 0
-  name                = "ccd-internal-${var.env}-demo-int-lb"
+  name                = "ccd-internal-demo-int-lb"
   location            = var.location
   resource_group_name = var.demo_int_rg_name
 
