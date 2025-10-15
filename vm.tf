@@ -61,7 +61,7 @@ module "elastic2_demo_int" {
   vm_version                   = var.vm_version
   vm_size                      = var.vm_size
   enable_availability_set      = var.enable_availability_set
-  availability_set_name        = var.availability_set_name
+  availability_set_name        = var.availability_set_name_demo_int
   platform_update_domain_count = var.platform_update_domain_count
   ipconfig_name                = var.ipconfig_name
 }

@@ -262,6 +262,12 @@ variable "availability_set_name" {
   default     = ""
 }
 
+variable "availability_set_name_demo_int" {
+  description = "Name of the availability set for demo-int environment"
+  type        = string
+  default     = ""
+}
+
 variable "platform_update_domain_count" {
   description = "Number of update domains for the availability set"
   type        = number
