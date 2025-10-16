@@ -154,24 +154,6 @@ variable "demo_int_rg_name" {
   default     = "demo-int"
 }
 
-variable "demo_int_vnet_name" {
-  description = "VNet demo-int env"
-  type        = string
-  default     = "core-infra-vnet-demo"
-}
-
-variable "demo_int_subnet_name" {
-  description = "Subnet demo-int env"
-  type        = string
-  default     = "elasticsearch"
-}
-
-variable "demo_int_vnet_resource_group" {
-  description = "RG demo-int env placed"
-  type        = string
-  default     = "core-infra-demo"
-}
-
 variable "lb_private_ip_address" {
   description = "The private IP address for the load balancer."
   type        = string

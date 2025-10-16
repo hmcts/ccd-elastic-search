@@ -209,9 +209,6 @@ nsg_security_rules = {
 enable_demo_int = true
 
 demo_int_rg_name             = "ccd-elastic-search-demo-int"
-demo_int_vnet_name           = "core-infra-vnet-demo"
-demo_int_subnet_name         = "elasticsearch"
-demo_int_vnet_resource_group = "core-infra-demo"
 
 lb_private_ip_address_demo_int = "10.96.216.154"
 
