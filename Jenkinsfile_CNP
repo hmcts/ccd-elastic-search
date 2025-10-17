@@ -15,7 +15,7 @@ properties([
 ])
 
 def setupSecret() {
-  def bootstap_env = env.ENV 
+  def bootstap_env = env.ENV
   azureKeyVault(
     keyVaultURL: "https://ccd-${bootstap_env}.vault.azure.net/",
     secrets: [
@@ -42,10 +42,15 @@ def runAnsible() {
         if (params.RUN_ANSIBLE_APPLY == true) {
             checkRunAnsible = ""
         }
-        
+
         sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
-        
+
         sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
+
+        if (env.ENV == 'demo' && readFile("${WORKSPACE}/demo.tfvars").contains('enable_demo_int = true')) {
+            sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo-int ${checkRunAnsible}"
+            sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo-int --extra-vars 'elastic_clustername=ccd-elastic-search-demo-int' ${checkRunAnsible}"
+        }
 
 }
 
@@ -66,7 +71,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
        onDemo {
            enableSlackNotifications('#ccd-demo-builds')
        }
-  
+
 
 
        // TODO: Healthcheck per env
@@ -91,7 +96,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 //            healthCheckStage('qa', 'ithc')
 //        }
 
-   
+
 
    if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
 

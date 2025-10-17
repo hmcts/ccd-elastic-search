@@ -6,6 +6,7 @@ availability_set_name          = "CCD-DATA-0-AV-SET"
 availability_set_name_demo_int = "CCD-DATA-0-AV-SET-INT"
 
 lb_private_ip_address = "10.96.216.253"
+
 soc_vault_name        = "soc-prod"
 soc_vault_rg          = "soc-core-infra-prod-rg"
 
@@ -208,8 +209,7 @@ nsg_security_rules = {
 # Feature flag to enable demo-int env
 enable_demo_int = true
 
-demo_int_rg_name             = "ccd-elastic-search-demo-int"
-
+demo_int_rg_name = "ccd-elastic-search-demo-int"
 lb_private_ip_address_demo_int = "10.96.216.154"
 
 vms_demo_int = {
