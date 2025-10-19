@@ -1,6 +1,6 @@
 vm_publisher_name              = "Canonical"
 vm_offer                       = "UbuntuServer"
-vm_sku                         = "16.04-LTS"
+vm_sku                         = "16.04.0-LTS"
 vm_version                     = "latest"
 availability_set_name          = "CCD-DATA-0-AV-SET"
 availability_set_name_demo_int = "CCD-DATA-0-AV-SET-INT"
@@ -208,6 +208,11 @@ nsg_security_rules = {
 
 # Feature flag to enable demo-int env
 enable_demo_int = true
+
+vm_publisher_name_int              = "Canonical"
+vm_offer_int                       = "UbuntuServer"
+vm_sku_int                         = "16.04-LTS"
+vm_version_int                     = "latest"
 
 demo_int_rg_name = "ccd-elastic-search-demo-int"
 lb_private_ip_address_demo_int = "10.96.216.154"

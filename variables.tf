@@ -227,6 +227,26 @@ variable "vm_version" {
   default = "latest"
 }
 
+variable "vm_publisher_name_int" {
+  type    = string
+  default = "Canonical"
+}
+
+variable "vm_offer_int" {
+  type    = string
+  default = "0001-com-ubuntu-server-focal"
+}
+
+variable "vm_sku_int" {
+  type    = string
+  default = "20_04-lts"
+}
+
+variable "vm_version_int" {
+  type    = string
+  default = "latest"
+}
+
 variable "vm_size" {
   type    = string
   default = "Standard_D4s_v3"

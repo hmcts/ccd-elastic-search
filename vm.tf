@@ -55,10 +55,10 @@ module "elastic2_demo_int" {
   soc_vault_name               = var.soc_vault_name
   soc_vault_rg                 = var.soc_vault_rg
   vm_admin_ssh_key             = data.azurerm_key_vault_secret.ssh_public_key.value
-  vm_publisher_name            = var.vm_publisher_name
-  vm_offer                     = var.vm_offer
-  vm_sku                       = var.vm_sku
-  vm_version                   = var.vm_version
+  vm_publisher_name            = var.vm_publisher_name_int
+  vm_offer                     = var.vm_offer_int
+  vm_sku                       = var.vm_sku_int
+  vm_version                   = var.vm_version_int
   vm_size                      = var.vm_size
   enable_availability_set      = var.enable_availability_set
   availability_set_name        = var.availability_set_name_demo_int
