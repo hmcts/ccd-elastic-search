@@ -289,7 +289,7 @@ vms_demo_int = {
         name                     = "ccd-data-3-datadisk2"
         resource_group_name      = "ccd-elastic-search-demo-int"
         disk_lun                 = "1"
-         = "Attach"
+        attachment_create_option = "Attach"
       }
     }
 
