@@ -135,6 +135,7 @@ variable "vms_demo_int" {
       resource_group_name  = string,
       storage_account_type = optional(string, "StandardSSD_LRS"),
       disk_lun             = string
+      attachment_create_option = optional(string, "Empty")
     }))
   }))
   default = {
