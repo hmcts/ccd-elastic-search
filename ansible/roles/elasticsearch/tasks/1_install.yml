@@ -33,7 +33,7 @@
 
 - name: Configure Elasticsearch settings
   ansible.builtin.template:
-    src: "elasticsearch.yml.j2"
+    src: "{{ 'elasticsearch-demo-int.yml.j2' if 'demo-int' in group_names else 'elasticsearch.yml.j2' }}"
     dest: "/etc/elasticsearch/elasticsearch.yml"
     mode: '0644'
     owner: root
