@@ -1,4 +1,30 @@
 ---
+- name: Bootstrap Python 3.8
+  hosts: demo-int
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Check if Python 3.8 exists
+      raw: test -f /usr/bin/python3.8
+      register: python38_check
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Install Python 3.8
+      raw: |
+        apt-get update && \
+        apt-get install -y software-properties-common && \
+        add-apt-repository -y ppa:deadsnakes/ppa && \
+        apt-get update && \
+        apt-get install -y python3.8 python3.8-distutils
+      when: python38_check.rc != 0
+      register: python_install
+
+    - name: Wait for Python 3.8 installation
+      pause:
+        seconds: 2
+      when: python_install.changed
+
 - name: Set up RAID0 from two datadisks and mount for Elasticsearch
   hosts: all
   become: true
@@ -26,7 +52,7 @@
 
     - name: Debug disk detection output
       debug:
-        msg: 
+        msg:
           - "Detected disks: {{ disk_detection.stdout_lines }}"
           - "Count: {{ disk_detection.stdout_lines | length }}"
 
@@ -48,7 +74,7 @@
           Could not auto-detect exactly 2 suitable 1TB data disks.
           Found: {{ disk_detection.stdout_lines | length }} disks: {{ disk_detection.stdout_lines }}
           Please specify manually: ansible-playbook -e "datadisks=['/dev/sdX','/dev/sdY']" diskmount.yml
-      when: 
+      when:
         - disk_detection.stdout_lines | length != 2
         - datadisks is not defined
 
