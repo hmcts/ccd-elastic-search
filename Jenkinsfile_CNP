@@ -35,7 +35,7 @@ def runAnsible() {
     sh "echo 'Running Ansible Playbook for Sandbox'"
 
     // Install regular Ansible for normal environments
-    sh "sudo apt update && sudo apt install -y ansible python3-pip"
+    sh "sudo apt update && sudo apt install -y ansible python3-venv"
     sh "ansible --version"
     sh "echo 'environment ${env.ENV}'"
 
@@ -55,8 +55,7 @@ def runAnsible() {
     if (env.ENV == 'demo' && readFile("${WORKSPACE}/demo.tfvars").contains('enable_demo_int = true')) {
         sh """
             # Create virtualenv with Ansible 2.9 for demo-int
-            python3 -m pip install --user virtualenv
-            python3 -m virtualenv /tmp/ansible29-venv
+            python3 -m venv /tmp/ansible29-venv
             /tmp/ansible29-venv/bin/pip install ansible==2.9.27
             /tmp/ansible29-venv/bin/ansible --version
 
@@ -70,7 +69,6 @@ def runAnsible() {
         """
     }
 }
-
 static Map<String, Object> secret(String secretName, String envVariable) {
   [
     $class     : 'AzureKeyVaultSecret',
