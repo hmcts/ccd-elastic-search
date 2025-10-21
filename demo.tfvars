@@ -218,18 +218,18 @@ demo_int_rg_name               = "ccd-elastic-search-demo-int"
 lb_private_ip_address_demo_int = "10.96.216.154"
 
 vms_demo_int = {
-  ccd-data-0 = {
-    name = "ccd-data-0"
+  ccd-data-int-0 = {
+    name = "ccd-data-int-0"
     ip   = "10.96.216.100"
     managed_disks = {
       disk1 = {
-        name                     = "ccd-data-0-datadisk1"
+        name                     = "ccd-data-int-0-datadisk1"
         resource_group_name      = "ccd-elastic-search-demo-int"
         disk_lun                 = "0"
         attachment_create_option = "Attach"
       }
       disk2 = {
-        name                     = "ccd-data-0-datadisk2"
+        name                     = "ccd-data-int-0-datadisk2"
         resource_group_name      = "ccd-elastic-search-demo-int"
         disk_lun                 = "1"
         attachment_create_option = "Attach"
@@ -237,18 +237,18 @@ vms_demo_int = {
     }
 
   }
-  ccd-data-1 = {
-    name = "ccd-data-1"
+  ccd-data-int-1 = {
+    name = "ccd-data-int-1"
     ip   = "10.96.216.101"
     managed_disks = {
       disk1 = {
-        name                     = "ccd-data-1-datadisk1"
+        name                     = "ccd-data-int-1-datadisk1"
         resource_group_name      = "ccd-elastic-search-demo-int"
         disk_lun                 = "0"
         attachment_create_option = "Attach"
       }
       disk2 = {
-        name                     = "ccd-data-1-datadisk2"
+        name                     = "ccd-data-int-1-datadisk2"
         resource_group_name      = "ccd-elastic-search-demo-int"
         disk_lun                 = "1"
         attachment_create_option = "Attach"
@@ -256,18 +256,18 @@ vms_demo_int = {
     }
 
   }
-  ccd-data-2 = {
-    name = "ccd-data-2"
+  ccd-data-int-2 = {
+    name = "ccd-data-int-2"
     ip   = "10.96.216.102"
     managed_disks = {
       disk1 = {
-        name                     = "ccd-data-2-datadisk1"
+        name                     = "ccd-data-int-2-datadisk1"
         resource_group_name      = "ccd-elastic-search-demo-int"
         disk_lun                 = "0"
         attachment_create_option = "Attach"
       }
       disk2 = {
-        name                     = "ccd-data-2-datadisk2"
+        name                     = "ccd-data-int-2-datadisk2"
         resource_group_name      = "ccd-elastic-search-demo-int"
         disk_lun                 = "1"
         attachment_create_option = "Attach"
@@ -275,18 +275,18 @@ vms_demo_int = {
     }
 
   }
-  ccd-data-3 = {
-    name = "ccd-data-3"
+  ccd-data-int-3 = {
+    name = "ccd-data-int-3"
     ip   = "10.96.216.103"
     managed_disks = {
       disk1 = {
-        name                     = "ccd-data-3-datadisk1"
+        name                     = "ccd-data-int-3-datadisk1"
         resource_group_name      = "ccd-elastic-search-demo-int"
         disk_lun                 = "0"
         attachment_create_option = "Attach"
       }
       disk2 = {
-        name                     = "ccd-data-3-datadisk2"
+        name                     = "ccd-data-int-3-datadisk2"
         resource_group_name      = "ccd-elastic-search-demo-int"
         disk_lun                 = "1"
         attachment_create_option = "Attach"
