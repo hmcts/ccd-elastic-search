@@ -51,11 +51,15 @@ def runAnsible() {
 
     sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
 
-    // For demo-int only: use Ansible 2.9 in virtualenv (supports Python 3.5)
+    // For demo-int only: use Ansible 2.9 with Python 3.9 in virtualenv (supports Python 3.5 targets)
     if (env.ENV == 'demo' && readFile("${WORKSPACE}/demo.tfvars").contains('enable_demo_int = true')) {
         sh """
-            # Create virtualenv with Ansible 2.9 for demo-int
-            python3 -m venv /tmp/ansible29-venv
+            # Install Python 3.9 if not present
+            sudo apt install -y python3.9 python3.9-venv
+
+            # Create virtualenv with Python 3.9 and Ansible 2.9 for demo-int
+            python3.9 -m venv /tmp/ansible29-venv
+            /tmp/ansible29-venv/bin/pip install --upgrade pip
             /tmp/ansible29-venv/bin/pip install ansible==2.9.27
             /tmp/ansible29-venv/bin/ansible --version
 
@@ -69,6 +73,7 @@ def runAnsible() {
         """
     }
 }
+
 static Map<String, Object> secret(String secretName, String envVariable) {
   [
     $class     : 'AzureKeyVaultSecret',
