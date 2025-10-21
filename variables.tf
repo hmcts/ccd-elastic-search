@@ -131,10 +131,10 @@ variable "vms_demo_int" {
     name = optional(string)
     ip   = optional(string)
     managed_disks = map(object({
-      name                 = string,
-      resource_group_name  = string,
-      storage_account_type = optional(string, "StandardSSD_LRS"),
-      disk_lun             = string
+      name                     = string,
+      resource_group_name      = string,
+      storage_account_type     = optional(string, "StandardSSD_LRS"),
+      disk_lun                 = string
       attachment_create_option = optional(string, "Empty")
     }))
   }))
@@ -280,4 +280,10 @@ variable "ipconfig_name" {
   type        = string
   description = "The name of the IPConfig to asssoicate with the NIC."
   default     = null
+}
+
+variable "vm_privateip_allocation" {
+  description = "Private IP allocation method for the VM NICs"
+  type        = string
+  default     = "Static"
 }

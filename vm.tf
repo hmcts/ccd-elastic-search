@@ -64,6 +64,7 @@ module "elastic2_demo_int" {
   availability_set_name        = var.availability_set_name_demo_int
   platform_update_domain_count = var.platform_update_domain_count
   ipconfig_name                = var.ipconfig_name
+  privateip_allocation         = var.vm_privateip_allocation
 }
 
 locals {
