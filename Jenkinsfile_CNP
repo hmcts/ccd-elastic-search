@@ -9,6 +9,7 @@ properties([
         parameters([
                 string(name: 'PRODUCT_NAME', defaultValue: 'ccd-elastic-search', description: ''),
                 booleanParam(name: 'DEPLOY_ES_CLUSTER', defaultValue: false, description: 'Select to deploy ElasticSearch'),
+                booleanParam(name: 'PLAN_ONLY', defaultValue: false, description: 'Run Terraform plan only (no apply)'),
                 booleanParam(name: 'RUN_ANSIBLE_DRY', defaultValue: false, description: 'Run Ansible in DRY run mode'),
                 booleanParam(name: 'RUN_ANSIBLE_APPLY', defaultValue: false, description: 'Run Ansible in APPLY mode'),
         ])
@@ -83,8 +84,8 @@ static Map<String, Object> secret(String secretName, String envVariable) {
   ]
 }
 
-if (params.DEPLOY_ES_CLUSTER == true) {
-   withInfraPipeline(params.PRODUCT_NAME) {
+if (params.DEPLOY_ES_CLUSTER == true || params.PLAN_ONLY == true) {
+   withInfraPipeline(params.PRODUCT_NAME, planOnly: params.PLAN_ONLY) {
      onMaster {
            enableSlackNotifications('#ccd-master-builds')
        }
@@ -118,7 +119,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 
 
 
-   if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
+   if ((params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) && params.PLAN_ONLY == false) {
 
         afterSuccess('buildinfra:demo') {
             echo 'running Ansible in Demo '
