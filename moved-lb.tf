@@ -1,10 +1,10 @@
 moved {
-  from = azurerm_lb.this["ithc"]
+  from = azurerm_lb.this["perftest"]
   to   = module.main_lb.azurerm_lb.this
 }
 
 moved {
-  from = azurerm_lb_backend_address_pool.this["ithc"]
+  from = azurerm_lb_backend_address_pool.this["perftest"]
   to   = module.main_lb.azurerm_lb_backend_address_pool.this
 }
 
