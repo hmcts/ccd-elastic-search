@@ -43,12 +43,14 @@ resource "azurerm_network_security_rule" "nsg_rules" {
   source_port_range          = each.value.source_port_range
   destination_port_range     = each.value.destination_port_range
   source_address_prefix      = each.value.source_address_prefix
-  destination_address_prefix = each.value.destination_address_prefix
   destination_port_ranges    = each.value.destination_port_ranges
   source_address_prefixes    = each.value.source_address_prefixes
 
-  source_application_security_group_ids      = each.value.source_application_security_group_ids == "id" ? [azurerm_application_security_group.this.id] : null
+  # Only set one of destination_address_prefix or destination_application_security_group_ids
+  destination_address_prefix                 = each.value.destination_application_security_group_ids == "id" ? null : each.value.destination_address_prefix
   destination_application_security_group_ids = each.value.destination_application_security_group_ids == "id" ? [azurerm_application_security_group.this.id] : null
+
+  source_application_security_group_ids      = each.value.source_application_security_group_ids == "id" ? [azurerm_application_security_group.this.id] : null
 }
 
 resource "azurerm_network_interface_security_group_association" "association" {
