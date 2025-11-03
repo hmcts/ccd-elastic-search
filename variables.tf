@@ -116,10 +116,11 @@ variable "vms" {
     name = optional(string)
     ip   = optional(string)
     managed_disks = map(object({
-      name                 = string,
-      resource_group_name  = string,
-      storage_account_type = optional(string, "StandardSSD_LRS"),
-      disk_lun             = string
+      name                     = string,
+      resource_group_name      = string,
+      storage_account_type     = optional(string, "StandardSSD_LRS"),
+      disk_lun                 = string
+      attachment_create_option = optional(string, "Empty")
     }))
   }))
   default = {

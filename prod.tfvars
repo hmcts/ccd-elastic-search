@@ -22,10 +22,11 @@ vms = {
     ip   = "10.96.85.7"
     managed_disks = {
       disk1 = {
-        name                 = "ccd-data-0-datadisk1"
-        resource_group_name  = "ccd-elastic-search-prod"
-        storage_account_type = "Premium_LRS"
-        disk_lun             = "0"
+        name                     = "ccd-data-0-datadisk1"
+        resource_group_name      = "ccd-elastic-search-prod"
+        storage_account_type     = "Premium_LRS"
+        disk_lun                 = "0"
+        attachment_create_option = "Attach"
       }
       disk2 = {
         name                 = "ccd-data-0-datadisk2"
@@ -82,10 +83,11 @@ vms = {
         disk_lun             = "0"
       }
       disk2 = {
-        name                 = "ccd-data-3-datadisk2"
-        resource_group_name  = "ccd-elastic-search-prod"
-        storage_account_type = "Premium_LRS"
-        disk_lun             = "1"
+        name                     = "ccd-data-3-datadisk2"
+        resource_group_name      = "ccd-elastic-search-prod"
+        storage_account_type     = "Premium_LRS"
+        disk_lun                 = "1"
+        attachment_create_option = "Attach"
       }
     }
   }

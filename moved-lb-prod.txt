@@ -1,10 +1,12 @@
+# Moved blocks for production load balancer resources to new module structure
+
 moved {
-  from = azurerm_lb.this["perftest"]
+  from = azurerm_lb.this["prod"]
   to   = module.main_lb.azurerm_lb.this
 }
 
 moved {
-  from = azurerm_lb_backend_address_pool.this["perftest"]
+  from = azurerm_lb_backend_address_pool.this["prod"]
   to   = module.main_lb.azurerm_lb_backend_address_pool.this
 }
 
