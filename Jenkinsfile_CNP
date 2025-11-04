@@ -56,7 +56,7 @@ static Map<String, Object> secret(String secretName, String envVariable) {
   ]
 }
 
-withInfraPipeline(params.PRODUCT_NAME, null, !DEPLOY_ES_CLUSTER) {
+withInfraPipeline(params.PRODUCT_NAME, null, !params.DEPLOY_ES_CLUSTER) {
   onMaster {
     enableSlackNotifications('#ccd-master-builds')
   }
