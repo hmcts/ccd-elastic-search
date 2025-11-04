@@ -1,7 +1,7 @@
 locals {
   enabled_lb_envs = ["sandbox", "demo", "ithc", "aat", "perftest", "prod"]
-  is_enabled_env = contains(local.enabled_lb_envs, var.env)
-  env_map        = local.is_enabled_env ? { (var.env) = true } : {}
+  is_enabled_env  = contains(local.enabled_lb_envs, var.env)
+  env_map         = local.is_enabled_env ? { (var.env) = true } : {}
 
   lb_ports = {
     "http" = {
