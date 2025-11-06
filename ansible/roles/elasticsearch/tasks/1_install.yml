@@ -1,26 +1,26 @@
 - name: Download Elasticsearch .deb package
   ansible.builtin.get_url:
-    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}"
-    dest: "/tmp/{{ elastic_search_version }}"
+    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
+    dest: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
     mode: '0644'
   check_mode: no # Allow actual download even in check mode
 - name: Download Elasticsearch checksum file
   ansible.builtin.get_url:
-    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version }}.sha512"
-    dest: "/tmp/{{ elastic_search_version }}.sha512"
+    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
+    dest: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
     mode: '0644'
   check_mode: no  # Allow download of checksum in dry-run
 
 - name: Verify checksum of the downloaded package
   ansible.builtin.shell: |
     cd /tmp
-    sha512sum -c "{{ elastic_search_version }}.sha512"
+    sha512sum -c "{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
   register: checksum_output
   failed_when: checksum_output.rc != 0
   when: not ansible_check_mode  # Skip during dry-run
 - name: Install Elasticsearch deb package
   ansible.builtin.apt:
-    deb: "/tmp/{{ elastic_search_version }}"
+    deb: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
     state: present
   when: not ansible_check_mode  # Skip actual install during dry-run
 
