@@ -1,15 +1,30 @@
 - name: Download Elasticsearch .deb package
-  ansible.builtin.get_url:
-    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
-    dest: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
-    mode: '0644'
+  ansible.builtin.shell: |
+    wget -O "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}" \
+         "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
+  args:
+    creates: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
   check_mode: no # Allow actual download even in check mode
-- name: Download Elasticsearch checksum file
-  ansible.builtin.get_url:
-    url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
-    dest: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
+
+- name: Set permissions on downloaded package
+  ansible.builtin.file:
+    path: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
     mode: '0644'
+  check_mode: no
+
+- name: Download Elasticsearch checksum file
+  ansible.builtin.shell: |
+    wget -O "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512" \
+         "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
+  args:
+    creates: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
   check_mode: no  # Allow download of checksum in dry-run
+
+- name: Set permissions on checksum file
+  ansible.builtin.file:
+    path: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
+    mode: '0644'
+  check_mode: no
 
 - name: Verify checksum of the downloaded package
   ansible.builtin.shell: |
