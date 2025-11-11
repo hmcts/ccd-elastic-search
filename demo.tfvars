@@ -211,7 +211,7 @@ enable_demo_int = true
 
 vm_publisher_name_int = "Canonical"
 vm_offer_int          = "0001-com-ubuntu-server-noble"
-vm_sku_int            = "ubuntu-24_04-lts"
+vm_sku_int            = "24_04-lts-gen2"
 vm_version_int        = "latest"
 
 demo_int_rg_name               = "ccd-elastic-search-demo-int"
