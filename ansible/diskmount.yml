@@ -148,24 +148,9 @@
         opts: defaults
         state: present
 
-    - name: Create elasticsearch group
-      group:
-        name: elasticsearch
-        state: present
-
-    - name: Create elasticsearch user
-      user:
-        name: elasticsearch
-        group: elasticsearch
-        system: yes
-        shell: /bin/false
-        home: /usr/share/elasticsearch
-        createhome: no
-        state: present
-
-    - name: Set ownership to elasticsearch
-      file:
-        path: "{{ mount_point }}"
-        owner: elasticsearch
-        group: elasticsearch
-        recurse: yes
+    # - name: Set ownership to elasticsearch
+    #   file:
+    #     path: "{{ mount_point }}"
+    #     owner: elasticsearch
+    #     group: elasticsearch
+    #     recurse: yes
