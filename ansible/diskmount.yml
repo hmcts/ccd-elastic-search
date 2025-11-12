@@ -148,6 +148,23 @@
         opts: defaults
         state: present
 
+    - name: Create elasticsearch group
+      group:
+        name: elasticsearch
+        state: present
+      when: "'demo-int' in group_names"
+
+    - name: Create elasticsearch user
+      user:
+        name: elasticsearch
+        group: elasticsearch
+        system: yes
+        shell: /bin/false
+        home: /usr/share/elasticsearch
+        createhome: no
+        state: present
+      when: "'demo-int' in group_names"
+
     - name: Set ownership to elasticsearch
       file:
         path: "{{ mount_point }}"
