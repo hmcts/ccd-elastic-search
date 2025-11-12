@@ -39,13 +39,6 @@
     state: present
   when: not ansible_check_mode  # Skip actual install during dry-run
 
-- name: Ensure Elasticsearch is started and enabled
-  ansible.builtin.systemd:
-    name: elasticsearch
-    state: started
-    enabled: yes
-  when: not ansible_check_mode  # Skip actual install during dry-run
-
 - name: Configure Elasticsearch settings
   ansible.builtin.template:
     src: "{{ 'elasticsearch-demo-int.yml.j2' if 'demo-int' in group_names else 'elasticsearch.yml.j2' }}"
@@ -53,6 +46,7 @@
     mode: '0644'
     owner: root
     group: root
+
 - name: Set JVM heap size
   ansible.builtin.lineinfile:
     path: "/etc/elasticsearch/jvm.options"
@@ -60,6 +54,7 @@
     line: "-Xms2g"
     state: present
   when: not ansible_check_mode
+
 - name: Enable memory locking
   ansible.builtin.lineinfile:
     path: "/etc/elasticsearch/elasticsearch.yml"
@@ -75,6 +70,7 @@
     state: directory
     mode: '0755'
   when: not ansible_check_mode
+
 # Create systemd override file
 - name: Set LimitMEMLOCK in systemd override
   ansible.builtin.copy:
@@ -101,6 +97,7 @@
     owner: root
     group: root
   when: not ansible_check_mode
+
 - name: Restart Elasticsearch to apply changes
   ansible.builtin.systemd:
     name: elasticsearch
