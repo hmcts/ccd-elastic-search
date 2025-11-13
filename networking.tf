@@ -7,13 +7,19 @@ resource "azurerm_application_security_group" "this" {
 
 resource "azurerm_network_interface_application_security_group_association" "this" {
 
-  for_each = var.env == "sandbox" || var.env == "demo" || var.env == "ithc" || var.env == "aat" || var.env == "perftest" ? var.vms : {}
+  for_each = var.vms
 
   network_interface_id          = module.elastic2[each.key].nic_id
   application_security_group_id = azurerm_application_security_group.this.id
 }
 
+resource "azurerm_network_interface_application_security_group_association" "this_demo_int" {
 
+  for_each = var.enable_demo_int ? var.vms_demo_int : {}
+
+  network_interface_id          = module.elastic2_demo_int[each.key].nic_id
+  application_security_group_id = azurerm_application_security_group.this.id
+}
 resource "azurerm_network_security_group" "nsg_group" {
   name                = "ccd-cluster-nsg"
   location            = var.location
@@ -37,18 +43,28 @@ resource "azurerm_network_security_rule" "nsg_rules" {
   source_port_range          = each.value.source_port_range
   destination_port_range     = each.value.destination_port_range
   source_address_prefix      = each.value.source_address_prefix
-  destination_address_prefix = each.value.destination_address_prefix
   destination_port_ranges    = each.value.destination_port_ranges
   source_address_prefixes    = each.value.source_address_prefixes
 
-  source_application_security_group_ids      = each.value.source_application_security_group_ids == "id" ? [azurerm_application_security_group.this.id] : null
+  # Only set one of destination_address_prefix or destination_application_security_group_ids
+  destination_address_prefix                 = each.value.destination_application_security_group_ids == "id" ? null : each.value.destination_address_prefix
   destination_application_security_group_ids = each.value.destination_application_security_group_ids == "id" ? [azurerm_application_security_group.this.id] : null
+
+  source_application_security_group_ids      = each.value.source_application_security_group_ids == "id" ? [azurerm_application_security_group.this.id] : null
 }
 
 resource "azurerm_network_interface_security_group_association" "association" {
 
-  for_each = var.env == "sandbox" || var.env == "demo" || var.env == "ithc" || var.env == "aat" || var.env == "perftest" ? var.vms : {}
+  for_each = var.vms
 
   network_interface_id      = module.elastic2[each.key].nic_id
+  network_security_group_id = azurerm_network_security_group.nsg_group.id
+}
+
+resource "azurerm_network_interface_security_group_association" "association_demo_int" {
+
+  for_each = var.enable_demo_int ? var.vms_demo_int : {}
+
+  network_interface_id      = module.elastic2_demo_int[each.key].nic_id
   network_security_group_id = azurerm_network_security_group.nsg_group.id
 }

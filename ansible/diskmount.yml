@@ -26,7 +26,7 @@
 
     - name: Debug disk detection output
       debug:
-        msg: 
+        msg:
           - "Detected disks: {{ disk_detection.stdout_lines }}"
           - "Count: {{ disk_detection.stdout_lines | length }}"
 
@@ -48,7 +48,7 @@
           Could not auto-detect exactly 2 suitable 1TB data disks.
           Found: {{ disk_detection.stdout_lines | length }} disks: {{ disk_detection.stdout_lines }}
           Please specify manually: ansible-playbook -e "datadisks=['/dev/sdX','/dev/sdY']" diskmount.yml
-      when: 
+      when:
         - disk_detection.stdout_lines | length != 2
         - datadisks is not defined
 
@@ -148,9 +148,26 @@
         opts: defaults
         state: present
 
-    # - name: Set ownership to elasticsearch
-    #   file:
-    #     path: "{{ mount_point }}"
-    #     owner: elasticsearch
-    #     group: elasticsearch
-    #     recurse: yes
+    - name: Create elasticsearch group
+      group:
+        name: elasticsearch
+        state: present
+      when: "'demo-int' in group_names"
+
+    - name: Create elasticsearch user
+      user:
+        name: elasticsearch
+        group: elasticsearch
+        system: yes
+        shell: /bin/false
+        home: /usr/share/elasticsearch
+        createhome: no
+        state: present
+      when: "'demo-int' in group_names"
+
+    - name: Set ownership to elasticsearch
+      file:
+        path: "{{ mount_point }}"
+        owner: elasticsearch
+        group: elasticsearch
+        recurse: yes

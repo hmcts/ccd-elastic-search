@@ -15,7 +15,7 @@ properties([
 ])
 
 def setupSecret() {
-  def bootstap_env = env.ENV 
+  def bootstap_env = env.ENV
   azureKeyVault(
     keyVaultURL: "https://ccd-${bootstap_env}.vault.azure.net/",
     secrets: [
@@ -29,24 +29,49 @@ def setupSecret() {
 
 def runAnsible() {
 
-        setupSecret()
-        echo "ANSIBLE Dry run: " + params.RUN_ANSIBLE_DRY
-        echo "ANSIBLE Apply run: " + params.RUN_ANSIBLE_APPLY
-        sh "echo 'Running Ansible Playbook for Sandbox'"
-        sh "sudo apt update && sudo apt install -y ansible"
-        sh "ansible --version"
-        sh "echo 'environment ${env.ENV}'"
-        writeFile file: '/tmp/ccdadmin_key', text: "${CCD_VM_SSH_PRIVATE_KEY}"
-        sh "chmod 600 /tmp/ccdadmin_key"
-        def checkRunAnsible = "--check"
-        if (params.RUN_ANSIBLE_APPLY == true) {
-            checkRunAnsible = ""
-        }
-        
-        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
-        
-        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
+    setupSecret()
+    echo "ANSIBLE Dry run: " + params.RUN_ANSIBLE_DRY
+    echo "ANSIBLE Apply run: " + params.RUN_ANSIBLE_APPLY
+    sh "echo 'Running Ansible Playbook for Sandbox'"
 
+    // Install regular Ansible for normal environments
+    sh "sudo apt update && sudo apt install -y ansible python3-venv"
+    sh "ansible --version"
+    sh "echo 'environment ${env.ENV}'"
+
+    writeFile file: '/tmp/ccdadmin_key', text: "${CCD_VM_SSH_PRIVATE_KEY}"
+    sh "chmod 600 /tmp/ccdadmin_key"
+    def checkRunAnsible = "--check"
+    if (params.RUN_ANSIBLE_APPLY == true) {
+        checkRunAnsible = ""
+    }
+
+    // Run regular demo environment with standard Ansible
+    sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
+
+    sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
+
+    // For demo-int only: use Ansible 2.9 with Python 3.9 in virtualenv (supports Python 3.5 targets)
+    if (env.ENV == 'demo' && readFile("${WORKSPACE}/demo.tfvars").contains('enable_demo_int = true')) {
+        sh """
+            # Install Python 3.9 if not present
+            sudo apt install -y python3.9 python3.9-venv
+
+            # Create virtualenv with Python 3.9 and Ansible 6.x for demo-int (Ubuntu 24.04 compatible)
+            python3.9 -m venv /tmp/ansible6-venv
+            /tmp/ansible6-venv/bin/pip install --upgrade pip
+            /tmp/ansible6-venv/bin/pip install ansible==6.7.0
+            /tmp/ansible6-venv/bin/ansible --version
+
+            # Run demo-int with Ansible 6.x
+            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible6-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo-int ${checkRunAnsible}
+
+            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible6-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo-int --extra-vars 'elastic_clustername=ccd-elastic-search-demo-int' ${checkRunAnsible}
+
+            # Cleanup
+            rm -rf /tmp/ansible6-venv
+        """
+    }
 }
 
 static Map<String, Object> secret(String secretName, String envVariable) {
@@ -66,7 +91,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
        onDemo {
            enableSlackNotifications('#ccd-demo-builds')
        }
-  
+
 
 
        // TODO: Healthcheck per env
@@ -91,7 +116,7 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 //            healthCheckStage('qa', 'ithc')
 //        }
 
-   
+
 
    if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
 
