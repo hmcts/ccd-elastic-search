@@ -2,4 +2,4 @@
 elastic_search_version: "elasticsearch-7.17.28-amd64.deb"
 
 # Demo-int specific version
-elastic_search_version_demo_int: "elasticsearch-8.19.7-amd64.deb"
+elastic_search_version_demo_int: "elasticsearch-9.1.2-amd64.deb"
