@@ -1,4 +1,4 @@
-- name: Download Elasticsearch .deb package
+- name: Download Elasticsearch {{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }} .deb package
   ansible.builtin.shell: |
     wget -O "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}" \
          "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
@@ -12,7 +12,7 @@
     mode: '0644'
   check_mode: no
 
-- name: Download Elasticsearch checksum file
+- name: Download Elasticsearch {{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }} checksum file
   ansible.builtin.shell: |
     wget -O "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512" \
          "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
