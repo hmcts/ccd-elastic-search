@@ -98,9 +98,64 @@
     group: root
   when: not ansible_check_mode
 
+- name: Disable shard allocation
+  ansible.builtin.uri:
+    url: "http://localhost:9200/_cluster/settings"
+    method: PUT
+    body_format: json
+    body:
+      persistent:
+        cluster.routing.allocation.enable: "none"
+  when:
+    - rolling_upgrade | bool
+    - not ansible_check_mode
+
+- name: Attempt synced flush
+  ansible.builtin.uri:
+    url: "http://localhost:9200/_flush/synced"
+    method: POST
+  register: synced_flush
+  failed_when: false
+  changed_when: synced_flush.status is defined and synced_flush.status == 200
+  when:
+    - rolling_upgrade | bool
+    - not ansible_check_mode
+
 - name: Restart Elasticsearch to apply changes
   ansible.builtin.systemd:
     name: elasticsearch
     state: restarted
     enabled: yes
   when: not ansible_check_mode  # Skip actual restart during dry-run
+
+- name: Wait for Elasticsearch service after restart
+  ansible.builtin.wait_for:
+    host: localhost
+    port: 9200
+    delay: 5
+    timeout: 300
+  when: not ansible_check_mode
+
+- name: Re-enable shard allocation
+  ansible.builtin.uri:
+    url: "http://localhost:9200/_cluster/settings"
+    method: PUT
+    body_format: json
+    body:
+      persistent:
+        cluster.routing.allocation.enable: "all"
+  when:
+    - rolling_upgrade | bool
+    - not ansible_check_mode
+
+- name: Wait for cluster to become green
+  ansible.builtin.uri:
+    url: "http://localhost:9200/_cluster/health?wait_for_status=green&timeout=300s"
+    method: GET
+  register: cluster_health
+  until: cluster_health.json.status == "green"
+  retries: 30
+  delay: 10
+  when:
+    - rolling_upgrade | bool
+    - not ansible_check_mode
