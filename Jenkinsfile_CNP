@@ -50,9 +50,10 @@ def runAnsible() {
     def rollingUpgradeDemoInt = params.ROLLING_UPGRADE ? "true" : "false"
 
     // Run regular demo environment with standard Ansible
-    sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
+    // Temporarily disabled to save time during demo-int builds
+    // sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
 
-    sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
+    // sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
 
     // For demo-int only: use Ansible 2.9 with Python 3.9 in virtualenv (supports Python 3.5 targets)
     if (env.ENV == 'demo' && readFile("${WORKSPACE}/demo.tfvars").contains('enable_demo_int = true')) {
