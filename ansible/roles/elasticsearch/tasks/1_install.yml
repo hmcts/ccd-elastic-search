@@ -152,8 +152,9 @@
   ansible.builtin.uri:
     url: "http://localhost:9200/_cluster/health?wait_for_status=green&timeout=300s"
     method: GET
+    return_content: yes
   register: cluster_health
-  until: cluster_health.json.status == "green"
+  until: cluster_health.json is defined and cluster_health.json.status == "green"
   retries: 30
   delay: 10
   when:

@@ -10,7 +10,6 @@ properties([
                 choice(name: 'ENVIRONMENT', choices: 'sandbox\nsaat\nsprod', description: 'Environment where code should be build and deployed'),
                 booleanParam(name: 'RUN_ANSIBLE_DRY', defaultValue: true, description: 'Run Ansible in DRY run mode'),
                 booleanParam(name: 'RUN_ANSIBLE_APPLY', defaultValue: true, description: 'Run Ansible in APPLY mode'),
-                booleanParam(name: 'ROLLING_UPGRADE', defaultValue: false, description: 'Run Ansible with rolling upgrade steps'),
         ])
 ])
 
@@ -32,7 +31,6 @@ def runAnsible() {
         setupSecret()
         echo "ANSIBLE Dry run: " + params.RUN_ANSIBLE_DRY
         echo "ANSIBLE Apply run: " + params.RUN_ANSIBLE_APPLY
-        echo "Rolling upgrade: " + params.ROLLING_UPGRADE
         sh "echo 'Running Ansible Playbook for Sandbox'"
         sh "sudo apt update && sudo apt install -y ansible"
         sh "ansible --version"
@@ -46,7 +44,7 @@ def runAnsible() {
         
         sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
         
-        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV} rolling_upgrade=${params.ROLLING_UPGRADE ? "true" : "false"}' ${checkRunAnsible}"
+        sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV} ${checkRunAnsible}"
 
 }
 
