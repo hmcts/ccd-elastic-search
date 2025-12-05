@@ -5,4 +5,4 @@ elastic_search_version: "elasticsearch-7.17.28-amd64.deb"
 elastic_search_version_demo_int: "elasticsearch-7.17.29-amd64.deb"
 
 # Toggle rolling upgrade orchestration
-rolling_upgrade: true
+rolling_upgrade: false
