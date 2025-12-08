@@ -1,75 +1,73 @@
-vms = {
-  ccd-data-0 = {
-    name = "ccd-data-0"
-    ip   = "10.100.157.10"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-0-datadisk1"
-        resource_group_name = "ccd-elastic-search-sandbox"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-0-datadisk2"
-        resource_group_name = "ccd-elastic-search-sandbox"
-        disk_lun            = "1"
-      }
-    }
+# LEGACY: Commented out in favor of elastic_search_clusters
+# vms = {
+#   ccd-data-0 = {
+#     name = "ccd-data-0"
+#     ip   = "10.100.157.10"
+#     managed_disks = {
+#       disk1 = {
+#         name                = "ccd-data-0-datadisk1"
+#         resource_group_name = "ccd-elastic-search-sandbox"
+#         disk_lun            = "0"
+#       }
+#       disk2 = {
+#         name                = "ccd-data-0-datadisk2"
+#         resource_group_name = "ccd-elastic-search-sandbox"
+#         disk_lun            = "1"
+#       }
+#     }
+#   }
+#   ccd-data-1 = {
+#     name = "ccd-data-1"
+#     ip   = "10.100.157.11"
+#     managed_disks = {
+#       disk1 = {
+#         name                = "ccd-data-1-datadisk1"
+#         resource_group_name = "ccd-elastic-search-sandbox"
+#         disk_lun            = "0"
+#       }
+#       disk2 = {
+#         name                = "ccd-data-1-datadisk2"
+#         resource_group_name = "ccd-elastic-search-sandbox"
+#         disk_lun            = "1"
+#       }
+#     }
+#   }
+#   ccd-data-2 = {
+#     name = "ccd-data-2"
+#     ip   = "10.100.157.12"
+#     managed_disks = {
+#       disk1 = {
+#         name                = "ccd-data-2-datadisk1"
+#         resource_group_name = "ccd-elastic-search-sandbox"
+#         disk_lun            = "0"
+#       }
+#       disk2 = {
+#         name                = "ccd-data-2-datadisk2"
+#         resource_group_name = "ccd-elastic-search-sandbox"
+#         disk_lun            = "1"
+#       }
+#     }
+#   }
+#   ccd-data-3 = {
+#     name = "ccd-data-3"
+#     ip   = "10.100.157.13"
+#     managed_disks = {
+#       disk1 = {
+#         name                = "ccd-data-3-datadisk1"
+#         resource_group_name = "ccd-elastic-search-sandbox"
+#         disk_lun            = "0"
+#       }
+#       disk2 = {
+#         name                = "ccd-data-3-datadisk2"
+#         resource_group_name = "ccd-elastic-search-sandbox"
+#         disk_lun            = "1"
+#       }
+#     }
+#   }
+# }
 
-  }
-  ccd-data-1 = {
-    name = "ccd-data-1"
-    ip   = "10.100.157.11"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-1-datadisk1"
-        resource_group_name = "ccd-elastic-search-sandbox"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-1-datadisk2"
-        resource_group_name = "ccd-elastic-search-sandbox"
-        disk_lun            = "1"
-      }
-    }
-
-  }
-  ccd-data-2 = {
-    name = "ccd-data-2"
-    ip   = "10.100.157.12"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-2-datadisk1"
-        resource_group_name = "ccd-elastic-search-sandbox"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-2-datadisk2"
-        resource_group_name = "ccd-elastic-search-sandbox"
-        disk_lun            = "1"
-      }
-    }
-
-  }
-  ccd-data-3 = {
-    name = "ccd-data-3"
-    ip   = "10.100.157.13"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-3-datadisk1"
-        resource_group_name = "ccd-elastic-search-sandbox"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-3-datadisk2"
-        resource_group_name = "ccd-elastic-search-sandbox"
-        disk_lun            = "1"
-      }
-    }
-
-  }
-}
-
-lb_private_ip_address = "10.100.157.254"
+# LEGACY: No longer needed when using elastic_search_clusters with lb_private_ip_address per cluster
+# lb_private_ip_address = "10.100.157.254"
 
 soc_vault_name = "soc-sbox"
 
@@ -210,4 +208,33 @@ nsg_security_rules = {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+}
+
+elastic_search_clusters = {
+  default = {
+    instance_count = 4
+    name_template  = "ccd-data-%d"
+    data_disks     = 2
+    private_ip_allocation = {
+      0 = "10.100.157.10"
+      1 = "10.100.157.11"
+      2 = "10.100.157.12"
+      3 = "10.100.157.13"
+    }
+    lb_private_ip_address = "10.100.157.254"
+    storage_account_type  = "StandardSSD_LRS"
+  }
+  # Example: Add additional cluster for upgrade testing
+  # upgrade = {
+  #   instance_count = 4
+  #   name_template  = "ccd-data-upgrade-%d"
+  #   data_disks     = 2
+  #   private_ip_allocation = {
+  #     0 = "10.100.157.20"
+  #     1 = "10.100.157.21"
+  #     2 = "10.100.157.22"
+  #     3 = "10.100.157.23"
+  #   }
+  #   lb_private_ip_address = "10.100.157.253"
+  # }
 }
