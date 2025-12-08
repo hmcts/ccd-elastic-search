@@ -1,67 +1,32 @@
-- name: Download Elasticsearch {{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }} package
-  ansible.builtin.shell: |
-    wget -O "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}" \
-         "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
-  args:
-    creates: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
+- name: Show variables
+  debug:
+    msg:
+      elastic_search_version: "{{ elastic_search_version }}"
+      elastic_search_version_demo_int: "{{ elastic_search_version_demo_int }}"
+      checksum_url: "{{ checksum_url }}"
+      group_names: "{{ group_names }}"
+
+- name: Download Elasticsearch {{ elastic_search_version }} package
+  ansible.builtin.get_url:
+    url: "{{ elastic_search_url_base }}/{{ elastic_search_version }}"
+    dest: "/tmp/{{ elastic_search_version }}"
+    mode: '0644'
+    checksum: "sha512:{{ lookup('url', checksum_url).split()[0] }}"
   check_mode: no # Allow actual download even in check mode
 
-- name: Set permissions on downloaded package
-  ansible.builtin.file:
-    path: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
-    mode: '0644'
-  check_mode: no
-
-- name: Download Elasticsearch {{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }} checksum file
-  ansible.builtin.shell: |
-    wget -O "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512" \
-         "https://artifacts.elastic.co/downloads/elasticsearch/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
-  args:
-    creates: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
-  check_mode: no  # Allow download of checksum in dry-run
-
-- name: Set permissions on checksum file
-  ansible.builtin.file:
-    path: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
-    mode: '0644'
-  check_mode: no
-
-- name: Verify checksum of the downloaded package
-  ansible.builtin.shell: |
-    cd /tmp
-    sha512sum -c "{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}.sha512"
-  register: checksum_output
-  failed_when: checksum_output.rc != 0
-  when: not ansible_check_mode  # Skip during dry-run
 - name: Install Elasticsearch deb package
   ansible.builtin.apt:
-    deb: "/tmp/{{ elastic_search_version_demo_int if 'demo-int' in group_names else elastic_search_version }}"
+    deb: "/tmp/{{ elastic_search_version }}"
     state: present
   when: not ansible_check_mode  # Skip actual install during dry-run
 
 - name: Configure Elasticsearch settings
   ansible.builtin.template:
-    src: "{{ 'elasticsearch-demo-int.yml.j2' if 'demo-int' in group_names else 'elasticsearch.yml.j2' }}"
+    src: "{{ elasticsearch_config }}"
     dest: "/etc/elasticsearch/elasticsearch.yml"
     mode: '0644'
     owner: root
     group: root
-
-- name: Set JVM heap size
-  ansible.builtin.lineinfile:
-    path: "/etc/elasticsearch/jvm.options"
-    regexp: "^#?-Xms.*"
-    line: "-Xms2g"
-    state: present
-  when: not ansible_check_mode
-
-- name: Enable memory locking
-  ansible.builtin.lineinfile:
-    path: "/etc/elasticsearch/elasticsearch.yml"
-    regexp: "^#?bootstrap.memory_lock"
-    line: "bootstrap.memory_lock: true"
-    state: present
-  when: not ansible_check_mode
 
 # Create directory for systemd override
 - name: Create systemd override directory for Elasticsearch
@@ -90,9 +55,7 @@
 - name: Create custom JVM options file
   ansible.builtin.copy:
     dest: /etc/elasticsearch/jvm.options.d/custom.options
-    content: |
-      -Xms8g
-      -Xmx8g
+    content: {{ jvm_custom_options }}
     mode: '0644'
     owner: root
     group: root
@@ -150,7 +113,7 @@
 
 - name: Wait for cluster to become green
   ansible.builtin.uri:
-    url: "http://localhost:9200/_cluster/health?wait_for_status=green&timeout=300s"
+    url: "http://localhost:9200/_cluster/health"
     method: GET
   register: cluster_health
   until: cluster_health.json.status == "green"

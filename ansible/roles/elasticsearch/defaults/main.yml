@@ -1,8 +1,19 @@
 # Elasticsearch default vars
+elastic_search_url_base: "https://artifacts.elastic.co/downloads/elasticsearch"
 elastic_search_version: "elasticsearch-7.17.28-amd64.deb"
+checksum_url: "{{ elastic_search_url_base }}/{{ elastic_search_version }}.sha512"
+elasticsearch_config: "elasticsearch.yml.j2"
 
-# Demo-int specific version
+# Demo_int specific version
 elastic_search_version_demo_int: "elasticsearch-7.17.29-amd64.deb"
+elasticsearch_config_demo_int: "elasticsearch-demo-int.yml.j2"
+
 
 # Toggle rolling upgrade orchestration
 rolling_upgrade: false
+
+
+# Custom JVM options
+jvm_custom_options: |
+  -Xms8g
+  -Xmx8g
