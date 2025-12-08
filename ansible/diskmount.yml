@@ -152,7 +152,7 @@
       group:
         name: elasticsearch
         state: present
-      when: "'demo-int' in group_names"
+      when: "'demo_int' in group_names"
 
     - name: Create elasticsearch user
       user:
@@ -163,7 +163,7 @@
         home: /usr/share/elasticsearch
         createhome: no
         state: present
-      when: "'demo-int' in group_names"
+      when: "'demo_int' in group_names"
 
     - name: Set ownership to elasticsearch
       file:

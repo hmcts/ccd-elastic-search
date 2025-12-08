@@ -66,9 +66,9 @@ def runAnsible() {
             /tmp/ansible6-venv/bin/ansible --version
 
             # Run demo-int with Ansible 6.x
-            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible6-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo-int ${checkRunAnsible}
+            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible6-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo_int ${checkRunAnsible}
 
-            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible6-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo-int --extra-vars 'elastic_clustername=ccd-elastic-search-demo-int rolling_upgrade=${params.ROLLING_UPGRADE ? "true" : "false"}' ${checkRunAnsible}
+            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible6-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo_int --extra-vars 'elastic_clustername=ccd-elastic-search-demo-int rolling_upgrade=${params.ROLLING_UPGRADE ? "true" : "false"}' ${checkRunAnsible}
 
             # Cleanup
             rm -rf /tmp/ansible6-venv
