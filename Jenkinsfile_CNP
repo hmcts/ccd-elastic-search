@@ -11,7 +11,6 @@ properties([
                 booleanParam(name: 'DEPLOY_ES_CLUSTER', defaultValue: false, description: 'Select to deploy ElasticSearch'),
                 booleanParam(name: 'RUN_ANSIBLE_DRY', defaultValue: false, description: 'Run Ansible in DRY run mode'),
                 booleanParam(name: 'RUN_ANSIBLE_APPLY', defaultValue: false, description: 'Run Ansible in APPLY mode'),
-                booleanParam(name: 'ROLLING_UPGRADE', defaultValue: false, description: 'Run Ansible with rolling upgrade steps (demo-int only)'),
         ])
 ])
 
@@ -33,7 +32,6 @@ def runAnsible() {
     setupSecret()
     echo "ANSIBLE Dry run: " + params.RUN_ANSIBLE_DRY
     echo "ANSIBLE Apply run: " + params.RUN_ANSIBLE_APPLY
-    echo "Rolling upgrade (demo-int only): " + params.ROLLING_UPGRADE
     sh "echo 'Running Ansible Playbook for Sandbox'"
 
     // Install regular Ansible for normal environments
@@ -47,13 +45,11 @@ def runAnsible() {
     if (params.RUN_ANSIBLE_APPLY == true) {
         checkRunAnsible = ""
     }
-    def rollingUpgradeDemoInt = params.ROLLING_UPGRADE ? "true" : "false"
 
     // Run regular demo environment with standard Ansible
-    // Temporarily disabled to save time during demo-int builds
-    // sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
+    sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
 
-    // sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
+    sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
 
     // For demo-int only: use Ansible 2.9 with Python 3.9 in virtualenv (supports Python 3.5 targets)
     if (env.ENV == 'demo' && readFile("${WORKSPACE}/demo.tfvars").contains('enable_demo_int = true')) {
@@ -70,7 +66,7 @@ def runAnsible() {
             # Run demo-int with Ansible 2.9
             ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible29-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo-int ${checkRunAnsible}
 
-            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible6-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo-int --extra-vars 'elastic_clustername=ccd-elastic-search-demo-int rolling_upgrade=${rollingUpgradeDemoInt}' ${checkRunAnsible}
+            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible29-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo-int --extra-vars 'elastic_clustername=ccd-elastic-search-demo-int' ${checkRunAnsible}
 
             # Cleanup
             rm -rf /tmp/ansible29-venv
@@ -87,17 +83,21 @@ static Map<String, Object> secret(String secretName, String envVariable) {
   ]
 }
 
+// Set environment filter based on target branch (for PRs) or current branch
 def environmentsToRun = null
-if (env.BRANCH_NAME) {
-  if (env.BRANCH_NAME == 'master') {
+def targetBranch = env.CHANGE_TARGET ?: env.BRANCH_NAME // CHANGE_TARGET is set for PRs
+
+if (targetBranch) {
+  if (targetBranch == 'master') {
     environmentsToRun = 'aat,prod'
-  } else if (env.BRANCH_NAME == 'demo') {
+  } else if (targetBranch == 'demo') {
     environmentsToRun = 'demo'
-  } else if (env.BRANCH_NAME == 'perftest') {
+  } else if (targetBranch == 'perftest') {
     environmentsToRun = 'perftest'
-  } else if (env.BRANCH_NAME == 'ithc') {
+  } else if (targetBranch == 'ithc') {
     environmentsToRun = 'ithc'
   } else {
+    // Fallback to AAT for unknown branches
     environmentsToRun = 'aat'
   }
 }
