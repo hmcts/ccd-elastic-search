@@ -87,22 +87,22 @@ static Map<String, Object> secret(String secretName, String envVariable) {
   ]
 }
 
-withInfraPipeline(params.PRODUCT_NAME, null, !params.DEPLOY_ES_CLUSTER) {
-
-  if (env.BRANCH_NAME) {
-    if (env.BRANCH_NAME == 'master') {
-      enablePlanOnly('aat', 'prod')
-    } else if (env.BRANCH_NAME == 'demo') {
-      enablePlanOnly('demo')
-    } else if (env.BRANCH_NAME == 'perftest') {
-      enablePlanOnly('perftest')
-    } else if (env.BRANCH_NAME == 'ithc') {
-      enablePlanOnly('ithc')
-    } else {
-      enablePlanOnly('aat')
-    }
+def environmentsToRun = null
+if (env.BRANCH_NAME) {
+  if (env.BRANCH_NAME == 'master') {
+    environmentsToRun = 'aat,prod'
+  } else if (env.BRANCH_NAME == 'demo') {
+    environmentsToRun = 'demo'
+  } else if (env.BRANCH_NAME == 'perftest') {
+    environmentsToRun = 'perftest'
+  } else if (env.BRANCH_NAME == 'ithc') {
+    environmentsToRun = 'ithc'
+  } else {
+    environmentsToRun = 'aat'
   }
+}
 
+withInfraPipeline(params.PRODUCT_NAME, environmentsToRun, !params.DEPLOY_ES_CLUSTER) {
   onMaster {
     enableSlackNotifications('#ccd-master-builds')
   }
