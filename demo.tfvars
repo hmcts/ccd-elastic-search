@@ -113,7 +113,7 @@ nsg_security_rules = {
   },
   LB_To_ES = {
     name                                       = "LB_To_ES"
-    description                                = "Allows ElasticSeach queries from the LoadBalancer.  Needed for LoadBalancer healthchecks."
+    description                                = "Allows ElasticSearch queries from the LoadBalancer.  Needed for LoadBalancer healthchecks."
     priority                                   = 160
     direction                                  = "Inbound"
     access                                     = "Allow"
@@ -180,7 +180,7 @@ nsg_security_rules = {
   },
   Bastion_To_VMs = {
     name                       = "Bastion_To_VMs"
-    description                = "Allow Bastion SSH access overridding templates broad SSH access"
+    description                = "Allow Bastion SSH access overriding templates broad SSH access"
     priority                   = 230
     direction                  = "Inbound"
     access                     = "Allow"
