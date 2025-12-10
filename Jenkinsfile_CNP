@@ -8,7 +8,7 @@ import uk.gov.hmcts.contino.azure.KeyVault
 properties([
         parameters([
                 string(name: 'PRODUCT_NAME', defaultValue: 'ccd-elastic-search', description: ''),
-                booleanParam(name: 'DEPLOY_ES_CLUSTER', defaultValue: false, description: 'Select to deploy ElasticSearch'),
+                booleanParam(name: 'DEPLOY_ES_CLUSTER', defaultValue: false, description: 'Select to deploy ElasticSearch (if false, will run plan only)'),
                 booleanParam(name: 'RUN_ANSIBLE_DRY', defaultValue: false, description: 'Run Ansible in DRY run mode'),
                 booleanParam(name: 'RUN_ANSIBLE_APPLY', defaultValue: false, description: 'Run Ansible in APPLY mode'),
         ])
@@ -83,39 +83,7 @@ static Map<String, Object> secret(String secretName, String envVariable) {
   ]
 }
 
-// Set environment filter based on target branch (for PRs) or current branch
-def targetBranch = env.CHANGE_TARGET ?: env.BRANCH_NAME // CHANGE_TARGET is set for PRs
-
-echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
-echo "BRANCH_NAME: ${env.BRANCH_NAME}"
-echo "Target branch determined as: ${targetBranch}"
-
-// Set environment variable for the library to use
-env.DEPLOY_ENV = targetBranch
-
 withInfraPipeline(params.PRODUCT_NAME, null, !params.DEPLOY_ES_CLUSTER) {
-
-  // Use overrideStageCondition to skip stages that don't match the target branch
-  overrideStageCondition('buildinfra:aat') {
-    targetBranch == 'master' || targetBranch == 'aat'
-  }
-
-  overrideStageCondition('buildinfra:prod') {
-    targetBranch == 'master'
-  }
-
-  overrideStageCondition('buildinfra:demo') {
-    targetBranch == 'demo'
-  }
-
-  overrideStageCondition('buildinfra:perftest') {
-    targetBranch == 'perftest'
-  }
-
-  overrideStageCondition('buildinfra:ithc') {
-    targetBranch == 'ithc'
-  }
-
   onMaster {
     enableSlackNotifications('#ccd-master-builds')
   }
