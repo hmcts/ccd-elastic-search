@@ -61,9 +61,10 @@ locals {
   use_new_structure = length(var.elastic_search_clusters) > 0
 }
 
-# Legacy module for environments still using vms variable (e.g., AAT)
-module "elastic2_legacy" {
-  for_each = local.use_new_structure ? {} : var.vms
+# ORIGINAL module for environments using vms variable (e.g., AAT, prod, demo, perftest)
+# Keep this as-is to avoid state file moves
+module "elastic2" {
+  for_each = length(var.elastic_search_clusters) > 0 ? {} : var.vms
 
   providers = {
     azurerm     = azurerm
@@ -96,8 +97,8 @@ module "elastic2_legacy" {
   ipconfig_name                = var.ipconfig_name
 }
 
-# New module for environments using elastic_search_clusters (e.g., ITHC)
-module "elastic2" {
+# NEW module for environments using elastic_search_clusters (e.g., ITHC)
+module "elastic2_cluster" {
   for_each = local.use_new_structure ? local.flattened_vms : {}
 
   providers = {
