@@ -95,6 +95,9 @@ if (shouldRunPipeline) {
        onDemo {
            enableSlackNotifications('#ccd-demo-builds')
        }
+       onIthc {
+           echo 'Running new elastic_search_clusters configuration on ITHC'
+       }
 
 
 

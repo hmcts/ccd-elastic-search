@@ -81,8 +81,19 @@ data "azurerm_monitor_data_collection_rule" "linux_data_collection_rule" {
   resource_group_name = data.azurerm_resource_group.la_rg.name
 }
 
+# Data collection rule association for legacy VMs (AAT, etc.)
+resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra_legacy" {
+  for_each = local.use_new_structure ? {} : var.vms
+
+  name                    = "vm-${each.value.name}-${var.env}-dcra"
+  target_resource_id      = module.elastic2_legacy[each.key].vm_id
+  data_collection_rule_id = data.azurerm_monitor_data_collection_rule.linux_data_collection_rule.id
+  description             = "Association between the ELK linux VMs and the appropriate data collection rule."
+}
+
+# Data collection rule association for new cluster-based VMs (ITHC, etc.)
 resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra" {
-  for_each = local.all_vms
+  for_each = local.use_new_structure ? local.flattened_vms : {}
 
   name                    = "vm-${each.value.name}-${var.env}-dcra"
   target_resource_id      = module.elastic2[each.key].vm_id
