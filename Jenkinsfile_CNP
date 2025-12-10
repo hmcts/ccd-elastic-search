@@ -84,7 +84,8 @@ static Map<String, Object> secret(String secretName, String envVariable) {
   ]
 }
 
-def shouldRunPipeline = env.CHANGE_ID || params.DEPLOY_ES_CLUSTER == true
+// Run pipeline if: PR (auto-plan) OR DEPLOY_ES_CLUSTER is checked OR PLAN_ONLY is checked
+def shouldRunPipeline = env.CHANGE_ID || params.DEPLOY_ES_CLUSTER == true || params.PLAN_ONLY == true
 
 if (shouldRunPipeline) {
    withInfraPipeline(params.PRODUCT_NAME, null, params.PLAN_ONLY) {
