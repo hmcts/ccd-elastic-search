@@ -1,5 +1,5 @@
 #!groovy
-@Library("Infrastructure") _
+@Library("Infrastructure@allow-plan-only") _
 
 import uk.gov.hmcts.contino.Environment
 import uk.gov.hmcts.contino.HealthChecker
@@ -9,7 +9,7 @@ properties([
         parameters([
                 string(name: 'PRODUCT_NAME', defaultValue: 'ccd-elastic-search', description: ''),
                 booleanParam(name: 'DEPLOY_ES_CLUSTER', defaultValue: false, description: 'Select to deploy ElasticSearch'),
-                booleanParam(name: 'PLAN_ONLY', defaultValue: false, description: 'Run Terraform plan only without deploying'),
+                booleanParam(name: 'PLAN_ONLY', defaultValue: false, description: 'Run Terraform plan only (no apply)'),
                 booleanParam(name: 'RUN_ANSIBLE_DRY', defaultValue: false, description: 'Run Ansible in DRY run mode'),
                 booleanParam(name: 'RUN_ANSIBLE_APPLY', defaultValue: false, description: 'Run Ansible in APPLY mode'),
         ])
@@ -84,11 +84,18 @@ static Map<String, Object> secret(String secretName, String envVariable) {
   ]
 }
 
-// Determine if we should skip apply (plan only mode)
+// Determine plan-only mode and which environments to run
 def planOnly = params.PLAN_ONLY || !params.DEPLOY_ES_CLUSTER
 
 if (params.DEPLOY_ES_CLUSTER == true || params.PLAN_ONLY == true) {
    withInfraPipeline(params.PRODUCT_NAME, null, planOnly) {
+
+     onPR {
+       // For PRs, only run plan on the target branch environment
+       def targetEnv = env.CHANGE_TARGET ?: 'aat'
+       echo "PR detected - will only plan ${targetEnv}"
+     }
+
      onMaster {
            enableSlackNotifications('#ccd-master-builds')
        }
