@@ -90,7 +90,49 @@ echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
 echo "BRANCH_NAME: ${env.BRANCH_NAME}"
 echo "Target branch determined as: ${targetBranch}"
 
-withInfraPipeline(params.PRODUCT_NAME, targetBranch, !params.DEPLOY_ES_CLUSTER) {
+withInfraPipeline(params.PRODUCT_NAME, null, !params.DEPLOY_ES_CLUSTER) {
+
+  // Skip stages that don't match the target branch
+  before('buildinfra:aat') {
+    if (targetBranch != 'master' && targetBranch != 'aat') {
+      echo "Skipping AAT - target branch is ${targetBranch}"
+      currentBuild.result = 'NOT_BUILT'
+      error("Skipping AAT build for ${targetBranch}")
+    }
+  }
+
+  before('buildinfra:prod') {
+    if (targetBranch != 'master') {
+      echo "Skipping prod - target branch is ${targetBranch}"
+      currentBuild.result = 'NOT_BUILT'
+      error("Skipping prod build for ${targetBranch}")
+    }
+  }
+
+  before('buildinfra:demo') {
+    if (targetBranch != 'demo') {
+      echo "Skipping demo - target branch is ${targetBranch}"
+      currentBuild.result = 'NOT_BUILT'
+      error("Skipping demo build for ${targetBranch}")
+    }
+  }
+
+  before('buildinfra:perftest') {
+    if (targetBranch != 'perftest') {
+      echo "Skipping perftest - target branch is ${targetBranch}"
+      currentBuild.result = 'NOT_BUILT'
+      error("Skipping perftest build for ${targetBranch}")
+    }
+  }
+
+  before('buildinfra:ithc') {
+    if (targetBranch != 'ithc') {
+      echo "Skipping ithc - target branch is ${targetBranch}"
+      currentBuild.result = 'NOT_BUILT'
+      error("Skipping ithc build for ${targetBranch}")
+    }
+  }
+
   onMaster {
     enableSlackNotifications('#ccd-master-builds')
   }
