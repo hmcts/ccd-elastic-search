@@ -99,6 +99,11 @@ if (params.DEPLOY_ES_CLUSTER == true || params.PLAN_ONLY == true) {
 
    withInfraPipeline(params.PRODUCT_NAME, null, planOnly) {
 
+     // Suppress default environments - only use what we explicitly enable
+     onNonPR {
+       // Don't run anything by default on non-PR builds unless explicitly enabled below
+     }
+
      // Include callbacks based on target branch to control which environments run
      if (targetBranch == 'master') {
        onMaster {
@@ -123,8 +128,6 @@ if (params.DEPLOY_ES_CLUSTER == true || params.PLAN_ONLY == true) {
          echo 'Running ithc'
        }
      }
-
-
 
        // TODO: Healthcheck per env
 //        afterAlways('buildinfra:aat') {
