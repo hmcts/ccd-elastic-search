@@ -84,18 +84,15 @@ static Map<String, Object> secret(String secretName, String envVariable) {
   ]
 }
 
-// Determine plan-only mode and which environments to run
+// Determine plan-only mode
 def planOnly = params.PLAN_ONLY || !params.DEPLOY_ES_CLUSTER
 
+// Run pipeline if deploying or plan-only requested
 if (params.DEPLOY_ES_CLUSTER == true || params.PLAN_ONLY == true) {
+
+   echo "Running pipeline - DEPLOY_ES_CLUSTER: ${params.DEPLOY_ES_CLUSTER}, PLAN_ONLY: ${params.PLAN_ONLY}, planOnly mode: ${planOnly}"
+
    withInfraPipeline(params.PRODUCT_NAME, null, planOnly) {
-
-     onPR {
-       // For PRs, only run plan on the target branch environment
-       def targetEnv = env.CHANGE_TARGET ?: 'aat'
-       echo "PR detected - will only plan ${targetEnv}"
-     }
-
      onMaster {
            enableSlackNotifications('#ccd-master-builds')
        }
