@@ -87,18 +87,42 @@ static Map<String, Object> secret(String secretName, String envVariable) {
 // Determine plan-only mode
 def planOnly = params.PLAN_ONLY || !params.DEPLOY_ES_CLUSTER
 
+// Determine target branch (for PRs) or current branch
+def targetBranch = env.CHANGE_TARGET ?: env.BRANCH_NAME
+
+echo "Target branch: ${targetBranch}"
+
 // Run pipeline if deploying or plan-only requested
 if (params.DEPLOY_ES_CLUSTER == true || params.PLAN_ONLY == true) {
 
    echo "Running pipeline - DEPLOY_ES_CLUSTER: ${params.DEPLOY_ES_CLUSTER}, PLAN_ONLY: ${params.PLAN_ONLY}, planOnly mode: ${planOnly}"
 
    withInfraPipeline(params.PRODUCT_NAME, null, planOnly) {
-     onMaster {
-           enableSlackNotifications('#ccd-master-builds')
+
+     // Include callbacks based on target branch to control which environments run
+     if (targetBranch == 'master') {
+       onMaster {
+         enableSlackNotifications('#ccd-master-builds')
        }
+     }
+
+     if (targetBranch == 'demo') {
        onDemo {
-           enableSlackNotifications('#ccd-demo-builds')
+         enableSlackNotifications('#ccd-demo-builds')
        }
+     }
+
+     if (targetBranch == 'perftest') {
+       onPerftest {
+         echo 'Running perftest'
+       }
+     }
+
+     if (targetBranch == 'ithc') {
+       onIthc {
+         echo 'Running ithc'
+       }
+     }
 
 
 
