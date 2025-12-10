@@ -90,47 +90,30 @@ echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
 echo "BRANCH_NAME: ${env.BRANCH_NAME}"
 echo "Target branch determined as: ${targetBranch}"
 
+// Set environment variable for the library to use
+env.DEPLOY_ENV = targetBranch
+
 withInfraPipeline(params.PRODUCT_NAME, null, !params.DEPLOY_ES_CLUSTER) {
 
-  // Skip stages that don't match the target branch
-  before('buildinfra:aat') {
-    if (targetBranch != 'master' && targetBranch != 'aat') {
-      echo "Skipping AAT - target branch is ${targetBranch}"
-      currentBuild.result = 'NOT_BUILT'
-      error("Skipping AAT build for ${targetBranch}")
-    }
+  // Use overrideStageCondition to skip stages that don't match the target branch
+  overrideStageCondition('buildinfra:aat') {
+    targetBranch == 'master' || targetBranch == 'aat'
   }
 
-  before('buildinfra:prod') {
-    if (targetBranch != 'master') {
-      echo "Skipping prod - target branch is ${targetBranch}"
-      currentBuild.result = 'NOT_BUILT'
-      error("Skipping prod build for ${targetBranch}")
-    }
+  overrideStageCondition('buildinfra:prod') {
+    targetBranch == 'master'
   }
 
-  before('buildinfra:demo') {
-    if (targetBranch != 'demo') {
-      echo "Skipping demo - target branch is ${targetBranch}"
-      currentBuild.result = 'NOT_BUILT'
-      error("Skipping demo build for ${targetBranch}")
-    }
+  overrideStageCondition('buildinfra:demo') {
+    targetBranch == 'demo'
   }
 
-  before('buildinfra:perftest') {
-    if (targetBranch != 'perftest') {
-      echo "Skipping perftest - target branch is ${targetBranch}"
-      currentBuild.result = 'NOT_BUILT'
-      error("Skipping perftest build for ${targetBranch}")
-    }
+  overrideStageCondition('buildinfra:perftest') {
+    targetBranch == 'perftest'
   }
 
-  before('buildinfra:ithc') {
-    if (targetBranch != 'ithc') {
-      echo "Skipping ithc - target branch is ${targetBranch}"
-      currentBuild.result = 'NOT_BUILT'
-      error("Skipping ithc build for ${targetBranch}")
-    }
+  overrideStageCondition('buildinfra:ithc') {
+    targetBranch == 'ithc'
   }
 
   onMaster {
