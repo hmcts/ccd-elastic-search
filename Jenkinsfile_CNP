@@ -84,25 +84,13 @@ static Map<String, Object> secret(String secretName, String envVariable) {
 }
 
 // Set environment filter based on target branch (for PRs) or current branch
-def environmentsToRun = null
 def targetBranch = env.CHANGE_TARGET ?: env.BRANCH_NAME // CHANGE_TARGET is set for PRs
 
-if (targetBranch) {
-  if (targetBranch == 'master') {
-    environmentsToRun = 'aat,prod'
-  } else if (targetBranch == 'demo') {
-    environmentsToRun = 'demo'
-  } else if (targetBranch == 'perftest') {
-    environmentsToRun = 'perftest'
-  } else if (targetBranch == 'ithc') {
-    environmentsToRun = 'ithc'
-  } else {
-    // Fallback to AAT for unknown branches
-    environmentsToRun = 'aat'
-  }
-}
+echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
+echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+echo "Target branch determined as: ${targetBranch}"
 
-withInfraPipeline(params.PRODUCT_NAME, environmentsToRun, !params.DEPLOY_ES_CLUSTER) {
+withInfraPipeline(params.PRODUCT_NAME, targetBranch, !params.DEPLOY_ES_CLUSTER) {
   onMaster {
     enableSlackNotifications('#ccd-master-builds')
   }
