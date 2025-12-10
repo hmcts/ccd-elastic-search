@@ -84,8 +84,10 @@ static Map<String, Object> secret(String secretName, String envVariable) {
   ]
 }
 
-if (params.DEPLOY_ES_CLUSTER == true) {
-   withInfraPipeline(params.PRODUCT_NAME, params.PLAN_ONLY) {
+def shouldRunPipeline = env.CHANGE_ID || params.DEPLOY_ES_CLUSTER == true
+
+if (shouldRunPipeline) {
+   withInfraPipeline(params.PRODUCT_NAME, null, params.PLAN_ONLY) {
      onMaster {
            enableSlackNotifications('#ccd-master-builds')
        }
