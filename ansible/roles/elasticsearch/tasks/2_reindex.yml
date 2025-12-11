@@ -1,0 +1,107 @@
+- name: Get all indices
+  uri:
+    url: "{{ es_url }}/_cat/indices?expand_wildcards=all&h=index&format=json"
+  register: index_list
+
+
+- name: Extract index names
+  set_fact:
+    all_indices: "{{ index_list.json | map(attribute='index') | list }}"
+
+
+- name: Initialise index lists
+  set_fact:
+    system_indices: []
+    user_indices: []
+
+
+- name: Find sytem indices
+  set_fact:
+    system_indices: "{{ system_indices + [ idx ] }}"
+  loop: "{{ all_indices | product(system_index_patterns) | list }}"
+  loop_control:
+    label: "{{ idx }} against {{ pat }}"
+  vars:
+    idx: "{{ item.0 }}"
+    pat: "{{ item.1 }}"
+  when: idx.startswith(pat)
+
+
+- name: Deduplicate system_indices
+  set_fact:
+    system_indices: "{{ system_indices | unique }}"
+
+
+- name: Build user indices list
+  set_fact:
+    user_indices: "{{ user_indices + [ item ] }}"
+  loop: "{{ all_indices }}"
+  when:
+    - item not in system_indices
+
+
+- name: Show discovered indices
+  debug:
+    msg:
+      system_indices: "{{ system_indices }}"
+      user_indices: "{{ user_indices }}"
+
+
+- name: Process each user index one by one
+  include_tasks: process_index.yml
+  loop: "{{ user_indices }}"
+  loop_control:
+    loop_var: index_name
+    label: "Processing -> {{ index_name }}"
+
+
+- name: Get DS indices
+  uri:
+    url: "{{ es_url }}/_cat/indices/.ds-*?h=index"
+    method: GET
+    return_content: yes
+  register: ds_indices
+
+
+- name: Parse DS into parent indices
+  set_fact:
+    ds_streams: "{{ ds_indices.content.split('\n')
+                    | reject('equalto', '')
+                    | map('regex_replace', '^\\.ds-', '')
+                    | map('regex_replace', '-[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}-[0-9]+$', '')
+                    | list }}"
+
+
+- name: Rollover DS streams
+  uri:
+    url: "{{ es_url }}/{{ item }}/_rollover"
+    method: POST
+  loop: "{{ ds_streams }}"
+  loop_control:
+    label: "Rolling over DS - {{ item }}"
+
+
+- name: Apply write block to system indices (freeze for upgrade)
+  uri:
+    url: "{{ es_url }}/{{ item }}/_block/write"
+    method: PUT
+    status_code: [200]
+  loop: "{{ system_indices }}"
+  loop_control:
+    label: "{{ item }}"
+  register: system_write_blocks
+
+
+- name: Verify write block on system indices
+  uri:
+    url: "{{ es_url }}/{{ item }}/_settings?include_defaults=false"
+  loop: "{{ system_indices }}"
+  register: verify_system_blocks
+
+
+- name: Report system index freeze status
+  debug:
+    msg: >
+      System index {{ item.item }} write-block:
+      {{ item.json[item.item].settings.index.blocks.write | default('false') }}
+  loop: "{{ verify_system_blocks.results }}"

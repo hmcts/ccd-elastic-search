@@ -2,9 +2,11 @@
   debug:
     msg:
       elastic_search_version: "{{ elastic_search_version }}"
-      elastic_search_version_demo_int: "{{ elastic_search_version_demo_int }}"
       checksum_url: "{{ checksum_url }}"
-      group_names: "{{ group_names }}"
+      group_name: "{{ group_names[0] }}"
+      jvm_custom_options: "{{ jvm_custom_options }}"
+      rolling_upgrade: "{{ rolling_upgrade }}"
+
 
 - name: Download Elasticsearch {{ elastic_search_version }} package
   ansible.builtin.get_url:
@@ -14,11 +16,6 @@
     checksum: "sha512:{{ lookup('url', checksum_url).split()[0] }}"
   check_mode: no # Allow actual download even in check mode
 
-- name: Install Elasticsearch deb package
-  ansible.builtin.apt:
-    deb: "/tmp/{{ elastic_search_version }}"
-    state: present
-  when: not ansible_check_mode  # Skip actual install during dry-run
 
 - name: Configure Elasticsearch settings
   ansible.builtin.template:
@@ -28,7 +25,7 @@
     owner: root
     group: root
 
-# Create directory for systemd override
+
 - name: Create systemd override directory for Elasticsearch
   ansible.builtin.file:
     path: /etc/systemd/system/elasticsearch.service.d
@@ -36,22 +33,14 @@
     mode: '0755'
   when: not ansible_check_mode
 
-# Create systemd override file
+
 - name: Set LimitMEMLOCK in systemd override
   ansible.builtin.copy:
     dest: /etc/systemd/system/elasticsearch.service.d/override.conf
-    content: |
-      [Service]
-      LimitMEMLOCK=infinity
+    content: "{{ service_override }}"
     mode: '0644'
 
-# Reload systemd to apply override
-- name: Reload systemd daemon
-  ansible.builtin.systemd:
-    daemon_reload: yes
-  when: not ansible_check_mode
 
-# Create custom JVM options file
 - name: Create custom JVM options file
   ansible.builtin.copy:
     dest: /etc/elasticsearch/jvm.options.d/custom.options
@@ -61,6 +50,7 @@
     group: root
   when: not ansible_check_mode
 
+
 - name: Disable shard allocation
   ansible.builtin.uri:
     url: "http://localhost:9200/_cluster/settings"
@@ -68,10 +58,12 @@
     body_format: json
     body:
       persistent:
-        cluster.routing.allocation.enable: "none"
+        cluster.routing.allocation.enable: "primaries"
   when:
     - rolling_upgrade | bool
     - not ansible_check_mode
+    - inventory_hostname == groups[group_names[0]] | first
+
 
 - name: Attempt synced flush
   ansible.builtin.uri:
@@ -83,13 +75,37 @@
   when:
     - rolling_upgrade | bool
     - not ansible_check_mode
+    - inventory_hostname == groups[group_names[0]] | first
+
+
+- name: Stop Elasticsearch for upgrade
+  ansible.builtin.systemd:
+    name: elasticsearch
+    state: stopped
+    enabled: yes
+  when: not ansible_check_mode  # Skip actual restart during dry-run
+
+
+- name: Install Elasticsearch deb package
+  ansible.builtin.apt:
+    deb: "/tmp/{{ elastic_search_version }}"
+    state: present
+  when: not ansible_check_mode  # Skip actual install during dry-run
+
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  when: not ansible_check_mode
+
 
 - name: Restart Elasticsearch to apply changes
   ansible.builtin.systemd:
     name: elasticsearch
-    state: restarted
+    state: started
     enabled: yes
   when: not ansible_check_mode  # Skip actual restart during dry-run
+
 
 - name: Wait for Elasticsearch service after restart
   ansible.builtin.wait_for:
@@ -99,6 +115,7 @@
     timeout: 300
   when: not ansible_check_mode
 
+
 - name: Re-enable shard allocation
   ansible.builtin.uri:
     url: "http://localhost:9200/_cluster/settings"
@@ -106,10 +123,13 @@
     body_format: json
     body:
       persistent:
-        cluster.routing.allocation.enable: "all"
+        cluster.routing.allocation.enable: null
+    timeout: 300
   when:
     - rolling_upgrade | bool
     - not ansible_check_mode
+    - inventory_hostname == groups[group_names[0]] | last
+
 
 - name: Wait for cluster to become green
   ansible.builtin.uri:
@@ -118,7 +138,8 @@
   register: cluster_health
   until: cluster_health.json.status == "green"
   retries: 30
-  delay: 10
+  delay: 20
   when:
     - rolling_upgrade | bool
     - not ansible_check_mode
+    - inventory_hostname == groups[group_names[0]] | last
