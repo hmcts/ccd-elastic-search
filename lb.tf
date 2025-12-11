@@ -36,8 +36,8 @@ module "load_balancers" {
   resource_group_name = each.value.resource_group_name
   subnet_id           = data.azurerm_subnet.elastic-subnet.id
   ip_address          = each.value.lb_private_ip_address
-  frontend_name       = "LBFE-${upper(each.key)}"
-  backend_name        = "LBBE-${upper(each.key)}"
+  frontend_name       = "LBFE"
+  backend_name        = "LBBE"
   vms                 = each.value.vms
   virtual_network_id  = data.azurerm_virtual_network.core_infra_vnet.id
   ports               = local.lb_ports

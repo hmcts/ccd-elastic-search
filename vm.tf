@@ -6,7 +6,7 @@ locals {
   flattened_vms = merge([
     for cluster_key, cluster in var.elastic_search_clusters : {
       for instance_idx in range(cluster.instance_count) :
-      "${cluster_key}-${instance_idx}" => {
+      format(cluster.name_template, instance_idx) => {
         cluster_key         = cluster_key
         instance_idx        = instance_idx
         name                = format(cluster.name_template, instance_idx)
@@ -49,7 +49,8 @@ locals {
   cluster_load_balancers = {
     for cluster_key, cluster in var.elastic_search_clusters :
     cluster_key => {
-      name                  = "ccd-internal-${var.env}-${cluster_key}-lb"
+      # Keep legacy name format when cluster_key is "default" for backward compatibility
+      name                  = cluster_key == "default" ? "ccd-internal-${var.env}-lb" : "ccd-internal-${var.env}-${cluster_key}-lb"
       resource_group_name   = coalesce(cluster.resource_group_name, "ccd-elastic-search-${var.env}")
       lb_private_ip_address = cluster.lb_private_ip_address
       vms                   = local.vms_by_cluster[cluster_key]

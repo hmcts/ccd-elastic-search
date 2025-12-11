@@ -6,10 +6,18 @@ resource "azurerm_application_security_group" "this" {
 }
 
 resource "azurerm_network_interface_application_security_group_association" "this" {
-
-  for_each = var.vms
+  # Legacy: for environments using vms variable (e.g., AAT, prod, demo, perftest)
+  for_each = length(var.elastic_search_clusters) > 0 ? {} : var.vms
 
   network_interface_id          = module.elastic2[each.key].nic_id
+  application_security_group_id = azurerm_application_security_group.this.id
+}
+
+resource "azurerm_network_interface_application_security_group_association" "this_cluster" {
+  # New cluster-based: for environments using elastic_search_clusters variable (e.g., ITHC)
+  for_each = local.use_new_structure ? local.flattened_vms : {}
+
+  network_interface_id          = module.elastic2_cluster[each.key].nic_id
   application_security_group_id = azurerm_application_security_group.this.id
 }
 
@@ -54,10 +62,18 @@ resource "azurerm_network_security_rule" "nsg_rules" {
 }
 
 resource "azurerm_network_interface_security_group_association" "association" {
-
-  for_each = var.vms
+  # Legacy: for environments using vms variable (e.g., AAT, prod, demo, perftest)
+  for_each = length(var.elastic_search_clusters) > 0 ? {} : var.vms
 
   network_interface_id      = module.elastic2[each.key].nic_id
+  network_security_group_id = azurerm_network_security_group.nsg_group.id
+}
+
+resource "azurerm_network_interface_security_group_association" "association_cluster" {
+  # New cluster-based: for environments using elastic_search_clusters variable (e.g., ITHC)
+  for_each = local.use_new_structure ? local.flattened_vms : {}
+
+  network_interface_id      = module.elastic2_cluster[each.key].nic_id
   network_security_group_id = azurerm_network_security_group.nsg_group.id
 }
 

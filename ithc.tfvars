@@ -25,9 +25,34 @@ elastic_search_clusters = {
       2 = "10.112.53.6"
       3 = "10.112.53.7"
     }
-    lb_private_ip_address = "10.112.53.254"
+    lb_private_ip_address = "10.112.53.252"
     storage_account_type  = "StandardSSD_LRS"
   }
+  upgrade = {
+    instance_count = 4
+    name_template  = "ccd-data-upgrade-%d"
+    data_disks     = 2
+    private_ip_allocation = {
+      0 = "10.112.53.100"
+      1 = "10.112.53.101"
+      2 = "10.112.53.102"
+      3 = "10.112.53.103"
+    }
+    lb_private_ip_address = "10.112.53.253"
+  }
+  # Example: Add additional cluster for upgrade testing
+  # upgrade = {
+  #   instance_count = 4
+  #   name_template  = "ccd-data-upgrade-%d"
+  #   data_disks     = 2
+  #   private_ip_allocation = {
+  #     0 = "10.100.157.20"
+  #     1 = "10.100.157.21"
+  #     2 = "10.100.157.22"
+  #     3 = "10.100.157.23"
+  #   }
+  #   lb_private_ip_address = "10.100.157.253"
+  # }
 }
 # vms = {
 #   ccd-data-0 = {
