@@ -26,3 +26,25 @@ jvm_custom_options: |
 service_override: |
   [Service]
   LimitMEMLOCK=infinity
+
+
+system_index_patterns:
+  - ".ds-"
+  - ".logstash"
+  - ".kibana"
+  - ".security"
+  - ".fleet"
+  - ".monitoring"
+  - ".watches"
+  - ".tasks"
+  - ".alerts"
+  - ".transform"
+  - ".ml-"
+  - ".geoip"
+
+# Suffix to append to cloned indices
+clone_suffix: "-v7"
+# Optimise user indices after reindex
+do_forcemerge: true
+# Whether to delete cloned indices after reindex
+delete_clones: true
