@@ -5,7 +5,7 @@ checksum_url: "{{ elastic_search_url_base }}/{{ elastic_search_version }}.sha512
 elasticsearch_config: "elasticsearch.yml.j2"
 
 # Demo_int specific version
-elastic_search_version_demo_int: "elasticsearch-7.17.29-amd64.deb"
+elastic_search_version_demo_int: "elasticsearch-8.19.7-amd64.deb"
 elasticsearch_config_demo_int: "elasticsearch-demo-int.yml.j2"
 
 es_url: "http://localhost:9200"
