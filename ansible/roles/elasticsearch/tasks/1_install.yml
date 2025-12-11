@@ -14,7 +14,6 @@
     dest: "/tmp/{{ elastic_search_version }}"
     mode: '0644'
     checksum: "sha512:{{ lookup('url', checksum_url).split()[0] }}"
-    validate_certs: no
   check_mode: no # Allow actual download even in check mode
 
 
