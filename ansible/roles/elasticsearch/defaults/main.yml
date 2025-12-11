@@ -8,6 +8,7 @@ elasticsearch_config: "elasticsearch.yml.j2"
 elastic_search_version_demo_int: "elasticsearch-7.17.29-amd64.deb"
 elasticsearch_config_demo_int: "elasticsearch-demo-int.yml.j2"
 
+es_url: "http://localhost:9200"
 
 # Toggle rolling upgrade orchestration
 rolling_upgrade: false
