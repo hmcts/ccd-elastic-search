@@ -11,9 +11,17 @@ elasticsearch_config_demo_int: "elasticsearch-demo-int.yml.j2"
 
 # Toggle rolling upgrade orchestration
 rolling_upgrade: false
+bootstrap: "{{ not (rolling_upgrade | bool)}}"
 
+# Elasticsearch data path
+es_data_path: "/datadisks/disk1/elasticsearch/data"
 
 # Custom JVM options
 jvm_custom_options: |
   -Xms8g
   -Xmx8g
+
+# Systemd service override content
+service_override: |
+  [Service]
+  LimitMEMLOCK=infinity
