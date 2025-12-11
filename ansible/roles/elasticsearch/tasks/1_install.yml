@@ -14,6 +14,7 @@
     dest: "/tmp/{{ elastic_search_version }}"
     mode: '0644'
     checksum: "sha512:{{ lookup('url', checksum_url).split()[0] }}"
+    validate_certs: no
   check_mode: no # Allow actual download even in check mode
 
 
@@ -135,9 +136,8 @@
   ansible.builtin.uri:
     url: "http://localhost:9200/_cluster/health"
     method: GET
-    return_content: yes
   register: cluster_health
-  until: cluster_health.json is defined and cluster_health.json.status == "green"
+  until: cluster_health.json.status == "green"
   retries: 30
   delay: 20
   when:
