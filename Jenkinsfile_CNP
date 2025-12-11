@@ -59,12 +59,12 @@ def runAnsible() {
     if (env.ENV == 'demo' && readFile("${WORKSPACE}/demo.tfvars").contains('enable_demo_int = true')) {
         sh """
             # Install Python 3.9 if not present
-            sudo apt install -y python3.9 python3.9-venv
+            # sudo apt install -y python3.9 python3.9-venv
 
             # Create virtualenv with Python 3.9 and Ansible 6.x for demo-int (Ubuntu 24.04 compatible)
-            python3.9 -m venv /tmp/ansible6-venv
+            python3.12 -m venv /tmp/ansible6-venv
             /tmp/ansible6-venv/bin/pip install --upgrade pip
-            /tmp/ansible6-venv/bin/pip install ansible==6.7.0
+            /tmp/ansible6-venv/bin/pip install ansible==13.0.0
             /tmp/ansible6-venv/bin/ansible --version
 
             # Run demo-int with Ansible 6.x
