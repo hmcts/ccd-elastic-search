@@ -39,6 +39,12 @@ elastic_search_clusters = {
       3 = "10.112.53.103"
     }
     lb_private_ip_address = "10.112.53.253"
+    storage_account_type  = "StandardSSD_LRS"
+    # Use Ubuntu 24.04 LTS for upgrade cluster (different from default cluster's 16.04)
+    vm_publisher_name     = "Canonical"
+    vm_offer              = "ubuntu-24_04-lts"
+    vm_sku                = "server"
+    vm_version            = "latest"
   }
   # Example: Add additional cluster for upgrade testing
   # upgrade = {
