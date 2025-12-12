@@ -54,7 +54,6 @@
     loop_var: index_name
     label: "Processing -> {{ index_name }}"
 
-
 - name: Get DS indices
   uri:
     url: "{{ es_url }}/_cat/indices/.ds-*?h=index"
@@ -72,36 +71,24 @@
                     | list }}"
 
 
-- name: Rollover DS streams
-  uri:
-    url: "{{ es_url }}/{{ item }}/_rollover"
-    method: POST
+- name: Process data stream like indices
+  include_tasks: process_data_streams.yml
   loop: "{{ ds_streams }}"
   loop_control:
-    label: "Rolling over DS - {{ item }}"
+    loop_var: ds_index
+    label: "Processing DS -> {{ ds_index }}"
 
 
-- name: Apply write block to system indices (freeze for upgrade)
-  uri:
-    url: "{{ es_url }}/{{ item }}/_block/write"
-    method: PUT
-    status_code: [200]
+- name: Apply write blocks to system indices
+  include_tasks: freeze_system_indices.yml
   loop: "{{ system_indices }}"
   loop_control:
-    label: "{{ item }}"
-  register: system_write_blocks
+    loop_var: index_name
+    label: "Freezing system index -> {{ index_name }}"
 
 
-- name: Verify write block on system indices
+- name: Delete logstash DLQ index
   uri:
-    url: "{{ es_url }}/{{ item }}/_settings?include_defaults=false"
-  loop: "{{ system_indices }}"
-  register: verify_system_blocks
-
-
-- name: Report system index freeze status
-  debug:
-    msg: >
-      System index {{ item.item }} write-block:
-      {{ item.json[item.item].settings.index.blocks.write | default('false') }}
-  loop: "{{ verify_system_blocks.results }}"
+    url: "{{ es_url }}/.logstash_dead_letter"
+    method: DELETE
+    status_code: [200, 404]  # allow success if index doesn't exist

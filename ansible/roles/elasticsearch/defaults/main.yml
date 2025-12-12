@@ -8,6 +8,9 @@ elasticsearch_config: "elasticsearch.yml.j2"
 elastic_search_version_demo_int: "elasticsearch-9.2.2-amd64.deb"
 elasticsearch_config_demo_int: "elasticsearch-demo-int.yml.j2"
 
+# version that we are upgrading to
+elasticsearch_major_version: 9
+
 es_url: "http://localhost:9200"
 
 # Toggle rolling upgrade orchestration
@@ -43,7 +46,7 @@ system_index_patterns:
   - ".geoip"
 
 # Suffix to append to cloned indices
-clone_suffix: "-v7"
+clone_suffix: "-clone"
 # Optimise user indices after reindex
 do_forcemerge: true
 # Whether to delete cloned indices after reindex
