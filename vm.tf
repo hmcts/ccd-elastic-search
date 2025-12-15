@@ -25,6 +25,7 @@ locals {
             )
             storage_account_type = coalesce(cluster.storage_account_type, "StandardSSD_LRS")
             disk_lun             = tostring(disk_idx)
+            create_option        = try(cluster.attachment_create_option, "Empty")
           }
         }
         vm_publisher_name     = cluster.vm_publisher_name
