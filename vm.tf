@@ -140,6 +140,7 @@ module "elastic2_cluster" {
   availability_set_name        = coalesce(try(each.value.availability_set_name, null), var.availability_set_name)
   platform_update_domain_count = var.platform_update_domain_count
   ipconfig_name                = var.ipconfig_name
+  privateip_allocation         = each.value.cluster_key == "upgrade" ? "Static" : "Dynamic"
 }
 
 module "elastic2_demo_int" {

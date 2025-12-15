@@ -47,6 +47,7 @@ elastic_search_clusters = {
     vm_version               = "latest"
     vm_size                  = "Standard_D4ds_v5"  # New VM size to meet SKU requirements https://github.com/hmcts/azure-policy/blob/master/policies/allowed_vm_sku/README.md
     attachment_create_option = "Attach"
+    privateip_allocation     = "Static"
   }
   # Example: Add additional cluster for upgrade testing
   # upgrade = {
