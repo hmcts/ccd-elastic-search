@@ -1,11 +1,11 @@
 # elasticsearch-demo-int.yml.j2
 cluster.name: "{{ elastic_clustername }}"
-node.name: "{{ inventory_hostname }}"
+node.name: "{{ ansible_hostname }}"
 path.logs: /var/log/elasticsearch
 path.data: {{ es_data_path }}
-discovery.seed_hosts: {{ groups[group_names[0]] }}
+discovery.seed_hosts: {{ groups[group_names[0]] | map('extract', hostvars, 'ansible_hostname') | list }}
 {% if bootstrap %}
-cluster.initial_master_nodes: {{ groups[group_names[0]] }}
+cluster.initial_master_nodes: {{ groups[group_names[0]] | map('extract', hostvars, 'ansible_hostname') | list }}
 {% endif %}
 node.roles: [master, data]
 network.host: [_site_, _local_]
