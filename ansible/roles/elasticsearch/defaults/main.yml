@@ -1,5 +1,8 @@
 # Elasticsearch default vars
 elastic_search_version: "elasticsearch-7.17.28-amd64.deb"
 
-# Demo-int specific version
+# Demo-int specific version (legacy - will be replaced by upgrade clusters)
 elastic_search_version_demo_int: "elasticsearch-8.19.7-amd64.deb"
+
+# Upgrade cluster version - Elasticsearch 9.x for all upgrade clusters
+elastic_search_version_upgrade: "elasticsearch-9.2.2-amd64.deb"
