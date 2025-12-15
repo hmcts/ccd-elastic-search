@@ -41,11 +41,12 @@ elastic_search_clusters = {
     lb_private_ip_address = "10.112.53.253"
     storage_account_type  = "StandardSSD_LRS"
     # Use Ubuntu 24.04 LTS for upgrade cluster (different from default cluster's 16.04)
-    vm_publisher_name     = "Canonical"
-    vm_offer              = "ubuntu-24_04-lts"
-    vm_sku                = "server"
-    vm_version            = "latest"
-    vm_size               = "Standard_D4ds_v5"  # New VM size to meet SKU requirements https://github.com/hmcts/azure-policy/blob/master/policies/allowed_vm_sku/README.md
+    vm_publisher_name        = "Canonical"
+    vm_offer                 = "ubuntu-24_04-lts"
+    vm_sku                   = "server"
+    vm_version               = "latest"
+    vm_size                  = "Standard_D4ds_v5"  # New VM size to meet SKU requirements https://github.com/hmcts/azure-policy/blob/master/policies/allowed_vm_sku/README.md
+    attachment_create_option = "Attach"
   }
   # Example: Add additional cluster for upgrade testing
   # upgrade = {
