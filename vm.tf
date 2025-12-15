@@ -23,9 +23,13 @@ locals {
               cluster.resource_group_name,
               cluster_key == "upgrade" ? "ccd-elastic-search-upgrade-${var.env}" : "ccd-elastic-search-${var.env}"
             )
-            storage_account_type = coalesce(cluster.storage_account_type, "StandardSSD_LRS")
-            disk_lun             = tostring(disk_idx)
-            create_option        = try(cluster.attachment_create_option, "Empty")
+            location                 = var.location
+            storage_account_type     = coalesce(cluster.storage_account_type, "StandardSSD_LRS")
+            disk_size_gb             = "1024"
+            disk_lun                 = tostring(disk_idx)
+            disk_caching             = "None"
+            disk_create_option       = "Empty"
+            attachment_create_option = lookup(cluster, "attachment_create_option", "Empty")
           }
         }
         vm_publisher_name     = cluster.vm_publisher_name
