@@ -11,12 +11,18 @@ locals {
         instance_idx        = instance_idx
         name                = format(cluster.name_template, instance_idx)
         ip                  = try(cluster.private_ip_allocation[instance_idx], null)
-        resource_group_name = coalesce(cluster.resource_group_name, "ccd-elastic-search-${var.env}")
+        resource_group_name = coalesce(
+          cluster.resource_group_name,
+          cluster_key == "upgrade" ? "ccd-elastic-search-upgrade-${var.env}" : "ccd-elastic-search-${var.env}"
+        )
         managed_disks = {
           for disk_idx in range(cluster.data_disks) :
           "disk${disk_idx + 1}" => {
             name                 = "${format(cluster.name_template, instance_idx)}-datadisk${disk_idx + 1}"
-            resource_group_name  = coalesce(cluster.resource_group_name, "ccd-elastic-search-${var.env}")
+            resource_group_name  = coalesce(
+              cluster.resource_group_name,
+              cluster_key == "upgrade" ? "ccd-elastic-search-upgrade-${var.env}" : "ccd-elastic-search-${var.env}"
+            )
             storage_account_type = coalesce(cluster.storage_account_type, "StandardSSD_LRS")
             disk_lun             = tostring(disk_idx)
           }
@@ -51,7 +57,10 @@ locals {
     cluster_key => {
       # Keep legacy name format when cluster_key is "default" for backward compatibility
       name                  = cluster_key == "default" ? "ccd-internal-${var.env}-lb" : "ccd-internal-${var.env}-${cluster_key}-lb"
-      resource_group_name   = coalesce(cluster.resource_group_name, "ccd-elastic-search-${var.env}")
+      resource_group_name   = coalesce(
+        cluster.resource_group_name,
+        cluster_key == "upgrade" ? "ccd-elastic-search-upgrade-${var.env}" : "ccd-elastic-search-${var.env}"
+      )
       lb_private_ip_address = cluster.lb_private_ip_address
       vms                   = local.vms_by_cluster[cluster_key]
     }
@@ -180,6 +189,13 @@ module "ctags" {
 
 resource "azurerm_resource_group" "this" {
   name     = "ccd-elastic-search-${var.env}"
+  location = var.location
+  tags     = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
+}
+
+resource "azurerm_resource_group" "upgrade" {
+  count    = length(var.elastic_search_clusters) > 0 && contains(keys(var.elastic_search_clusters), "upgrade") ? 1 : 0
+  name     = "ccd-elastic-search-upgrade-${var.env}"
   location = var.location
   tags     = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
 }
