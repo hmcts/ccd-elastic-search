@@ -7,10 +7,10 @@ locals {
     for cluster_key, cluster in var.elastic_search_clusters : {
       for instance_idx in range(cluster.instance_count) :
       format(cluster.name_template, instance_idx) => {
-        cluster_key         = cluster_key
-        instance_idx        = instance_idx
-        name                = format(cluster.name_template, instance_idx)
-        ip                  = try(cluster.private_ip_allocation[instance_idx], null)
+        cluster_key  = cluster_key
+        instance_idx = instance_idx
+        name         = format(cluster.name_template, instance_idx)
+        ip           = try(cluster.private_ip_allocation[instance_idx], null)
         resource_group_name = coalesce(
           cluster.resource_group_name,
           cluster_key == "upgrade" ? "ccd-elastic-search-upgrade-${var.env}" : "ccd-elastic-search-${var.env}"
@@ -18,8 +18,8 @@ locals {
         managed_disks = {
           for disk_idx in range(cluster.data_disks) :
           "disk${disk_idx + 1}" => {
-            name                 = "${format(cluster.name_template, instance_idx)}-datadisk${disk_idx + 1}"
-            resource_group_name  = coalesce(
+            name = "${format(cluster.name_template, instance_idx)}-datadisk${disk_idx + 1}"
+            resource_group_name = coalesce(
               cluster.resource_group_name,
               cluster_key == "upgrade" ? "ccd-elastic-search-upgrade-${var.env}" : "ccd-elastic-search-${var.env}"
             )
@@ -61,8 +61,8 @@ locals {
     for cluster_key, cluster in var.elastic_search_clusters :
     cluster_key => {
       # Keep legacy name format when cluster_key is "default" for backward compatibility
-      name                  = cluster_key == "default" ? "ccd-internal-${var.env}-lb" : "ccd-internal-${var.env}-${cluster_key}-lb"
-      resource_group_name   = coalesce(
+      name = cluster_key == "default" ? "ccd-internal-${var.env}-lb" : "ccd-internal-${var.env}-${cluster_key}-lb"
+      resource_group_name = coalesce(
         cluster.resource_group_name,
         cluster_key == "upgrade" ? "ccd-elastic-search-upgrade-${var.env}" : "ccd-elastic-search-${var.env}"
       )

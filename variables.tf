@@ -209,7 +209,7 @@ variable "nsg_security_rules" {
     access                                     = string,
     protocol                                   = string,
     source_port_range                          = string,
-    destination_port_range                     = string,
+    destination_port_range                     = optional(string, null),
     source_address_prefix                      = string,
     destination_address_prefix                 = string,
     source_application_security_group_ids      = optional(string, null),
