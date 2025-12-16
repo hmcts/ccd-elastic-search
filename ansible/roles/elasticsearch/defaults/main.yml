@@ -1,8 +1,55 @@
 # Elasticsearch default vars
+elastic_search_url_base: "https://artifacts.elastic.co/downloads/elasticsearch"
 elastic_search_version: "elasticsearch-7.17.28-amd64.deb"
+checksum_url: "{{ elastic_search_url_base }}/{{ elastic_search_version }}.sha512"
+elasticsearch_config: "elasticsearch.yml.j2"
 
-# Demo-int specific version (legacy - will be replaced by upgrade clusters)
-elastic_search_version_demo_int: "elasticsearch-8.19.7-amd64.deb"
+# Demo_int specific version
+elastic_search_version_demo_int: "elasticsearch-9.2.2-amd64.deb"
+elasticsearch_config_demo_int: "elasticsearch-demo-int.yml.j2"
 
-# Upgrade cluster version - Elasticsearch 9.x for all upgrade clusters
+# version that we are upgrading to
+elasticsearch_major_version: 9
+
+es_url: "http://localhost:9200"
+
+# Toggle rolling upgrade orchestration
+rolling_upgrade: false
+bootstrap: "{{ not (rolling_upgrade | bool)}}"
+
+# Elasticsearch data path
+es_data_path: "/datadisks/disk1/elasticsearch/data"
+
+# Custom JVM options
+jvm_custom_options: |
+  -Xms8g
+  -Xmx8g
+
+# Systemd service override content
+service_override: |
+  [Service]
+  LimitMEMLOCK=infinity
+
+
+system_index_patterns:
+  - ".ds-"
+  - ".logstash"
+  - ".kibana"
+  - ".security"
+  - ".fleet"
+  - ".monitoring"
+  - ".watches"
+  - ".tasks"
+  - ".alerts"
+  - ".transform"
+  - ".ml-"
+  - ".geoip"
+
+# Suffix to append to cloned indices
+clone_suffix: "-clone"
+# Optimise user indices after reindex
+do_forcemerge: true
+# Whether to delete cloned indices after reindex
+delete_clones: true
+
 elastic_search_version_upgrade: "elasticsearch-9.2.2-amd64.deb"

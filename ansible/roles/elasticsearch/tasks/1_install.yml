@@ -12,7 +12,7 @@
 - name: Download Elasticsearch .deb package
   ansible.builtin.shell: |
     wget -O "/tmp/{{ es_version }}" \
-         "https://artifacts.elastic.co/downloads/elasticsearch/{{ es_version }}"
+         "{{ elastic_search_url_base }}/{{ es_version }}"
   args:
     creates: "/tmp/{{ es_version }}"
   check_mode: no # Allow actual download even in check mode
@@ -50,6 +50,15 @@
     state: present
   when: not ansible_check_mode  # Skip actual install during dry-run
 
+- name: Show variables
+  debug:
+    msg:
+      elastic_search_version: "{{ elastic_search_version }}"
+      checksum_url: "{{ checksum_url }}"
+      group_name: "{{ group_names[0] }}"
+      jvm_custom_options: "{{ jvm_custom_options }}"
+      rolling_upgrade: "{{ rolling_upgrade }}"
+
 - name: Determine Elasticsearch config template based on cluster type
   set_fact:
     es_config_template: >-
@@ -69,23 +78,7 @@
     owner: root
     group: root
 
-- name: Set JVM heap size
-  ansible.builtin.lineinfile:
-    path: "/etc/elasticsearch/jvm.options"
-    regexp: "^#?-Xms.*"
-    line: "-Xms2g"
-    state: present
-  when: not ansible_check_mode
 
-- name: Enable memory locking
-  ansible.builtin.lineinfile:
-    path: "/etc/elasticsearch/elasticsearch.yml"
-    regexp: "^#?bootstrap.memory_lock"
-    line: "bootstrap.memory_lock: true"
-    state: present
-  when: not ansible_check_mode
-
-# Create directory for systemd override
 - name: Create systemd override directory for Elasticsearch
   ansible.builtin.file:
     path: /etc/systemd/system/elasticsearch.service.d
@@ -93,36 +86,113 @@
     mode: '0755'
   when: not ansible_check_mode
 
-# Create systemd override file
+
 - name: Set LimitMEMLOCK in systemd override
   ansible.builtin.copy:
     dest: /etc/systemd/system/elasticsearch.service.d/override.conf
-    content: |
-      [Service]
-      LimitMEMLOCK=infinity
+    content: "{{ service_override }}"
     mode: '0644'
 
-# Reload systemd to apply override
-- name: Reload systemd daemon
-  ansible.builtin.systemd:
-    daemon_reload: yes
-  when: not ansible_check_mode
 
-# Create custom JVM options file
 - name: Create custom JVM options file
   ansible.builtin.copy:
     dest: /etc/elasticsearch/jvm.options.d/custom.options
-    content: |
-      -Xms8g
-      -Xmx8g
+    content: "{{ jvm_custom_options }}"
     mode: '0644'
     owner: root
     group: root
   when: not ansible_check_mode
 
+
+- name: Disable shard allocation
+  ansible.builtin.uri:
+    url: "http://localhost:9200/_cluster/settings"
+    method: PUT
+    body_format: json
+    body:
+      persistent:
+        cluster.routing.allocation.enable: "primaries"
+  when:
+    - rolling_upgrade | bool
+    - not ansible_check_mode
+    - inventory_hostname == groups[group_names[0]] | first
+
+
+- name: Attempt synced flush
+  ansible.builtin.uri:
+    url: "http://localhost:9200/_flush/synced"
+    method: POST
+  register: synced_flush
+  failed_when: false
+  changed_when: synced_flush.status is defined and synced_flush.status == 200
+  when:
+    - rolling_upgrade | bool
+    - not ansible_check_mode
+    - inventory_hostname == groups[group_names[0]] | first
+
+
+- name: Stop Elasticsearch for upgrade
+  ansible.builtin.systemd:
+    name: elasticsearch
+    state: stopped
+    enabled: yes
+  when: not ansible_check_mode  # Skip actual restart during dry-run
+
+
+- name: Install Elasticsearch deb package
+  ansible.builtin.apt:
+    deb: "/tmp/{{ elastic_search_version }}"
+    state: present
+  when: not ansible_check_mode  # Skip actual install during dry-run
+
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  when: not ansible_check_mode
+
+
 - name: Restart Elasticsearch to apply changes
   ansible.builtin.systemd:
     name: elasticsearch
-    state: restarted
+    state: started
     enabled: yes
   when: not ansible_check_mode  # Skip actual restart during dry-run
+
+
+- name: Wait for Elasticsearch service after restart
+  ansible.builtin.wait_for:
+    host: localhost
+    port: 9200
+    delay: 5
+    timeout: 300
+  when: not ansible_check_mode
+
+
+- name: Re-enable shard allocation
+  ansible.builtin.uri:
+    url: "http://localhost:9200/_cluster/settings"
+    method: PUT
+    body_format: json
+    body:
+      persistent:
+        cluster.routing.allocation.enable: null
+    timeout: 300
+  when:
+    - rolling_upgrade | bool
+    - not ansible_check_mode
+    - inventory_hostname == groups[group_names[0]] | last
+
+
+- name: Wait for cluster to become green
+  ansible.builtin.uri:
+    url: "http://localhost:9200/_cluster/health"
+    method: GET
+  register: cluster_health
+  until: cluster_health.json.status == "green"
+  retries: 30
+  delay: 20
+  when:
+    - rolling_upgrade | bool
+    - not ansible_check_mode
+    - inventory_hostname == groups[group_names[0]] | last

@@ -2,18 +2,17 @@
 cluster.name: "{{ elastic_clustername }}"
 node.name: "{{ ansible_hostname }}"
 path.logs: /var/log/elasticsearch
-path.data: /datadisks/disk1/elasticsearch/data
-discovery.seed_hosts: ["ccd-data-int-0", "ccd-data-int-1", "ccd-data-int-2", "ccd-data-int-3"]
-cluster.initial_master_nodes: ["ccd-data-int-0", "ccd-data-int-1", "ccd-data-int-2", "ccd-data-int-3"]
-node.master: true
-node.data: true
+path.data: {{ es_data_path }}
+discovery.seed_hosts: {{ groups[group_names[0]] | map('extract', hostvars, 'ansible_hostname') | list }}
+{% if bootstrap %}
+cluster.initial_master_nodes: {{ groups[group_names[0]] | map('extract', hostvars, 'ansible_hostname') | list }}
+{% endif %}
+node.roles: [master, data]
 network.host: [_site_, _local_]
-node.max_local_storage_nodes: 1
 node.attr.fault_domain: 1
 node.attr.update_domain: 1
 cluster.routing.allocation.awareness.attributes: fault_domain,update_domain
 action.auto_create_index: .security*,.monitoring*,.kibana*,.watches,.triggered_watches,.watcher-history*,.logstash_dead_letter,.ml*
-xpack.monitoring.collection.enabled: true
 xpack.security.enabled: false
 script.allowed_types: inline
 script.allowed_contexts: template, ingest
