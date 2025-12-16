@@ -45,7 +45,7 @@ elastic_search_clusters = {
     vm_offer                 = "ubuntu-24_04-lts"
     vm_sku                   = "server"
     vm_version               = "latest"
-    vm_size                  = "Standard_D4ds_v5"  # New VM size to meet SKU requirements https://github.com/hmcts/azure-policy/blob/master/policies/allowed_vm_sku/README.md
+    vm_size                  = "Standard_D4ds_v5" # New VM size to meet SKU requirements https://github.com/hmcts/azure-policy/blob/master/policies/allowed_vm_sku/README.md
     attachment_create_option = "Attach"
     privateip_allocation     = "Static"
   }
@@ -221,7 +221,7 @@ nsg_security_rules = {
     access                                     = "Allow"
     protocol                                   = "Tcp"
     source_port_range                          = "*"
-    destination_port_range                     = "9200"
+    destination_port_ranges                    = ["9200", "22"]
     source_address_prefix                      = "10.10.76.0/23"
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
