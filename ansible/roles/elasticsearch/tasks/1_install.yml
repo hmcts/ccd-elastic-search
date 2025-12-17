@@ -1,13 +1,3 @@
-- name: Show variables
-  debug:
-    msg:
-      elastic_search_version: "{{ elastic_search_version }}"
-      checksum_url: "{{ checksum_url }}"
-      group_name: "{{ group_names[0] }}"
-      jvm_custom_options: "{{ jvm_custom_options }}"
-      rolling_upgrade: "{{ rolling_upgrade }}"
-
-
 - name: Download Elasticsearch {{ elastic_search_version }} package
   ansible.builtin.get_url:
     url: "{{ elastic_search_url_base }}/{{ elastic_search_version }}"
