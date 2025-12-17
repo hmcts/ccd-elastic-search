@@ -2,8 +2,7 @@
 - name: Show variables
   debug:
     msg:
-      elastic_search_version: "{{ elastic_search_version }}"
-      checksum_url: "{{ checksum_url }}"
+      elasticsearch_package: "{{ elasticsearch_package }}"
       group_name: "{{ group_names[0] }}"
       jvm_custom_options: "{{ jvm_custom_options }}"
       rolling_upgrade: "{{ rolling_upgrade }}"

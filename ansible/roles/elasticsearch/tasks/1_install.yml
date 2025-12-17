@@ -1,7 +1,7 @@
-- name: Download Elasticsearch {{ elastic_search_version }} package
+- name: Download Elasticsearch {{ elasticsearch_package }} package
   ansible.builtin.get_url:
-    url: "{{ elastic_search_url_base }}/{{ elastic_search_version }}"
-    dest: "/tmp/{{ elastic_search_version }}"
+    url: "{{ elasticsearch_url_base }}/{{ elasticsearch_package }}"
+    dest: "/tmp/{{ elasticsearch_package }}"
     mode: '0644'
     checksum: "sha512:{{ lookup('url', checksum_url).split()[0] }}"
   check_mode: no # Allow actual download even in check mode
@@ -78,7 +78,7 @@
 
 - name: Install Elasticsearch deb package
   ansible.builtin.apt:
-    deb: "/tmp/{{ elastic_search_version }}"
+    deb: "/tmp/{{ elasticsearch_package }}"
     state: present
   when: not ansible_check_mode  # Skip actual install during dry-run
 
