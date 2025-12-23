@@ -70,6 +70,15 @@
         elasticsearch.yml.j2
       {%- endif -%}
 
+- name: Download Elasticsearch {{ elasticsearch_package }} package
+  ansible.builtin.get_url:
+    url: "{{ elasticsearch_url_base }}/{{ elasticsearch_package }}"
+    dest: "/tmp/{{ elasticsearch_package }}"
+    mode: '0644'
+    checksum: "sha512:{{ lookup('url', checksum_url).split()[0] }}"
+  check_mode: no # Allow actual download even in check mode
+
+
 - name: Configure Elasticsearch settings
   ansible.builtin.template:
     src: "{{ es_config_template }}"
@@ -77,7 +86,6 @@
     mode: '0644'
     owner: root
     group: root
-
 
 - name: Create systemd override directory for Elasticsearch
   ansible.builtin.file:
@@ -141,7 +149,7 @@
 
 - name: Install Elasticsearch deb package
   ansible.builtin.apt:
-    deb: "/tmp/{{ elastic_search_version }}"
+    deb: "/tmp/{{ elasticsearch_package }}"
     state: present
   when: not ansible_check_mode  # Skip actual install during dry-run
 
