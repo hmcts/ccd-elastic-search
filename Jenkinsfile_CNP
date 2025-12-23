@@ -139,6 +139,12 @@ if (params.DEPLOY_ES_CLUSTER == true) {
             env.ENV = 'demo'
             runAnsible()
         }
+
+        afterSuccess('buildinfra:ithc') {
+            echo 'running Ansible in ITHC '
+            env.ENV = 'ithc'
+            runAnsible()
+        }
    }
  }
 }

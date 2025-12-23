@@ -55,3 +55,5 @@ clone_suffix: "-clone"
 do_forcemerge: true
 # Whether to delete cloned indices after reindex
 delete_clones: true
+
+elastic_search_version_upgrade: "elasticsearch-9.2.2-amd64.deb"
