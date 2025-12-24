@@ -82,6 +82,87 @@ vms = {
   }
 }
 
+
+   upgrade = {
+     instance_count = 4
+     name_template  = "ccd-data-upgrade-%d"
+     data_disks     = 2
+     private_ip_allocation = {
+       0 = "10.96.216.20"
+       1 = "10.96.216.21"
+       2 = "10.96.216.22"
+       3 = "10.96.216.23"
+     }
+     lb_private_ip_address = "10.96.216.252"
+   }
+}
+ vms = {
+   ccd-data-0 = {
+     name = "ccd-data-0"
+     ip   = "10.96.216.20"
+     managed_disks = {
+       disk1 = {
+         name                = "ccd-data-0-datadisk1"
+         resource_group_name = "ccd-elastic-search-ithc"
+         disk_lun            = "0"
+       }
+       disk2 = {
+         name                = "ccd-data-0-datadisk2"
+         resource_group_name = "ccd-elastic-search-ithc"
+         disk_lun            = "1"
+       }
+     }
+   }
+   ccd-data-1 = {
+     name = "ccd-data-1"
+     ip   = "10.96.216.21"
+     managed_disks = {
+       disk1 = {
+         name                = "ccd-data-1-datadisk1"
+         resource_group_name = "ccd-elastic-search-ithc"
+         disk_lun            = "0"
+       }
+       disk2 = {
+         name                = "ccd-data-1-datadisk2"
+         resource_group_name = "ccd-elastic-search-ithc"
+         disk_lun            = "1"
+       }
+     }
+   }
+   ccd-data-2 = {
+     name = "ccd-data-2"
+     ip   = "10.96.216.22"
+     managed_disks = {
+       disk1 = {
+         name                = "ccd-data-2-datadisk1"
+         resource_group_name = "ccd-elastic-search-ithc"
+         disk_lun            = "0"
+       }
+       disk2 = {
+         name                = "ccd-data-2-datadisk2"
+         resource_group_name = "ccd-elastic-search-ithc"
+         disk_lun            = "1"
+       }
+     }
+   }
+   ccd-data-3 = {
+     name = "ccd-data-3"
+     ip   = "10.96.216.23"
+     managed_disks = {
+       disk1 = {
+         name                = "ccd-data-3-datadisk1"
+         resource_group_name = "ccd-elastic-search-ithc"
+         disk_lun            = "0"
+       }
+       disk2 = {
+         name                = "ccd-data-3-datadisk2"
+         resource_group_name = "ccd-elastic-search-ithc"
+         disk_lun            = "1"
+       }
+     }
+   }
+ }
+
 nsg_security_rules = {
   SSH = {
     name                                       = "SSH"
