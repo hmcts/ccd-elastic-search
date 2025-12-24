@@ -83,19 +83,18 @@ vms = {
 }
 
 
-   upgrade = {
-     instance_count = 4
-     name_template  = "ccd-data-upgrade-%d"
-     data_disks     = 2
-     private_ip_allocation = {
-       0 = "10.96.216.20"
-       1 = "10.96.216.21"
-       2 = "10.96.216.22"
-       3 = "10.96.216.23"
+upgrade = {
+  instance_count = 4
+  name_template  = "ccd-data-upgrade-%d"
+  data_disks     = 2
+  private_ip_allocation = {
+    0 = "10.96.216.20"
+    1 = "10.96.216.21"
+    2 = "10.96.216.22"
+    3 = "10.96.216.23"
      }
      lb_private_ip_address = "10.96.216.252"
    }
-}
  vms = {
    ccd-data-0 = {
      name = "ccd-data-0"
