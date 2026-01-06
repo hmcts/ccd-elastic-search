@@ -112,3 +112,53 @@ moved {
   from = azurerm_resource_group.demo_int[0]
   to   = azurerm_resource_group.cluster_rgs["demo_int"]
 }
+
+moved {
+  from = module.main_lb.azurerm_lb.this
+  to   = module.load_balancers["legacy"].azurerm_lb.this
+}
+
+moved {
+  from = module.main_lb.azurerm_lb_backend_address_pool.this
+  to   = module.load_balancers["legacy"].azurerm_lb_backend_address_pool.this
+}
+
+moved {
+  from = module.main_lb.azurerm_lb_backend_address_pool_address.this["ccd-data-0"]
+  to   = module.load_balancers["legacy"].azurerm_lb_backend_address_pool_address.this["ccd-data-0"]
+}
+
+moved {
+  from = module.main_lb.azurerm_lb_backend_address_pool_address.this["ccd-data-1"]
+  to   = module.load_balancers["legacy"].azurerm_lb_backend_address_pool_address.this["ccd-data-1"]
+}
+
+moved {
+  from = module.main_lb.azurerm_lb_backend_address_pool_address.this["ccd-data-2"]
+  to   = module.load_balancers["legacy"].azurerm_lb_backend_address_pool_address.this["ccd-data-2"]
+}
+
+moved {
+  from = module.main_lb.azurerm_lb_backend_address_pool_address.this["ccd-data-3"]
+  to   = module.load_balancers["legacy"].azurerm_lb_backend_address_pool_address.this["ccd-data-3"]
+}
+
+moved {
+  from = module.main_lb.azurerm_lb_probe.this["http"]
+  to   = module.load_balancers["legacy"].azurerm_lb_probe.this["http"]
+}
+
+moved {
+  from = module.main_lb.azurerm_lb_probe.this["transport"]
+  to   = module.load_balancers["legacy"].azurerm_lb_probe.this["transport"]
+}
+
+moved {
+  from = module.main_lb.azurerm_lb_rule.this["http"]
+  to   = module.load_balancers["legacy"].azurerm_lb_rule.this["http"]
+}
+
+moved {
+  from = module.main_lb.azurerm_lb_rule.this["transport"]
+  to   = module.load_balancers["legacy"].azurerm_lb_rule.this["transport"]
+}
