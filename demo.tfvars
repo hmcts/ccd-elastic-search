@@ -102,6 +102,7 @@ vms = {
 
 elastic_search_clusters = {
   demo_int = {
+    resource_group_name   = "ccd-elastic-search-demo-int"
     instance_count        = 4
     name_template         = "ccd-data-int-%d"
     data_disks            = 2
@@ -127,6 +128,7 @@ elastic_search_clusters = {
   }
 
   demo_int2 = {
+    resource_group_name   = "ccd-elastic-search-demo-int2"
     instance_count        = 4
     name_template         = "ccd-data-int2-%d"
     data_disks            = 2
