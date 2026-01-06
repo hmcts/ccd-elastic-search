@@ -79,7 +79,7 @@ locals {
 # ORIGINAL module for environments using vms variable (e.g., AAT, prod, demo, perftest)
 # Keep this as-is to avoid state file moves
 module "elastic2" {
-  for_each = length(var.elastic_search_clusters) > 0 ? {} : var.vms
+  for_each = var.vms
 
   providers = {
     azurerm     = azurerm
