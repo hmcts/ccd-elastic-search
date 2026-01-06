@@ -7,7 +7,7 @@ resource "azurerm_application_security_group" "this" {
 
 resource "azurerm_network_interface_application_security_group_association" "this" {
   # Legacy: for environments using vms variable (e.g., AAT, prod, demo, perftest)
-  for_each = length(var.elastic_search_clusters) > 0 ? {} : var.vms
+  for_each = var.vms
 
   network_interface_id          = module.elastic2[each.key].nic_id
   application_security_group_id = azurerm_application_security_group.this.id
@@ -63,7 +63,7 @@ resource "azurerm_network_security_rule" "nsg_rules" {
 
 resource "azurerm_network_interface_security_group_association" "association" {
   # Legacy: for environments using vms variable (e.g., AAT, prod, demo, perftest)
-  for_each = length(var.elastic_search_clusters) > 0 ? {} : var.vms
+  for_each = var.vms
 
   network_interface_id      = module.elastic2[each.key].nic_id
   network_security_group_id = azurerm_network_security_group.nsg_group.id
