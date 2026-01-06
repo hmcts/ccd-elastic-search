@@ -83,7 +83,7 @@ data "azurerm_monitor_data_collection_rule" "linux_data_collection_rule" {
 
 # Data collection rule association for legacy VMs using vms variable (AAT, prod, demo, perftest)
 resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra" {
-  for_each = length(var.elastic_search_clusters) > 0 ? {} : var.vms
+  for_each = var.vms
 
   name                    = "vm-${each.value.name}-${var.env}-dcra"
   target_resource_id      = module.elastic2[each.key].vm_id
