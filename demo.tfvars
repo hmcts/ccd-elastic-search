@@ -210,8 +210,8 @@ nsg_security_rules = {
 enable_demo_int = true
 
 vm_publisher_name_int = "Canonical"
-vm_offer_int          = "UbuntuServer"
-vm_sku_int            = "16.04-LTS"
+vm_offer_int          = "ubuntu-24_04-lts"
+vm_sku_int            = "server"
 vm_version_int        = "latest"
 
 demo_int_rg_name               = "ccd-elastic-search-demo-int"
