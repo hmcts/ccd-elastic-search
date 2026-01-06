@@ -110,3 +110,14 @@ resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra_demo_
   data_collection_rule_id = data.azurerm_monitor_data_collection_rule.linux_data_collection_rule.id
   description             = "Association between the ELK demo-int linux VMs and the appropriate data collection rule."
 }
+
+resource "azurerm_resource_group" "cluster_rgs" {
+  for_each = {
+    for k, c in var.elastic_search_clusters :
+    k => coalesce(c.resource_group_name, "ccd-elastic-search-${var.env}-${k}")
+  }
+
+  name     = each.value
+  location = var.location
+  tags     = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
+}
