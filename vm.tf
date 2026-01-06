@@ -10,7 +10,7 @@ locals {
         cluster_key  = cluster_key
         instance_idx = instance_idx
         name         = format(cluster.name_template, instance_idx)
-        ip           = try(cluster.private_ip_allocation[instance_idx], null)
+        ip           = try(cluster.private_ip_allocation[tostring(instance_idx)], null)
         resource_group_name = coalesce(
           cluster.resource_group_name,
           cluster_key == "upgrade" ? "ccd-elastic-search-upgrade-${var.env}" : "ccd-elastic-search-${var.env}"
@@ -145,7 +145,7 @@ module "elastic2_cluster" {
   availability_set_name        = coalesce(try(each.value.availability_set_name, null), var.availability_set_name)
   platform_update_domain_count = var.platform_update_domain_count
   ipconfig_name                = var.ipconfig_name
-  privateip_allocation         = each.value.cluster_key == "upgrade" ? "Static" : "Dynamic"
+  privateip_allocation         = each.value.ip != null ? "Static" : "Dynamic"
 }
 
 module "elastic2_demo_int" {
