@@ -162,3 +162,23 @@ moved {
   from = module.main_lb.azurerm_lb_rule.this["transport"]
   to   = module.load_balancers["legacy"].azurerm_lb_rule.this["transport"]
 }
+
+import {
+  to = module.elastic2_cluster["ccd-data-int2-0"].module.virtual-machines.azurerm_availability_set.set[0]
+  id = "/subscriptions/1c4f0704-a29e-403d-b719-b90c34ef14c9/resourceGroups/ccd-elastic-search-demo-int2/providers/Microsoft.Compute/availabilitySets/CCD-DATA-0-AV-SET-INT2"
+}
+
+import {
+  to = module.elastic2_cluster["ccd-data-int2-1"].module.virtual-machines.azurerm_availability_set.set[0]
+  id = "/subscriptions/1c4f0704-a29e-403d-b719-b90c34ef14c9/resourceGroups/ccd-elastic-search-demo-int2/providers/Microsoft.Compute/availabilitySets/CCD-DATA-0-AV-SET-INT2"
+}
+
+import {
+  to = module.elastic2_cluster["ccd-data-int2-2"].module.virtual-machines.azurerm_availability_set.set[0]
+  id = "/subscriptions/1c4f0704-a29e-403d-b719-b90c34ef14c9/resourceGroups/ccd-elastic-search-demo-int2/providers/Microsoft.Compute/availabilitySets/CCD-DATA-0-AV-SET-INT2"
+}
+
+import {
+  to = module.elastic2_cluster["ccd-data-int2-3"].module.virtual-machines.azurerm_availability_set.set[0]
+  id = "/subscriptions/1c4f0704-a29e-403d-b719-b90c34ef14c9/resourceGroups/ccd-elastic-search-demo-int2/providers/Microsoft.Compute/availabilitySets/CCD-DATA-0-AV-SET-INT2"
+}
