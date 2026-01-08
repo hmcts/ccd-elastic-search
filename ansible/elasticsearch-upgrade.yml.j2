@@ -7,7 +7,7 @@ path.data: {{ es_data_path }}
 # Discovery settings - dynamically build list of upgrade cluster nodes
 {% set upgrade_nodes = [] %}
 {% for host in groups['all'] %}
-{% if hostvars[host]['group_names'] | select('search', '-upgrade$') | list | length > 0 %}
+{% if hostvars[host]['group_names'] | select('search', '_upgrade$') | list | length > 0 %}
 {% set _ = upgrade_nodes.append(hostvars[host]['ansible_hostname']) %}
 {% endif %}
 {% endfor %}
