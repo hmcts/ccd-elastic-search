@@ -3,10 +3,8 @@
     elasticsearch_package: >-
       {%- if group_names | select('search', '-upgrade$') | list | length > 0 -%}
         {{ elastic_search_version_upgrade }}
-      {%- elif 'demo_int' in group_names or 'demo_int2' in group_names -%}
-        {{ elastic_search_version_demo_int }}
       {%- else -%}
-        {{ elastic_search_version }}
+        {{ elasticsearch_package }}
       {%- endif -%}
 
 - name: Set checksum URL for Elasticsearch package
@@ -18,15 +16,13 @@
     es_config_template: >-
       {%- if group_names | select('search', '-upgrade$') | list | length > 0 -%}
         elasticsearch-upgrade.yml.j2
-      {%- elif 'demo_int' in group_names or 'demo_int2' in group_names -%}
-        elasticsearch-demo-int.yml.j2
       {%- else -%}
-        elasticsearch.yml.j2
+        {{ elasticsearch_config }}
       {%- endif -%}
 
 - name: Download Elasticsearch package
   ansible.builtin.get_url:
-    url: "{{ elastic_search_url_base }}/{{ elasticsearch_package }}"
+    url: "{{ elasticsearch_url_base }}/{{ elasticsearch_package }}"
     dest: "/tmp/{{ elasticsearch_package }}"
     mode: "0644"
     checksum: "sha512:{{ lookup('url', checksum_url).split()[0] }}"

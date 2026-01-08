@@ -2,7 +2,7 @@
 cluster.name: "{{ elastic_clustername }}"
 node.name: "{{ ansible_hostname }}"
 path.logs: /var/log/elasticsearch
-path.data: /datadisks/disk1/elasticsearch/data
+path.data: {{ es_data_path }}
 
 # Discovery settings - dynamically build list of upgrade cluster nodes
 {% set upgrade_nodes = [] %}
