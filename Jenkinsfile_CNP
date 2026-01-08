@@ -75,12 +75,12 @@ def runAnsible() {
             /tmp/ansible-venv/bin/ansible --version
 
             # Run demo-int with Ansible
-            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo_int ${checkRunAnsible}
+            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo_int2 ${checkRunAnsible}
             ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml \
                 -u ${CCD_VM_ADMIN_NAME} \
                 --private-key=/tmp/ccdadmin_key \
                 --limit demo_int \
-                --extra-vars 'elastic_clustername=ccd-elastic-search-demo-int rolling_upgrade=${rollingUpgradeDemoInt} reindex=${reindex} upgrade_es=${upgradeEs}' ${checkRunAnsible}
+                --extra-vars 'elastic_clustername=ccd-elastic-search-demo-int2 rolling_upgrade=${rollingUpgradeDemoInt} reindex=${reindex} upgrade_es=${upgradeEs}' ${checkRunAnsible}
 
             # Cleanup
             rm -rf /tmp/ansible-venv
