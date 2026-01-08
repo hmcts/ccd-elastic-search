@@ -62,31 +62,53 @@ def runAnsible() {
     // sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
 
     // For demo-int only: use Ansible 2.9 with Python 3.9 in virtualenv (supports Python 3.5 targets)
-    if (env.ENV == 'demo' && readFile("${WORKSPACE}/demo.tfvars").contains('enable_demo_int = true')) {
-        sh """
-            # Install Python 3.9 if not present
-            # Commented out as this python fails certs checks while downloading packages
-            # sudo apt install -y python3.9 python3.9-venv
+    if (env.ENV == 'demo') {
+        def tfvars = readFile("${WORKSPACE}/demo.tfvars")
 
-            # Create virtualenv with system's Python 3 and Ansible for demo-int (Ubuntu 24.04 compatible)
+        def targets = []
+        if (tfvars.contains('demo_int'))  { targets << 'demo_int' }
+        if (tfvars.contains('demo_int2')) { targets << 'demo_int2' }
+
+        if (targets.size() == 0) {
+            echo "No demo_int/demo_int2 clusters found in demo.tfvars; skipping Ansible."
+            return
+        }
+
+        sh """
             python3 -m venv /tmp/ansible-venv
             /tmp/ansible-venv/bin/pip install --upgrade pip
             /tmp/ansible-venv/bin/pip install ansible==13.0.0
             /tmp/ansible-venv/bin/ansible --version
-
-            # Run demo-int with Ansible
-            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit demo_int2 ${checkRunAnsible}
-            ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible-venv/bin/ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml \
-                -u ${CCD_VM_ADMIN_NAME} \
-                --private-key=/tmp/ccdadmin_key \
-                --limit demo_int \
-                --extra-vars 'elastic_clustername=ccd-elastic-search-demo-int2 rolling_upgrade=${rollingUpgradeDemoInt} reindex=${reindex} upgrade_es=${upgradeEs}' ${checkRunAnsible}
-
-            # Cleanup
-            rm -rf /tmp/ansible-venv
         """
+
+        for (t in targets) {
+            def clusterName = "ccd-elastic-search-${t.replace('_','-')}" 
+            def rollingUpgrade = (t == 'demo_int' && params.ROLLING_UPGRADE) ? "true" : "false"
+            def reindexFlag    = (t == 'demo_int' && params.REINDEX) ? "true" : "false"
+            def upgradeFlag    = (t == 'demo_int' && params.UPGRADE_ES) ? "true" : "false"
+
+            sh """
+                ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible-venv/bin/ansible-playbook \
+                  -i ${WORKSPACE}/ansible/inventory.ini \
+                  ansible/diskmount.yml \
+                  -u ${CCD_VM_ADMIN_NAME} \
+                  --private-key=/tmp/ccdadmin_key \
+                  --limit ${t} \
+                  ${checkRunAnsible}
+
+                ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible-venv/bin/ansible-playbook \
+                  -i ${WORKSPACE}/ansible/inventory.ini \
+                  ansible/main.yml \
+                  -u ${CCD_VM_ADMIN_NAME} \
+                  --private-key=/tmp/ccdadmin_key \
+                  --limit ${t} \
+                  --extra-vars 'elastic_clustername=${clusterName} rolling_upgrade=${rollingUpgrade} reindex=${reindexFlag} upgrade_es=${upgradeFlag}' \
+                  ${checkRunAnsible}
+            """
+        }
+
+        sh "rm -rf /tmp/ansible-venv"
     }
-}
 
 static Map<String, Object> secret(String secretName, String envVariable) {
   [
