@@ -82,7 +82,7 @@ def runAnsible() {
         """
 
         for (t in targets) {
-            def clusterName = "ccd-elastic-search-${t.replace('_','-')}" 
+            def clusterName = "ccd-elastic-search-${t.replace('_','-')}"
             def rollingUpgrade = (t == 'demo_int' && params.ROLLING_UPGRADE) ? "true" : "false"
             def reindexFlag    = (t == 'demo_int' && params.REINDEX) ? "true" : "false"
             def upgradeFlag    = (t == 'demo_int' && params.UPGRADE_ES) ? "true" : "false"
@@ -109,6 +109,7 @@ def runAnsible() {
 
         sh "rm -rf /tmp/ansible-venv"
     }
+}
 
 static Map<String, Object> secret(String secretName, String envVariable) {
   [
@@ -127,8 +128,6 @@ if (params.DEPLOY_ES_CLUSTER == true) {
        onDemo {
            enableSlackNotifications('#ccd-demo-builds')
        }
-
-
 
        // TODO: Healthcheck per env
 //        afterAlways('buildinfra:aat') {
@@ -151,8 +150,6 @@ if (params.DEPLOY_ES_CLUSTER == true) {
 //            echo 'Healthcheck in Perftest'
 //            healthCheckStage('qa', 'ithc')
 //        }
-
-
 
    if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
 
