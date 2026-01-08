@@ -1,116 +1,69 @@
-- name: Determine Elasticsearch version based on cluster type
-  set_fact:
-    es_version: >-
+- name: Determine Elasticsearch package/version based on cluster type
+  ansible.builtin.set_fact:
+    elasticsearch_package: >-
       {%- if group_names | select('search', '-upgrade$') | list | length > 0 -%}
         {{ elastic_search_version_upgrade }}
-      {%- elif 'demo-int' in group_names -%}
+      {%- elif 'demo_int' in group_names or 'demo_int2' in group_names -%}
         {{ elastic_search_version_demo_int }}
       {%- else -%}
         {{ elastic_search_version }}
       {%- endif -%}
 
-- name: Download Elasticsearch .deb package
-  ansible.builtin.shell: |
-    wget -O "/tmp/{{ es_version }}" \
-         "{{ elastic_search_url_base }}/{{ es_version }}"
-  args:
-    creates: "/tmp/{{ es_version }}"
-  check_mode: no # Allow actual download even in check mode
-
-- name: Set permissions on downloaded package
-  ansible.builtin.file:
-    path: "/tmp/{{ es_version }}"
-    mode: '0644'
-  check_mode: no
-
-- name: Download Elasticsearch checksum file
-  ansible.builtin.shell: |
-    wget -O "/tmp/{{ es_version }}.sha512" \
-         "https://artifacts.elastic.co/downloads/elasticsearch/{{ es_version }}.sha512"
-  args:
-    creates: "/tmp/{{ es_version }}.sha512"
-  check_mode: no  # Allow download of checksum in dry-run
-
-- name: Set permissions on checksum file
-  ansible.builtin.file:
-    path: "/tmp/{{ es_version }}.sha512"
-    mode: '0644'
-  check_mode: no
-
-- name: Verify checksum of the downloaded package
-  ansible.builtin.shell: |
-    cd /tmp
-    sha512sum -c "{{ es_version }}.sha512"
-  register: checksum_output
-  failed_when: checksum_output.rc != 0
-  when: not ansible_check_mode  # Skip during dry-run
-- name: Install Elasticsearch deb package
-  ansible.builtin.apt:
-    deb: "/tmp/{{ es_version }}"
-    state: present
-  when: not ansible_check_mode  # Skip actual install during dry-run
-
-- name: Show variables
-  debug:
-    msg:
-      elastic_search_version: "{{ elastic_search_version }}"
-      checksum_url: "{{ checksum_url }}"
-      group_name: "{{ group_names[0] }}"
-      jvm_custom_options: "{{ jvm_custom_options }}"
-      rolling_upgrade: "{{ rolling_upgrade }}"
+- name: Set checksum URL for Elasticsearch package
+  ansible.builtin.set_fact:
+    checksum_url: "https://artifacts.elastic.co/downloads/elasticsearch/{{ elasticsearch_package }}.sha512"
 
 - name: Determine Elasticsearch config template based on cluster type
-  set_fact:
+  ansible.builtin.set_fact:
     es_config_template: >-
       {%- if group_names | select('search', '-upgrade$') | list | length > 0 -%}
         elasticsearch-upgrade.yml.j2
-      {%- elif 'demo-int' in group_names -%}
+      {%- elif 'demo_int' in group_names or 'demo_int2' in group_names -%}
         elasticsearch-demo-int.yml.j2
       {%- else -%}
         elasticsearch.yml.j2
       {%- endif -%}
 
-- name: Download Elasticsearch {{ elasticsearch_package }} package
+- name: Download Elasticsearch package
   ansible.builtin.get_url:
-    url: "{{ elasticsearch_url_base }}/{{ elasticsearch_package }}"
+    url: "{{ elastic_search_url_base }}/{{ elasticsearch_package }}"
     dest: "/tmp/{{ elasticsearch_package }}"
-    mode: '0644'
+    mode: "0644"
     checksum: "sha512:{{ lookup('url', checksum_url).split()[0] }}"
-  check_mode: no # Allow actual download even in check mode
-
+  check_mode: no
 
 - name: Configure Elasticsearch settings
   ansible.builtin.template:
     src: "{{ es_config_template }}"
     dest: "/etc/elasticsearch/elasticsearch.yml"
-    mode: '0644'
+    mode: "0644"
     owner: root
     group: root
+  register: es_config
 
 - name: Create systemd override directory for Elasticsearch
   ansible.builtin.file:
     path: /etc/systemd/system/elasticsearch.service.d
     state: directory
-    mode: '0755'
+    mode: "0755"
   when: not ansible_check_mode
-
 
 - name: Set LimitMEMLOCK in systemd override
   ansible.builtin.copy:
     dest: /etc/systemd/system/elasticsearch.service.d/override.conf
     content: "{{ service_override }}"
-    mode: '0644'
-
+    mode: "0644"
+  register: es_systemd_override
 
 - name: Create custom JVM options file
   ansible.builtin.copy:
     dest: /etc/elasticsearch/jvm.options.d/custom.options
     content: "{{ jvm_custom_options }}"
-    mode: '0644'
+    mode: "0644"
     owner: root
     group: root
   when: not ansible_check_mode
-
+  register: es_jvm_opts
 
 - name: Disable shard allocation
   ansible.builtin.uri:
@@ -123,8 +76,7 @@
   when:
     - rolling_upgrade | bool
     - not ansible_check_mode
-    - inventory_hostname == groups[group_names[0]] | first
-
+    - inventory_hostname == (groups[group_names[0]] | first)
 
 - name: Attempt synced flush
   ansible.builtin.uri:
@@ -136,37 +88,39 @@
   when:
     - rolling_upgrade | bool
     - not ansible_check_mode
-    - inventory_hostname == groups[group_names[0]] | first
+    - inventory_hostname == (groups[group_names[0]] | first)
 
-
-- name: Stop Elasticsearch for upgrade
+- name: Stop Elasticsearch (only for rolling upgrade)
   ansible.builtin.systemd:
     name: elasticsearch
     state: stopped
     enabled: yes
-  when: not ansible_check_mode  # Skip actual restart during dry-run
-
+  when:
+    - rolling_upgrade | bool
+    - not ansible_check_mode
 
 - name: Install Elasticsearch deb package
   ansible.builtin.apt:
     deb: "/tmp/{{ elasticsearch_package }}"
     state: present
-  when: not ansible_check_mode  # Skip actual install during dry-run
-
+  when: not ansible_check_mode
+  register: es_install
 
 - name: Reload systemd daemon
   ansible.builtin.systemd:
     daemon_reload: yes
-  when: not ansible_check_mode
-
+  when:
+    - not ansible_check_mode
+    - es_systemd_override is changed
 
 - name: Restart Elasticsearch to apply changes
   ansible.builtin.systemd:
     name: elasticsearch
-    state: started
+    state: restarted
     enabled: yes
-  when: not ansible_check_mode  # Skip actual restart during dry-run
-
+  when:
+    - not ansible_check_mode
+    - (es_install is changed) or (es_config is changed) or (es_systemd_override is changed) or (es_jvm_opts is changed)
 
 - name: Wait for Elasticsearch service after restart
   ansible.builtin.wait_for:
@@ -174,8 +128,9 @@
     port: 9200
     delay: 5
     timeout: 300
-  when: not ansible_check_mode
-
+  when:
+    - not ansible_check_mode
+    - (es_install is changed) or (es_config is changed) or (es_systemd_override is changed) or (es_jvm_opts is changed)
 
 - name: Re-enable shard allocation
   ansible.builtin.uri:
@@ -189,8 +144,7 @@
   when:
     - rolling_upgrade | bool
     - not ansible_check_mode
-    - inventory_hostname == groups[group_names[0]] | last
-
+    - inventory_hostname == (groups[group_names[0]] | last)
 
 - name: Wait for cluster to become green
   ansible.builtin.uri:
@@ -203,4 +157,4 @@
   when:
     - rolling_upgrade | bool
     - not ansible_check_mode
-    - inventory_hostname == groups[group_names[0]] | last
+    - inventory_hostname == (groups[group_names[0]] | last)
