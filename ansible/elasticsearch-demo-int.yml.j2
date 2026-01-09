@@ -14,6 +14,7 @@ node.roles: [master, data, ingest]
 
 network.host: [_site_, _local_]
 
+# Availability zone awareness
 node.attr.fault_domain: 1
 node.attr.update_domain: 1
 cluster.routing.allocation.awareness.attributes: fault_domain,update_domain

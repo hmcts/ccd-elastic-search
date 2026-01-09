@@ -2,7 +2,7 @@
   ansible.builtin.set_fact:
     elasticsearch_package: >-
       {%- if group_names | select('search', '_upgrade$') | list | length > 0 -%}
-        {{ elastic_search_version_upgrade }}
+        {{ elasticsearch_version_upgrade }}
       {%- else -%}
         {{ elasticsearch_package }}
       {%- endif -%}
@@ -11,7 +11,7 @@
   ansible.builtin.set_fact:
     es_config_template: >-
       {%- if group_names | select('search', '_upgrade$') | list | length > 0 -%}
-        elasticsearch-upgrade.yml.j2
+        elasticsearch-demo-int.yml.j2
       {%- else -%}
         {{ elasticsearch_config }}
       {%- endif -%}
