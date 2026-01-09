@@ -15,7 +15,7 @@
     user_indices: []
 
 
-- name: Find sytem indices
+- name: Find system indices
   set_fact:
     system_indices: "{{ system_indices + [ idx ] }}"
   loop: "{{ all_indices | product(system_index_patterns) | list }}"
