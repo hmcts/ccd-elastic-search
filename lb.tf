@@ -11,20 +11,34 @@ locals {
       probe_name = "es-probe-transport-internal"
     }
   }
+
+  # Legacy load balancer config (for backward compatibility with var.vms)
+  legacy_lb_config = length(var.vms) > 0 ? {
+    legacy = {
+      name                  = "ccd-internal-${var.env}-lb"
+      resource_group_name   = "ccd-elastic-search-${var.env}"
+      lb_private_ip_address = var.lb_private_ip_address
+      vms                   = var.vms
+    }
+  } : {}
+
+  # Merge legacy and cluster-based load balancers
+  all_load_balancers = merge(local.legacy_lb_config, local.cluster_load_balancers)
 }
 
-# Main environment load balancer
-module "main_lb" {
-  source = "./modules/load-balancer"
+# Dynamic load balancers for each cluster or legacy config
+module "load_balancers" {
+  for_each = local.all_load_balancers
+  source   = "./modules/load-balancer"
 
-  name                = "ccd-internal-${var.env}-lb"
+  name                = each.value.name
   location            = var.location
-  resource_group_name = "ccd-elastic-search-${var.env}"
+  resource_group_name = each.value.resource_group_name
   subnet_id           = data.azurerm_subnet.elastic-subnet.id
-  ip_address          = var.lb_private_ip_address
-  frontend_name       = "LBFE"
-  backend_name        = "LBBE"
-  vms                 = var.vms
+  ip_address          = each.value.lb_private_ip_address
+  frontend_name       = "LBFE-${upper(each.key)}"
+  backend_name        = "LBBE-${upper(each.key)}"
+  vms                 = each.value.vms
   virtual_network_id  = data.azurerm_virtual_network.core_infra_vnet.id
   ports               = local.lb_ports
   tags                = module.ctags.common_tags
