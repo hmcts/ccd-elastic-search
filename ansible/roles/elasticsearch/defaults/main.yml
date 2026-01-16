@@ -1,5 +1,59 @@
-# Elasticsearch default vars
-elastic_search_version: "elasticsearch-7.17.28-amd64.deb"
+# Override this variable in ansible/group_vars/group_name.yml file
+# where group_name is the inventory group to set different version
+# on different environments
+elasticsearch_version: 7.17.28
 
-# Demo-int specific version
-elastic_search_version_demo_int: "elasticsearch-7.17.28-amd64.deb"
+
+# Elasticsearch default vars
+elasticsearch_url_base: "https://artifacts.elastic.co/downloads/elasticsearch"
+elasticsearch_package: "elasticsearch-{{ elasticsearch_version }}-amd64.deb"
+checksum_url: "{{ elasticsearch_url_base }}/{{ elasticsearch_package }}.sha512"
+# Overriden in group_vars file for demo_int group
+elasticsearch_config: "elasticsearch.yml.j2"
+
+
+# version that we are upgrading to
+elasticsearch_major_version: "{{ elasticsearch_version.split('.') | first | int }}"
+
+es_url: "http://localhost:9200"
+
+# Toggle rolling upgrade orchestration
+rolling_upgrade: false
+bootstrap: "{{ not (rolling_upgrade | bool)}}"
+
+# Elasticsearch data path
+es_data_path: "/datadisks/disk1/elasticsearch/data"
+
+# Custom JVM options
+jvm_custom_options: |
+  -Xms8g
+  -Xmx8g
+
+# Systemd service override content
+service_override: |
+  [Service]
+  LimitMEMLOCK=infinity
+
+
+system_index_patterns:
+  - ".ds-"
+  - ".logstash"
+  - ".kibana"
+  - ".security"
+  - ".fleet"
+  - ".monitoring"
+  - ".watches"
+  - ".tasks"
+  - ".alerts"
+  - ".transform"
+  - ".ml-"
+  - ".geoip"
+
+# Suffix to append to cloned indices
+clone_suffix: "-clone"
+# Optimise user indices after reindex
+do_forcemerge: true
+# Whether to delete cloned indices after reindex
+delete_clones: true
+
+elastic_search_version_upgrade: "elasticsearch-9.2.2-amd64.deb"
