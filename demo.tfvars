@@ -95,19 +95,19 @@ elastic_search_clusters = {
     lb_private_ip_address = "10.96.216.253"
     storage_account_type  = "StandardSSD_LRS"
   }
-  # int = {
-  #   instance_count = 4
-  #   name_template  = "ccd-data-int-%d"
-  #   data_disks     = 2
-  #   private_ip_allocation = {
-  #     0 = "10.96.216.100"
-  #     1 = "10.96.216.101"
-  #     2 = "10.96.216.102"
-  #     3 = "10.96.216.103"
-  #   }
-  #   lb_private_ip_address = "10.96.216.243"
-  #   storage_account_type  = "StandardSSD_LRS"
-  # }
+  int = {
+    instance_count = 4
+    name_template  = "ccd-data-int-%d"
+    data_disks     = 2
+    private_ip_allocation = {
+      0 = "10.96.216.100"
+      1 = "10.96.216.101"
+      2 = "10.96.216.102"
+      3 = "10.96.216.103"
+    }
+    lb_private_ip_address = "10.96.216.243"
+    storage_account_type  = "StandardSSD_LRS"
+  }
 }
 
 nsg_security_rules = {
