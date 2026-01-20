@@ -17,7 +17,7 @@ resource "azurerm_application_security_group" "cluster" {
     each.key == "upgrade" ? "ccd-elastic-search-upgrade-${var.env}" : "ccd-elastic-search-${var.env}"
   )
   tags = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
-
+  
   depends_on = [
     azurerm_resource_group.cluster
   ]
