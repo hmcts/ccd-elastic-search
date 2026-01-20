@@ -29,6 +29,7 @@ locals {
             disk_lun                 = tostring(disk_idx)
             disk_caching             = "None"
             disk_create_option       = "Empty"
+            disk_zone                = cluster.availability_zones != null ? cluster.availability_zones[instance_idx % length(cluster.availability_zones)] : null
             attachment_create_option = lookup(cluster, "attachment_create_option", "Empty")
           }
         }
