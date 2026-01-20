@@ -1,161 +1,120 @@
-############################################
-# Core variables
-############################################
-location     = "UK South"
-subscription = "nonprod"
+vm_publisher_name              = "Canonical"
+vm_offer                       = "UbuntuServer"
+vm_sku                         = "16.04.0-LTS"
+vm_version                     = "latest"
+availability_set_name = "CCD-DATA-0-AV-SET"
+
+lb_private_ip_address = "10.96.216.253"
 
 soc_vault_name = "soc-prod"
 soc_vault_rg   = "soc-core-infra-prod-rg"
 
 ipconfig_name = "ipconfig1"
+# vms = {
+#   ccd-data-0 = {
+#     name = "ccd-data-0"
+#     ip   = "10.96.216.4"
+#     managed_disks = {
+#       disk1 = {
+#         name                = "ccd-data-0-datadisk1"
+#         resource_group_name = "ccd-elastic-search-demo"
+#         disk_lun            = "0"
+#       }
+#       disk2 = {
+#         name                = "ccd-data-0-datadisk2"
+#         resource_group_name = "ccd-elastic-search-demo"
+#         disk_lun            = "1"
+#       }
+#     }
 
-############################################
-# DEMO (existing cluster)
-# Caution: This section modifies the Demo ES instance that CCD is wired up to
-############################################
+#   }
+#   ccd-data-1 = {
+#     name = "ccd-data-1"
+#     ip   = "10.96.216.7"
+#     managed_disks = {
+#       disk1 = {
+#         name                = "ccd-data-1-datadisk1"
+#         resource_group_name = "ccd-elastic-search-demo"
+#         disk_lun            = "0"
+#       }
+#       disk2 = {
+#         name                = "ccd-data-1-datadisk2"
+#         resource_group_name = "ccd-elastic-search-demo"
+#         disk_lun            = "1"
+#       }
+#     }
 
-vm_publisher_name = "Canonical"
-vm_offer          = "UbuntuServer"
-vm_sku            = "16.04.0-LTS"
-vm_version        = "latest"
+#   }
+#   ccd-data-2 = {
+#     name = "ccd-data-2"
+#     ip   = "10.96.216.5"
+#     managed_disks = {
+#       disk1 = {
+#         name                = "ccd-data-2-datadisk1"
+#         resource_group_name = "ccd-elastic-search-demo"
+#         disk_lun            = "0"
+#       }
+#       disk2 = {
+#         name                = "ccd-data-2-datadisk2"
+#         resource_group_name = "ccd-elastic-search-demo"
+#         disk_lun            = "1"
+#       }
+#     }
 
-vm_size                 = "Standard_D4s_v3"
-enable_availability_set = true
-availability_set_name   = "CCD-DATA-0-AV-SET"
+#   }
+#   ccd-data-3 = {
+#     name = "ccd-data-3"
+#     ip   = "10.96.216.6"
+#     managed_disks = {
+#       disk1 = {
+#         name                = "ccd-data-3-datadisk1"
+#         resource_group_name = "ccd-elastic-search-demo"
+#         disk_lun            = "0"
+#       }
+#       disk2 = {
+#         name                = "ccd-data-3-datadisk2"
+#         resource_group_name = "ccd-elastic-search-demo"
+#         disk_lun            = "1"
+#       }
+#     }
 
-lb_private_ip_address = "10.96.216.253"
-
-vms = {
-  ccd-data-0 = {
-    name = "ccd-data-0"
-    ip   = "10.96.216.4"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-0-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-0-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo"
-        disk_lun            = "1"
-      }
-    }
-  }
-
-  ccd-data-1 = {
-    name = "ccd-data-1"
-    ip   = "10.96.216.7"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-1-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-1-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo"
-        disk_lun            = "1"
-      }
-    }
-  }
-
-  ccd-data-2 = {
-    name = "ccd-data-2"
-    ip   = "10.96.216.5"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-2-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-2-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo"
-        disk_lun            = "1"
-      }
-    }
-  }
-
-  ccd-data-3 = {
-    name = "ccd-data-3"
-    ip   = "10.96.216.6"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-3-datadisk1"
-        resource_group_name = "ccd-elastic-search-demo"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-3-datadisk2"
-        resource_group_name = "ccd-elastic-search-demo"
-        disk_lun            = "1"
-      }
-    }
-  }
-}
-
-############################################
-# Testbeds (demo-int + demo-int2)
-# New multi-cluster structure
-############################################
+#   }
+# }
 
 elastic_search_clusters = {
-  demo_int = {
-    resource_group_name   = "ccd-elastic-search-demo-int"
-    instance_count        = 4
-    name_template         = "ccd-data-int-%d"
-    data_disks            = 2
-    lb_private_ip_address = "10.96.216.154"
-
+  default = {
+    instance_count          = 4
+    name_template           = "ccd-data-%d"
+    data_disks              = 2
+    resource_group_name     = "ccd-elastic-search-demo"
+    enable_availability_set = true
+    private_ip_allocation = {
+      0 = "10.96.216.4"
+      1 = "10.96.216.7"
+      2 = "10.96.216.5"
+      3 = "10.96.216.6"
+    }
+    lb_private_ip_address = "10.96.216.253"
+    storage_account_type  = "StandardSSD_LRS"
+  }
+  int = {
+    instance_count           = 4
+    name_template            = "ccd-data-int-%d"
+    data_disks               = 2
+    resource_group_name      = "ccd-elastic-search-demo-int"
+    enable_availability_set  = false
+    availability_zones       = ["1", "2", "3"]
+    attachment_create_option = "Attach"
     private_ip_allocation = {
       0 = "10.96.216.100"
       1 = "10.96.216.101"
       2 = "10.96.216.102"
       3 = "10.96.216.103"
     }
-
-
-    vm_publisher_name     = "Canonical"
-    vm_offer              = "ubuntu-24_04-lts"
-    vm_sku                = "server"
-    vm_version            = "latest"
-    vm_size               = "Standard_D4s_v3"
-    availability_set_name = "CCD-DATA-0-AV-SET-INT"
-
-    storage_account_type     = "StandardSSD_LRS"
-    attachment_create_option = "Attach"
-  }
-
-  demo_int2 = {
-    resource_group_name   = "ccd-elastic-search-demo-int2"
-    instance_count        = 4
-    name_template         = "ccd-data-int2-%d"
-    data_disks            = 2
-    lb_private_ip_address = "10.96.216.155"
-
-    private_ip_allocation = {
-      0 = "10.96.216.110"
-      1 = "10.96.216.111"
-      2 = "10.96.216.112"
-      3 = "10.96.216.113"
-    }
-
-    vm_publisher_name     = "Canonical"
-    vm_offer              = "ubuntu-24_04-lts"
-    vm_sku                = "server"
-    vm_version            = "latest"
-    vm_size               = "Standard_D4ds_v5"
-    availability_set_name = "CCD-DATA-0-AV-SET-INT2"
-
-    storage_account_type     = "StandardSSD_LRS"
-    attachment_create_option = "Attach"
+    lb_private_ip_address = "10.96.216.243"
+    storage_account_type  = "StandardSSD_LRS"
   }
 }
-
-############################################
-# Network security rules 
-############################################
 
 nsg_security_rules = {
   SSH = {
@@ -171,7 +130,6 @@ nsg_security_rules = {
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
-
   ElasticClusterTransport = {
     name                                       = "ElasticClusterTransport"
     description                                = "Allows ElasticSeach communication only between nodes"
@@ -187,10 +145,9 @@ nsg_security_rules = {
     destination_application_security_group_ids = "id"
     source_application_security_group_ids      = "id"
   },
-
   LB_To_ES = {
     name                                       = "LB_To_ES"
-    description                                = "Allows ElasticSearch queries from the LoadBalancer. Needed for LoadBalancer healthchecks."
+    description                                = "Allows ElasticSeach queries from the LoadBalancer.  Needed for LoadBalancer healthchecks."
     priority                                   = 160
     direction                                  = "Inbound"
     access                                     = "Allow"
@@ -202,7 +159,6 @@ nsg_security_rules = {
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
-
   Bastion_To_ES = {
     name                                       = "Bastion_To_ES"
     description                                = "Allow Bastion access for debugging elastic queries on development platforms"
@@ -216,7 +172,6 @@ nsg_security_rules = {
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
-
   App_To_ES = {
     name                                       = "App_To_ES"
     description                                = "Allow Apps to access the ElasticSearch cluster"
@@ -230,7 +185,6 @@ nsg_security_rules = {
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
-
   AKS_To_ES = {
     name                                       = "AKS_To_ES"
     description                                = "Allow AKS to access the ElasticSearch cluster"
@@ -245,7 +199,6 @@ nsg_security_rules = {
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
-
   Jenkins_To_ES = {
     name                                       = "Jenkins_To_ES"
     description                                = "Allow Jenkins to access the ElasticSearch cluster for testing"
@@ -259,10 +212,9 @@ nsg_security_rules = {
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
   },
-
   Bastion_To_VMs = {
     name                       = "Bastion_To_VMs"
-    description                = "Allow Bastion SSH access overriding templates broad SSH access"
+    description                = "Allow Bastion SSH access overridding templates broad SSH access"
     priority                   = 230
     direction                  = "Inbound"
     access                     = "Allow"
@@ -272,7 +224,6 @@ nsg_security_rules = {
     source_address_prefix      = "10.11.72.32/27"
     destination_address_prefix = "10.96.216.0/24"
   },
-
   DenyAllOtherTraffic = {
     name                       = "DenyAllOtherTraffic"
     description                = "Deny all traffic that is not Elastic or SSH from anywhere"
@@ -280,9 +231,9 @@ nsg_security_rules = {
     direction                  = "Inbound"
     access                     = "Deny"
     protocol                   = "*"
-    source_port_range                          = "*"
-    destination_port_range                     = "*"
-    source_address_prefix                      = "*"
-    destination_address_prefix                 = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
   }
 }
