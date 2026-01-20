@@ -140,13 +140,15 @@ variable "elastic_search_clusters" {
     vm_version               = optional(string)
     vm_size                  = optional(string)
     availability_set_name    = optional(string)
+    enable_availability_set  = optional(bool)
+    availability_zones       = optional(list(string))
     lb_private_ip_address    = optional(string)
     storage_account_type     = optional(string, "StandardSSD_LRS")
     attachment_create_option = optional(string, "Empty")
     privateip_allocation     = optional(string)
   }))
   default     = {}
-  description = "Configuration for Elasticsearch clusters. Each cluster will create multiple VMs based on instance_count."
+  description = "Configuration for Elasticsearch clusters. Each cluster will create multiple VMs based on instance_count. Use availability_zones to enable zone support (mutually exclusive with availability sets)."
 }
 
 
