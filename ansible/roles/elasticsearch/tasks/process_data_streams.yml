@@ -8,8 +8,10 @@
   vars:
     index_name: "{{ backing_indices.json[-1].index }}"
 
+# !!! can potentially timeout
 - name: Rollover DS streams
   uri:
     url: "{{ es_url }}/{{ ds_index }}/_rollover"
     method: POST
+    timeout: 3600
   when: index_version < elasticsearch_major_version
