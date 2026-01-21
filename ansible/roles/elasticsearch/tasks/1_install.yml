@@ -26,7 +26,7 @@
 
 - name: Create Elasticsearch config directory
   ansible.builtin.file:
-    path: /etc/elasticsearch
+    path: /etc/elasticsearch/jvm.options.d
     state: directory
     owner: root
     group: elasticsearch
