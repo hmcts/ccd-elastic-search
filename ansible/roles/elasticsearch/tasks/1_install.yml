@@ -24,6 +24,14 @@
     checksum: "sha512:{{ lookup('url', checksum_url).split()[0] }}"
   check_mode: no
 
+- name: Create Elasticsearch config directory
+  ansible.builtin.file:
+    path: /etc/elasticsearch
+    state: directory
+    owner: root
+    group: elasticsearch
+    mode: "2750"
+
 - name: Configure Elasticsearch settings
   ansible.builtin.template:
     src: "{{ es_config_template }}"
