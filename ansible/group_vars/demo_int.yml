@@ -1,0 +1,3 @@
+elasticsearch_version: 8.19.8
+
+elasticsearch_config: "elasticsearch-demo-int.yml.j2"

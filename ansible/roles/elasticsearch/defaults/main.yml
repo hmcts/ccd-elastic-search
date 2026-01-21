@@ -12,6 +12,8 @@ checksum_url: "{{ elasticsearch_url_base }}/{{ elasticsearch_package }}.sha512"
 elasticsearch_config: "elasticsearch.yml.j2"
 
 
+elasticsearch_version_upgrade: "elasticsearch-9.2.2-amd64.deb"
+
 # version that we are upgrading to
 elasticsearch_major_version: "{{ elasticsearch_version.split('.') | first | int }}"
 
@@ -55,5 +57,3 @@ clone_suffix: "-clone"
 do_forcemerge: true
 # Whether to delete cloned indices after reindex
 delete_clones: true
-
-elastic_search_version_upgrade: "elasticsearch-9.2.2-amd64.deb"
