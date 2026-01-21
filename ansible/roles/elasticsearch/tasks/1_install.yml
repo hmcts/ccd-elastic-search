@@ -111,7 +111,6 @@
     daemon_reload: yes
   when:
     - not ansible_check_mode
-    - es_systemd_override is changed
 
 - name: Restart Elasticsearch to apply changes
   ansible.builtin.systemd:
