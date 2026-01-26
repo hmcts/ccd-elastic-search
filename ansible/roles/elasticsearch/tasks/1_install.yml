@@ -7,15 +7,6 @@
         {{ elasticsearch_package }}
       {%- endif -%}
 
-- name: Determine Elasticsearch config template based on cluster type
-  ansible.builtin.set_fact:
-    es_config_template: >-
-      {%- if group_names | select('search', '_upgrade$') | list | length > 0 -%}
-        elasticsearch-demo-int.yml.j2
-      {%- else -%}
-        {{ elasticsearch_config }}
-      {%- endif -%}
-
 - name: Download Elasticsearch package
   ansible.builtin.get_url:
     url: "{{ elasticsearch_url_base }}/{{ elasticsearch_package }}"
@@ -34,7 +25,7 @@
 
 - name: Configure Elasticsearch settings
   ansible.builtin.template:
-    src: "{{ es_config_template }}"
+    src: "{{ elasticsearch_config }}"
     dest: "/etc/elasticsearch/elasticsearch.yml"
     mode: "0644"
     owner: root
