@@ -83,9 +83,11 @@ ipconfig_name = "ipconfig1"
 
 elastic_search_clusters = {
   default = {
-    instance_count = 4
-    name_template  = "ccd-data-%d"
-    data_disks     = 2
+    instance_count          = 4
+    name_template           = "ccd-data-%d"
+    data_disks              = 2
+    resource_group_name     = "ccd-elastic-search-demo"
+    enable_availability_set = true
     private_ip_allocation = {
       0 = "10.96.216.4"
       1 = "10.96.216.7"
@@ -95,19 +97,27 @@ elastic_search_clusters = {
     lb_private_ip_address = "10.96.216.253"
     storage_account_type  = "StandardSSD_LRS"
   }
-  # int = {
-  #   instance_count = 4
-  #   name_template  = "ccd-data-int-%d"
-  #   data_disks     = 2
-  #   private_ip_allocation = {
-  #     0 = "10.96.216.100"
-  #     1 = "10.96.216.101"
-  #     2 = "10.96.216.102"
-  #     3 = "10.96.216.103"
-  #   }
-  #   lb_private_ip_address = "10.96.216.243"
-  #   storage_account_type  = "StandardSSD_LRS"
-  # }
+  int = {
+    instance_count           = 4
+    name_template            = "ccd-data-int-%d"
+    data_disks               = 2
+    resource_group_name      = "ccd-elastic-search-demo-int"
+    enable_availability_set  = false
+    availability_zones       = ["1", "2", "3"]
+    attachment_create_option = "Attach"
+    vm_publisher_name        = "Canonical"
+    vm_offer                 = "ubuntu-24_04-lts"
+    vm_sku                   = "server"
+    vm_version               = "latest"
+    private_ip_allocation = {
+      0 = "10.96.216.100"
+      1 = "10.96.216.101"
+      2 = "10.96.216.102"
+      3 = "10.96.216.103"
+    }
+    lb_private_ip_address = "10.96.216.243"
+    storage_account_type  = "StandardSSD_LRS"
+  }
 }
 
 nsg_security_rules = {

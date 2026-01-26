@@ -40,4 +40,9 @@ module "load_balancers" {
   ports               = local.lb_ports
   tags                = module.ctags.common_tags
   expires_after       = var.env == "sandbox" ? local.expiresAfter : null
+
+  depends_on = [
+    azurerm_resource_group.this,
+    azurerm_resource_group.cluster
+  ]
 }

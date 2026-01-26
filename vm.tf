@@ -29,16 +29,19 @@ locals {
             disk_lun                 = tostring(disk_idx)
             disk_caching             = "None"
             disk_create_option       = "Empty"
+            disk_zone                = cluster.availability_zones != null ? cluster.availability_zones[instance_idx % length(cluster.availability_zones)] : null
             attachment_create_option = lookup(cluster, "attachment_create_option", "Empty")
           }
         }
-        vm_publisher_name     = cluster.vm_publisher_name
-        vm_offer              = cluster.vm_offer
-        vm_sku                = cluster.vm_sku
-        vm_version            = cluster.vm_version
-        vm_size               = cluster.vm_size
-        availability_set_name = cluster.availability_set_name
-        lb_private_ip_address = cluster.lb_private_ip_address
+        vm_publisher_name        = cluster.vm_publisher_name
+        vm_offer                 = cluster.vm_offer
+        vm_sku                   = cluster.vm_sku
+        vm_version               = cluster.vm_version
+        vm_size                  = cluster.vm_size
+        availability_set_name    = cluster.availability_set_name
+        enable_availability_set  = cluster.enable_availability_set
+        availability_zone        = cluster.availability_zones != null ? cluster.availability_zones[instance_idx % length(cluster.availability_zones)] : null
+        lb_private_ip_address    = cluster.lb_private_ip_address
       }
     }
   ]...)
@@ -141,11 +144,17 @@ module "elastic2_cluster" {
   vm_sku                       = coalesce(try(each.value.vm_sku, null), var.vm_sku)
   vm_version                   = coalesce(try(each.value.vm_version, null), var.vm_version)
   vm_size                      = coalesce(try(each.value.vm_size, null), var.vm_size)
-  enable_availability_set      = var.enable_availability_set
+  vm_availabilty_zones         = each.value.availability_zone
+  enable_availability_set      = try(each.value.enable_availability_set, null) != null ? each.value.enable_availability_set : (each.value.availability_zone == null ? var.enable_availability_set : false)
   availability_set_name        = coalesce(try(each.value.availability_set_name, null), var.availability_set_name)
   platform_update_domain_count = var.platform_update_domain_count
   ipconfig_name                = var.ipconfig_name
-  privateip_allocation         = each.value.cluster_key == "upgrade" ? "Static" : "Dynamic"
+  privateip_allocation         = each.value.ip != null ? "Static" : "Dynamic"
+
+  depends_on = [
+    azurerm_resource_group.this,
+    azurerm_resource_group.cluster
+  ]
 }
 
 module "ctags" {
@@ -164,9 +173,10 @@ resource "azurerm_resource_group" "this" {
   tags     = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
 }
 
-resource "azurerm_resource_group" "upgrade" {
-  count    = length(var.elastic_search_clusters) > 0 && contains(keys(var.elastic_search_clusters), "upgrade") ? 1 : 0
-  name     = "ccd-elastic-search-upgrade-${var.env}"
+resource "azurerm_resource_group" "cluster" {
+  for_each = { for k, v in var.elastic_search_clusters : k => v if k != "default" && v.resource_group_name != null }
+
+  name     = each.value.resource_group_name
   location = var.location
   tags     = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
 }
