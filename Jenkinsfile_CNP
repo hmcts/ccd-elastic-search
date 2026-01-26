@@ -35,9 +35,9 @@ def runAnsible() {
     setupSecret()
     echo "ANSIBLE Dry run: " + params.RUN_ANSIBLE_DRY
     echo "ANSIBLE Apply run: " + params.RUN_ANSIBLE_APPLY
-    echo "Rolling upgrade (demo-int only): " + params.ROLLING_UPGRADE
-    echo "Upgrade ES (demo-int only): " + params.UPGRADE_ES
-    echo "Reindex (demo-int only): " + params.REINDEX
+    echo "Rolling upgrade (demo-int/ithc only): " + params.ROLLING_UPGRADE
+    echo "Upgrade ES (demo-int/ithc only): " + params.UPGRADE_ES
+    echo "Reindex (demo-int/ithc only): " + params.REINDEX
     sh "echo 'Running Ansible Playbook for Sandbox'"
 
     // Install regular Ansible for normal environments
@@ -62,7 +62,7 @@ def runAnsible() {
     // sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
 
     // For demo-int only: use Ansible 2.9 with Python 3.9 in virtualenv (supports Python 3.5 targets)
-    if (env.ENV == 'demo') {
+    if (env.ENV == 'ithc' || env.ENV == 'demo') {
         // def tfvars = readFile("${WORKSPACE}/demo.tfvars")
 
         // def targets = []
@@ -82,11 +82,11 @@ def runAnsible() {
         """
 
         // for (t in targets) {
-            def t = 'demo_int'
+            def t = 'ithc'
             def clusterName = "ccd-elastic-search-${t.replace('_','-')}"
-            def rollingUpgrade = (t == 'demo_int' && params.ROLLING_UPGRADE) ? "true" : "false"
-            def reindexFlag    = (t == 'demo_int' && params.REINDEX) ? "true" : "false"
-            def upgradeFlag    = (t == 'demo_int' && params.UPGRADE_ES) ? "true" : "false"
+            def rollingUpgrade = (t == 'ithc' && params.ROLLING_UPGRADE) ? "true" : "false"
+            def reindexFlag    = (t == 'ithc' && params.REINDEX) ? "true" : "false"
+            def upgradeFlag    = (t == 'ithc' && params.UPGRADE_ES) ? "true" : "false"
 
             sh """
                 ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible-venv/bin/ansible-playbook \
