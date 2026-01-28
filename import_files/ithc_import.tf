@@ -12,6 +12,13 @@ import {
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
+  to = azurerm_resource_group.cluster["upgrade"]
+  id = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-upgrade-${each.key}"
+}
+
+
+import {
+  for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}"
   to       = azurerm_resource_group.this
 }
