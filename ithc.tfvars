@@ -29,9 +29,7 @@ elastic_search_clusters = {
     storage_account_type  = "StandardSSD_LRS"
   }
   upgrade = {
-    enable_availability_set = false
-    availability_set_name   = null
-    availability_zones      = ["1", "2", "3"]
+    availability_set_name = "CCD-DATA-0-AV-SET"
     resource_group_name = "ccd-elastic-search-upgrade-ithc"
     instance_count = 4
     name_template  = "ccd-data-upgrade-%d"
