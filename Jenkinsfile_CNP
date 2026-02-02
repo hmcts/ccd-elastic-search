@@ -82,7 +82,7 @@ def runAnsible() {
         """
 
         // for (t in targets) {
-            def t = 'demo_int'
+            def t = 'demo'
             def clusterName = "ccd-elastic-search-${t.replace('_','-')}"
             def rollingUpgrade = (t == 'demo_int' && params.ROLLING_UPGRADE) ? "true" : "false"
             def reindexFlag    = (t == 'demo_int' && params.REINDEX) ? "true" : "false"
