@@ -82,11 +82,11 @@ def runAnsible() {
         """
 
         // for (t in targets) {
-            def t = 'demo_int'
+            def t = 'demo'
             def clusterName = "ccd-elastic-search-${t.replace('_','-')}"
-            def rollingUpgrade = (t == 'demo_int' && params.ROLLING_UPGRADE) ? "true" : "false"
-            def reindexFlag    = (t == 'demo_int' && params.REINDEX) ? "true" : "false"
-            def upgradeFlag    = (t == 'demo_int' && params.UPGRADE_ES) ? "true" : "false"
+            def rollingUpgrade = (t == 'demo' && params.ROLLING_UPGRADE) ? "true" : "false"
+            def reindexFlag    = (t == 'demo' && params.REINDEX) ? "true" : "false"
+            def upgradeFlag    = (t == 'demo' && params.UPGRADE_ES) ? "true" : "false"
 
             sh """
                 ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible-venv/bin/ansible-playbook \

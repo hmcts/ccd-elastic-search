@@ -1,7 +1,7 @@
 # Override this variable in ansible/group_vars/group_name.yml file
 # where group_name is the inventory group to set different version
 # on different environments
-elasticsearch_version: 7.17.28
+elasticsearch_version: 8.19.10
 
 
 # Elasticsearch default vars
