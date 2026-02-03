@@ -23,7 +23,7 @@ action.auto_create_index: .security*,.monitoring*,.kibana*,.watches,.triggered_w
 xpack.security.enabled: false
 
 script.allowed_types: inline
-script.allowed_contexts: template, ingest
+script.allowed_contexts: template, ingest, watcher_condition
 
 ingest.geoip.downloader.enabled: false
 bootstrap.memory_lock: true

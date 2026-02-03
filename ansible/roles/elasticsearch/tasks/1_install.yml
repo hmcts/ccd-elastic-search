@@ -29,7 +29,7 @@
     dest: "/etc/elasticsearch/elasticsearch.yml"
     mode: "0644"
     owner: root
-    group: root
+    group: elasticsearch
   register: es_config
 
 - name: Create systemd override directory for Elasticsearch
@@ -55,6 +55,13 @@
     group: root
   when: not ansible_check_mode
   register: es_jvm_opts
+
+- name: Remove java security manager options
+  ansible.builtin.lineinfile:
+    path: /etc/elasticsearch/jvm.options
+    regexp: '^-Djava\.security\.(manager|policy)'
+    state: absent
+    backup: yes
 
 - name: Disable shard allocation
   ansible.builtin.uri:
