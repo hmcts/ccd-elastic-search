@@ -1,5 +1,5 @@
 #!groovy
-@Library("Infrastructure") _
+@Library("Infrastructure@allow-plan-only")
 
 import uk.gov.hmcts.contino.Environment
 import uk.gov.hmcts.contino.HealthChecker
@@ -12,8 +12,8 @@ properties([
                 booleanParam(name: "RUN_ANSIBLE_DRY", defaultValue: false, description: "Run Ansible in DRY run mode"),
                 booleanParam(name: "RUN_ANSIBLE_APPLY", defaultValue: false, description: "Run Ansible in APPLY mode"),
                 booleanParam(name: "UPGRADE_ES", defaultValue: true, description: "Whether to run ES version upgrade steps (deb packages re-deploy)"),
-                booleanParam(name: "ROLLING_UPGRADE", defaultValue: false, description: "Run Ansible with rolling upgrade steps (demo/ithc only)"),
-                booleanParam(name: "REINDEX", defaultValue: false, description: "Whether to re-index after version upgrade (demo/ithc only)"),
+                booleanParam(name: "ROLLING_UPGRADE", defaultValue: false, description: "Run Ansible with rolling upgrade steps"),
+                booleanParam(name: "REINDEX", defaultValue: false, description: "Whether to re-index after version upgrade"),
                 string(name: "ANSIBLE_TARGETS", defaultValue: "demo,ithc", description: "Comma-separated environments for Ansible runs")
         ])
 ])
@@ -32,7 +32,7 @@ def setupSecret(String targetEnv) {
 }
 
 def supportsUpgradeFlags(String targetEnv) {
-    ["demo", "ithc"].contains(targetEnv)
+    ["demo", "ithc", "perftest"].contains(targetEnv)
 }
 
 def runAnsible(String targetEnv) {
@@ -40,9 +40,9 @@ def runAnsible(String targetEnv) {
 
     echo "ANSIBLE Dry run: ${params.RUN_ANSIBLE_DRY}"
     echo "ANSIBLE Apply run: ${params.RUN_ANSIBLE_APPLY}"
-    echo "Rolling upgrade (demo/ithc only): ${params.ROLLING_UPGRADE}"
-    echo "Upgrade ES (demo/ithc only): ${params.UPGRADE_ES}"
-    echo "Reindex (demo/ithc only): ${params.REINDEX}"
+    echo "Rolling upgrade: ${params.ROLLING_UPGRADE}"
+    echo "Upgrade ES: ${params.UPGRADE_ES}"
+    echo "Reindex: ${params.REINDEX}"
 
     def checkRunAnsible = params.RUN_ANSIBLE_APPLY ? "" : "--check"
     def buildTag = (env.BUILD_TAG ?: "local").replaceAll("[^A-Za-z0-9_.-]", "-")
@@ -153,6 +153,15 @@ withInfraPipeline(params.PRODUCT_NAME, null, !params.DEPLOY_ES_CLUSTER) {
                 runAnsible("ithc")
             } else {
                 echo "Skipping ithc Ansible: ithc not in ANSIBLE_TARGETS=${params.ANSIBLE_TARGETS}"
+            }
+        }
+
+        afterSuccess("buildinfra:perftest") {
+            if (targets.contains("perftest")) {
+                echo "Running Ansible in perftest"
+                runAnsible("perftest")
+            } else {
+                echo "Skipping perftest Ansible: perftest not in ANSIBLE_TARGETS=${params.ANSIBLE_TARGETS}"
             }
         }
     }
