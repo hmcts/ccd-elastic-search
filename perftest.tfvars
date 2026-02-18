@@ -1,14 +1,39 @@
+vm_publisher_name      = "Canonical"
+vm_offer               = "UbuntuServer"
+vm_sku                 = "16.04.0-LTS"
+vm_version             = "latest"
+availability_set_name  = "CCD-DATA-0-AV-SET"
+
 storageAccountType     = "Default"
 dataStorageAccountType = "Standard"
 vmDataDiskCount        = "2"
+
+lb_private_ip_address  = "10.112.153.253"
+soc_vault_name         = "soc-prod"
+soc_vault_rg           = "soc-core-infra-prod-rg"
+
+ipconfig_name          = "ipconfig1"
+
 dynatrace_instance     = "yrk32651"
 dynatrace_hostgroup    = "PERF_CFT"
-availability_set_name  = "CCD-DATA-0-AV-SET"
-lb_private_ip_address  = "10.112.153.253"
+
+elastic_search_clusters = {
+  default = {
+    instance_count = 4
+    name_template  = "ccd-data-%d"
+    data_disks     = 2
+    private_ip_allocation = {
+      0 = "10.112.153.7"
+      1 = "10.112.153.6"
+      2 = "10.112.153.9"
+      3 = "10.112.153.5"
+    }
+    lb_private_ip_address = "10.112.153.253"
+    storage_account_type  = "StandardSSD_LRS"
+  }
+}
 
 nsg_security_rules = {
-
-
   SSH = {
     name                                       = "SSH"
     description                                = "Allows SSH traffic"
@@ -104,7 +129,7 @@ nsg_security_rules = {
     access                                     = "Allow"
     protocol                                   = "Tcp"
     source_port_range                          = "*"
-    destination_port_range                     = "9200"
+    destination_port_range                     = ["9200", "22"]
     source_address_prefix                      = "10.10.76.0/23"
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"

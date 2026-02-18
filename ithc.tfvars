@@ -63,72 +63,7 @@ elastic_search_clusters = {
   #   lb_private_ip_address = "10.100.157.253"
   # }
 }
-# vms = {
-#   ccd-data-0 = {
-#     name = "ccd-data-0"
-#     ip   = "10.112.53.5"
-#     managed_disks = {
-#       disk1 = {
-#         name                = "ccd-data-0-datadisk1"
-#         resource_group_name = "ccd-elastic-search-ithc"
-#         disk_lun            = "0"
-#       }
-#       disk2 = {
-#         name                = "ccd-data-0-datadisk2"
-#         resource_group_name = "ccd-elastic-search-ithc"
-#         disk_lun            = "1"
-#       }
-#     }
-#   }
-#   ccd-data-1 = {
-#     name = "ccd-data-1"
-#     ip   = "10.112.53.9"
-#     managed_disks = {
-#       disk1 = {
-#         name                = "ccd-data-1-datadisk1"
-#         resource_group_name = "ccd-elastic-search-ithc"
-#         disk_lun            = "0"
-#       }
-#       disk2 = {
-#         name                = "ccd-data-1-datadisk2"
-#         resource_group_name = "ccd-elastic-search-ithc"
-#         disk_lun            = "1"
-#       }
-#     }
-#   }
-#   ccd-data-2 = {
-#     name = "ccd-data-2"
-#     ip   = "10.112.53.6"
-#     managed_disks = {
-#       disk1 = {
-#         name                = "ccd-data-2-datadisk1"
-#         resource_group_name = "ccd-elastic-search-ithc"
-#         disk_lun            = "0"
-#       }
-#       disk2 = {
-#         name                = "ccd-data-2-datadisk2"
-#         resource_group_name = "ccd-elastic-search-ithc"
-#         disk_lun            = "1"
-#       }
-#     }
-#   }
-#   ccd-data-3 = {
-#     name = "ccd-data-3"
-#     ip   = "10.112.53.7"
-#     managed_disks = {
-#       disk1 = {
-#         name                = "ccd-data-3-datadisk1"
-#         resource_group_name = "ccd-elastic-search-ithc"
-#         disk_lun            = "0"
-#       }
-#       disk2 = {
-#         name                = "ccd-data-3-datadisk2"
-#         resource_group_name = "ccd-elastic-search-ithc"
-#         disk_lun            = "1"
-#       }
-#     }
-#   }
-# }
+
 
 nsg_security_rules = {
   SSH = {
