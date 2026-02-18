@@ -1,7 +1,7 @@
-vm_publisher_name              = "Canonical"
-vm_offer                       = "UbuntuServer"
-vm_sku                         = "16.04.0-LTS"
-vm_version                     = "latest"
+vm_publisher_name     = "Canonical"
+vm_offer              = "UbuntuServer"
+vm_sku                = "16.04.0-LTS"
+vm_version            = "latest"
 availability_set_name = "CCD-DATA-0-AV-SET"
 
 lb_private_ip_address = "10.96.216.253"

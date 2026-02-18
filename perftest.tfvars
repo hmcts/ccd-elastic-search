@@ -1,21 +1,21 @@
-vm_publisher_name      = "Canonical"
-vm_offer               = "UbuntuServer"
-vm_sku                 = "16.04.0-LTS"
-vm_version             = "latest"
-availability_set_name  = "CCD-DATA-0-AV-SET"
+vm_publisher_name     = "Canonical"
+vm_offer              = "UbuntuServer"
+vm_sku                = "16.04.0-LTS"
+vm_version            = "latest"
+availability_set_name = "CCD-DATA-0-AV-SET"
 
 storageAccountType     = "Default"
 dataStorageAccountType = "Standard"
 vmDataDiskCount        = "2"
 
-lb_private_ip_address  = "10.112.153.253"
-soc_vault_name         = "soc-prod"
-soc_vault_rg           = "soc-core-infra-prod-rg"
+lb_private_ip_address = "10.112.153.253"
+soc_vault_name        = "soc-prod"
+soc_vault_rg          = "soc-core-infra-prod-rg"
 
-ipconfig_name          = "ipconfig1"
+ipconfig_name = "ipconfig1"
 
-dynatrace_instance     = "yrk32651"
-dynatrace_hostgroup    = "PERF_CFT"
+dynatrace_instance  = "yrk32651"
+dynatrace_hostgroup = "PERF_CFT"
 
 elastic_search_clusters = {
   default = {
