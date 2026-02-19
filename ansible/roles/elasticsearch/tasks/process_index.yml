@@ -1,0 +1,135 @@
+# sets "index_version" fact for the given "index_name"
+- include_tasks: get_index_version.yml
+
+- name: Process index only if upgrade needed
+  block:
+
+    ## Make readonly for cloning
+    - name: Add write block to user index before cloning
+      uri:
+        url: "{{ es_url }}/{{ index_name }}/_block/write"
+        method: PUT
+        status_code: [200]
+      when:
+        - not index_name.endswith(clone_suffix)
+
+
+    - name: Clone user index {{ index_name }} -> {{ index_name }}{{ clone_suffix }}
+      uri:
+        url: "{{ es_url }}/{{ index_name }}/_clone/{{ index_name }}{{ clone_suffix }}"
+        method: POST
+        body_format: json
+        body: {}
+        status_code: [200]
+      when:
+        - not index_name.endswith(clone_suffix)
+
+
+    - name: Wait for cloned index health to be green
+      uri:
+        url: "{{ es_url }}/_cluster/health/{{ index_name }}{{ clone_suffix }}?wait_for_status=green&timeout=120s"
+      when:
+        - not index_name.endswith(clone_suffix)
+
+
+    ## Copy aliases
+    - name: Get aliases from original index
+      uri:
+        url: "{{ es_url }}/{{ index_name }}/_alias"
+        method: GET
+      register: original_aliases_raw
+      when:
+        - not index_name.endswith(clone_suffix)
+
+
+    - name: Apply aliases to cloned index
+      uri:
+        url: "{{ es_url }}/_aliases"
+        method: POST
+        body_format: json
+        body:
+          actions: "{{ original_aliases_raw.json[index_name].aliases | aliases_to_actions(index_name + clone_suffix) }}"
+        status_code: [200]
+      when:
+        - original_aliases_raw.json[index_name].aliases | length > 0
+
+
+    - name: Delete original index before reindex
+      uri:
+        url: "{{ es_url }}/{{ index_name }}"
+        method: DELETE
+        status_code: [200, 404]  # allow success if index doesn't exist
+
+
+    ## Reindex
+    - name: Get settings and mappings from cloned index
+      uri:
+        url: "{{ es_url }}/{{ index_name }}{{ clone_suffix }}"
+        method: GET
+      register: cloned_index_def
+
+
+    - name: Re-create original index with settings and mappings
+      uri:
+        url: "{{ es_url }}/{{ index_name }}"
+        method: PUT
+        body_format: json
+        body: "{{ cloned_index_def.json | filter_readonly_parts }}"
+        status_code: [200]
+
+
+    - name: Reindex from cloned index back into original
+      uri:
+        url: "{{ es_url }}/_reindex?wait_for_completion=true"
+        method: POST
+        body_format: json
+        body:
+          source:
+            index: "{{ index_name }}{{ clone_suffix }}"
+          dest:
+            index: "{{ index_name }}"
+        status_code: [200]
+
+
+    - name: Refresh user indices after reindex
+      uri:
+        url: "{{ es_url }}/{{ index_name }}/_refresh"
+        method: POST
+
+
+    ## Copy aliases back
+    - name: Get aliases from cloned index
+      uri:
+        url: "{{ es_url }}/{{ index_name }}{{ clone_suffix }}/_alias"
+        method: GET
+      register: original_aliases_raw
+
+
+    - name: Apply aliases to freshly created index
+      uri:
+        url: "{{ es_url }}/_aliases"
+        method: POST
+        body_format: json
+        body:
+          actions: "{{ original_aliases_raw.json[index_name + clone_suffix].aliases | aliases_to_actions(index_name) }}"
+        status_code: [200]
+      when:
+        - original_aliases_raw.json[index_name + clone_suffix].aliases | length > 0
+
+
+    ## Optimise user indices
+    - name: Force merge user indices to 3 segment (optional)
+      uri:
+        url: "{{ es_url }}/{{ index_name }}/_forcemerge?max_num_segments=3"
+        method: POST
+      when: do_forcemerge
+
+
+    ## Delete cloned index
+    - name: Delete cloned index after reindex
+      uri:
+        url: "{{ es_url }}/{{ index_name }}{{ clone_suffix }}"
+        method: DELETE
+        status_code: [200, 404]  # allow success if index doesn't exist
+      when: delete_clones
+  when: index_version < elasticsearch_major_version
