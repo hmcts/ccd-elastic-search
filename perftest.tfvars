@@ -5,6 +5,31 @@ dynatrace_instance     = "yrk32651"
 dynatrace_hostgroup    = "PERF_CFT"
 availability_set_name  = "CCD-DATA-0-AV-SET"
 lb_private_ip_address  = "10.112.153.253"
+vm_publisher_name      = "Canonical"
+vm_offer               = "UbuntuServer"
+vm_sku                 = "16.04.0-LTS"
+vm_version             = "latest"
+
+soc_vault_name = "soc-prod"
+soc_vault_rg   = "soc-core-infra-prod-rg"
+
+elastic_search_clusters = {
+  default = {
+    instance_count           = 4
+    name_template            = "ccd-data-%d"
+    data_disks               = 2
+    resource_group_name      = "ccd-elastic-search-perftest"
+    enable_availability_set  = true
+    private_ip_allocation = {
+      0 = "10.112.153.7"
+      1 = "10.112.153.6"
+      2 = "10.112.153.9"
+      3 = "10.112.153.5"
+    }
+    lb_private_ip_address = "10.112.153.253"
+    storage_account_type  = "StandardSSD_LRS"
+  }
+}
 
 nsg_security_rules = {
 
