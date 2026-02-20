@@ -206,3 +206,66 @@ import {
   id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Compute/availabilitySets/CCD-DATA-0-AV-SET"
   to = module.elastic2_cluster["ccd-data-3"].module.virtual-machines.azurerm_availability_set.set[0]
 }
+
+# Data Collection Rule Associations
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Compute/virtualMachines/ccd-data-0/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-0-perftest-dcra"
+  to = azurerm_monitor_data_collection_rule_association.linux_vm_dcra_cluster["ccd-data-0"]
+}
+
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Compute/virtualMachines/ccd-data-1/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-1-perftest-dcra"
+  to = azurerm_monitor_data_collection_rule_association.linux_vm_dcra_cluster["ccd-data-1"]
+}
+
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Compute/virtualMachines/ccd-data-2/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-2-perftest-dcra"
+  to = azurerm_monitor_data_collection_rule_association.linux_vm_dcra_cluster["ccd-data-2"]
+}
+
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Compute/virtualMachines/ccd-data-3/providers/Microsoft.Insights/dataCollectionRuleAssociations/vm-ccd-data-3-perftest-dcra"
+  to = azurerm_monitor_data_collection_rule_association.linux_vm_dcra_cluster["ccd-data-3"]
+}
+
+# NIC to ASG Associations
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkInterfaces/ccd-data-0-nic|/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/applicationSecurityGroups/ccd-data-asg"
+  to = azurerm_network_interface_application_security_group_association.this_cluster["ccd-data-0"]
+}
+
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkInterfaces/ccd-data-1-nic|/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/applicationSecurityGroups/ccd-data-asg"
+  to = azurerm_network_interface_application_security_group_association.this_cluster["ccd-data-1"]
+}
+
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkInterfaces/ccd-data-2-nic|/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/applicationSecurityGroups/ccd-data-asg"
+  to = azurerm_network_interface_application_security_group_association.this_cluster["ccd-data-2"]
+}
+
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkInterfaces/ccd-data-3-nic|/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/applicationSecurityGroups/ccd-data-asg"
+  to = azurerm_network_interface_application_security_group_association.this_cluster["ccd-data-3"]
+}
+
+# NIC to NSG Associations
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkInterfaces/ccd-data-0-nic|/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg"
+  to = azurerm_network_interface_security_group_association.association_cluster["ccd-data-0"]
+}
+
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkInterfaces/ccd-data-1-nic|/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg"
+  to = azurerm_network_interface_security_group_association.association_cluster["ccd-data-1"]
+}
+
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkInterfaces/ccd-data-2-nic|/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg"
+  to = azurerm_network_interface_security_group_association.association_cluster["ccd-data-2"]
+}
+
+import {
+  id = "/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkInterfaces/ccd-data-3-nic|/subscriptions/${local.perftest_subscription}/resourceGroups/ccd-elastic-search-perftest/providers/Microsoft.Network/networkSecurityGroups/ccd-cluster-nsg"
+  to = azurerm_network_interface_security_group_association.association_cluster["ccd-data-3"]
+}
