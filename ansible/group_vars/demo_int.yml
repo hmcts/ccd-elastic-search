@@ -1,3 +1,1 @@
-elasticsearch_version: 7.17.28
-
-elasticsearch_config: "elasticsearch-demo-int.yml.j2"
+elasticsearch_version: 9.2.2
