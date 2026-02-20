@@ -10,6 +10,8 @@ vm_publisher_name      = "Canonical"
 vm_offer               = "UbuntuServer"
 vm_sku                 = "16.04.0-LTS"
 vm_version             = "latest"
+soc_vault_name        = "soc-prod"
+soc_vault_rg          = "soc-core-infra-prod-rg"
 
 elastic_search_clusters = {
   default = {
