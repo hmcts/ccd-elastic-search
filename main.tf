@@ -98,3 +98,15 @@ resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra_clust
   data_collection_rule_id = data.azurerm_monitor_data_collection_rule.linux_data_collection_rule.id
   description             = "Association between the ELK linux VMs and the appropriate data collection rule."
 }
+
+module "storageaccount" {
+  source = "git@github.com:hmcts/cnp-module-storage-account?ref=4.x"
+  count  = var.env == "perftest" ? 1 : 0
+
+  env                  = var.env
+  storage_account_name = var.storage_account_name
+  resource_group_name  = var.resource_group_name
+  location             = var.location
+  account_kind         = var.account_kind
+  common_tags          = var.common_tags
+}

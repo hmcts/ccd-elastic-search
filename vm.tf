@@ -33,15 +33,15 @@ locals {
             attachment_create_option = lookup(cluster, "attachment_create_option", "Empty")
           }
         }
-        vm_publisher_name        = cluster.vm_publisher_name
-        vm_offer                 = cluster.vm_offer
-        vm_sku                   = cluster.vm_sku
-        vm_version               = cluster.vm_version
-        vm_size                  = cluster.vm_size
-        availability_set_name    = cluster.availability_set_name
-        enable_availability_set  = cluster.enable_availability_set
-        availability_zone        = cluster.availability_zones != null ? cluster.availability_zones[instance_idx % length(cluster.availability_zones)] : null
-        lb_private_ip_address    = cluster.lb_private_ip_address
+        vm_publisher_name       = cluster.vm_publisher_name
+        vm_offer                = cluster.vm_offer
+        vm_sku                  = cluster.vm_sku
+        vm_version              = cluster.vm_version
+        vm_size                 = cluster.vm_size
+        availability_set_name   = cluster.availability_set_name
+        enable_availability_set = cluster.enable_availability_set
+        availability_zone       = cluster.availability_zones != null ? cluster.availability_zones[instance_idx % length(cluster.availability_zones)] : null
+        lb_private_ip_address   = cluster.lb_private_ip_address
       }
     }
   ]...)
