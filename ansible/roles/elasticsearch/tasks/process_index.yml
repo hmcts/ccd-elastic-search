@@ -2,6 +2,7 @@
 - include_tasks: get_index_version.yml
 
 - name: Process index only if upgrade needed
+  when: index_version < elasticsearch_major_version
   block:
 
     ## Make readonly for cloning
@@ -25,9 +26,18 @@
         - not index_name.endswith(clone_suffix)
 
 
+    # !!! can potentially timeout
     - name: Wait for cloned index health to be green
       uri:
-        url: "{{ es_url }}/_cluster/health/{{ index_name }}{{ clone_suffix }}?wait_for_status=green&timeout=120s"
+        url: "{{ es_url }}/_cluster/health/{{ index_name }}{{ clone_suffix }}?format=json"
+        timeout: 30
+        return_content: yes
+      register: cloned_health
+      until: >
+        cloned_health.json.status == 'green'
+        and (cloned_health.json.unassigned_shards | default(0) == 0)
+      retries: 60
+      delay: 30
       when:
         - not index_name.endswith(clone_suffix)
 
@@ -77,11 +87,12 @@
         body: "{{ cloned_index_def.json | filter_readonly_parts }}"
         status_code: [200]
 
-
+    # !!! can potentially timeout
     - name: Reindex from cloned index back into original
       uri:
         url: "{{ es_url }}/_reindex?wait_for_completion=true"
         method: POST
+        timeout: 3600
         body_format: json
         body:
           source:
@@ -118,11 +129,12 @@
 
 
     ## Optimise user indices
-    - name: Force merge user indices to 3 segment (optional)
-      uri:
-        url: "{{ es_url }}/{{ index_name }}/_forcemerge?max_num_segments=3"
-        method: POST
-      when: do_forcemerge
+    # usually takes a long time and very IO heavy, so skip
+    # - name: Force merge user indices to 3 segment (optional)
+    #   uri:
+    #     url: "{{ es_url }}/{{ index_name }}/_forcemerge?max_num_segments=3"
+    #     method: POST
+    #   when: do_forcemerge
 
 
     ## Delete cloned index
@@ -132,4 +144,3 @@
         method: DELETE
         status_code: [200, 404]  # allow success if index doesn't exist
       when: delete_clones
-  when: index_version < elasticsearch_major_version
