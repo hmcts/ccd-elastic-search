@@ -10,14 +10,14 @@ resource "azurerm_application_security_group" "this" {
 resource "azurerm_application_security_group" "cluster" {
   for_each = { for k, v in var.elastic_search_clusters : k => v if k != "default" }
 
-  name                = "ccd-data-${each.key}-asg"
-  location            = var.location
+  name     = "ccd-data-${each.key}-asg"
+  location = var.location
   resource_group_name = coalesce(
     each.value.resource_group_name,
     each.key == "upgrade" ? "ccd-elastic-search-upgrade-${var.env}" : "ccd-elastic-search-${var.env}"
   )
   tags = merge(module.ctags.common_tags, var.env == "sandbox" ? { expiresAfter = local.expiresAfter } : {})
-  
+
   depends_on = [
     azurerm_resource_group.cluster
   ]
@@ -49,8 +49,8 @@ resource "azurerm_network_security_group" "nsg_group" {
 resource "azurerm_network_security_group" "cluster_nsg" {
   for_each = { for k, v in var.elastic_search_clusters : k => v if k != "default" }
 
-  name                = "ccd-${each.key}-cluster-nsg"
-  location            = var.location
+  name     = "ccd-${each.key}-cluster-nsg"
+  location = var.location
   resource_group_name = coalesce(
     each.value.resource_group_name,
     "ccd-elastic-search-${each.key}-${var.env}"
@@ -152,6 +152,6 @@ resource "azurerm_network_interface_security_group_association" "association" {
 resource "azurerm_network_interface_security_group_association" "association_cluster" {
   for_each = local.use_new_structure ? local.flattened_vms : {}
 
-  network_interface_id = module.elastic2_cluster[each.key].nic_id
+  network_interface_id      = module.elastic2_cluster[each.key].nic_id
   network_security_group_id = each.value.cluster_key == "default" ? azurerm_network_security_group.nsg_group.id : azurerm_network_security_group.cluster_nsg[each.value.cluster_key].id
 }
