@@ -35,6 +35,14 @@ def filter_readonly_parts(index_def):
     index.pop("provided_name", None)
     index.pop("blocks", None)
     stripped.pop("aliases", None)
+
+    mappings = stripped.get("mappings", {})
+    props = mappings.get("properties", {})
+    if "@timestamp" in props:
+        props["@timestamp"] = {
+            "type": "date",
+            "ignore_malformed": True,
+        }
     return stripped
 
 
