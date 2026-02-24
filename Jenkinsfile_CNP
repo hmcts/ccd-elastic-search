@@ -1,5 +1,5 @@
 #!groovy
-@Library("Infrastructure") _
+@Library("Infrastructure@allow-plan-only")
 
 import uk.gov.hmcts.contino.Environment
 import uk.gov.hmcts.contino.HealthChecker
@@ -7,170 +7,168 @@ import uk.gov.hmcts.contino.azure.KeyVault
 
 properties([
         parameters([
-                string(name: 'PRODUCT_NAME', defaultValue: 'ccd-elastic-search', description: ''),
-                booleanParam(name: 'DEPLOY_ES_CLUSTER', defaultValue: false, description: 'Select to deploy ElasticSearch'),
-                booleanParam(name: 'RUN_ANSIBLE_DRY', defaultValue: false, description: 'Run Ansible in DRY run mode'),
-                booleanParam(name: 'RUN_ANSIBLE_APPLY', defaultValue: false, description: 'Run Ansible in APPLY mode'),
-                booleanParam(name: 'UPGRADE_ES', defaultValue: true, description: 'Whether to run ES version upgrade steps (deb packages re-deploy)'),
-                booleanParam(name: 'ROLLING_UPGRADE', defaultValue: false, description: 'Run Ansible with rolling upgrade steps (demo-int only)'),
-                booleanParam(name: 'REINDEX', defaultValue: false, description: 'Whether to re-index after version upgrade (demo-int only)'),
+                string(name: "PRODUCT_NAME", defaultValue: "ccd-elastic-search", description: ""),
+                booleanParam(name: "DEPLOY_ES_CLUSTER", defaultValue: false, description: "Select to deploy ElasticSearch"),
+                booleanParam(name: "RUN_ANSIBLE_DRY", defaultValue: false, description: "Run Ansible in DRY run mode"),
+                booleanParam(name: "RUN_ANSIBLE_APPLY", defaultValue: false, description: "Run Ansible in APPLY mode"),
+                booleanParam(name: "UPGRADE_ES", defaultValue: true, description: "Whether to run ES version upgrade steps (deb packages re-deploy)"),
+                booleanParam(name: "ROLLING_UPGRADE", defaultValue: false, description: "Run Ansible with rolling upgrade steps"),
+                booleanParam(name: "REINDEX", defaultValue: false, description: "Whether to re-index after version upgrade"),
+                string(name: "ANSIBLE_TARGETS", defaultValue: "demo,ithc", description: "Comma-separated environments for Ansible runs")
         ])
 ])
 
-def setupSecret() {
-  def bootstap_env = env.ENV
-  azureKeyVault(
-    keyVaultURL: "https://ccd-${bootstap_env}.vault.azure.net/",
-    secrets: [
-      secret("ccd-vm-admin-name", 'CCD_VM_ADMIN_NAME'),
-      secret("ccd-ELASTIC-SEARCH-PRIVATE-KEY", 'CCD_VM_SSH_PRIVATE_KEY'),
-    ]) {
-      env.CCD_VM_ADMIN_NAME = "${CCD_VM_ADMIN_NAME}"
-      env.CCD_VM_SSH_PRIVATE_KEY = "${CCD_VM_SSH_PRIVATE_KEY}"
+def setupSecret(String targetEnv) {
+    def bootstrapEnv = targetEnv
+    azureKeyVault(
+        keyVaultURL: "https://ccd-${bootstrapEnv}.vault.azure.net/",
+        secrets: [
+            secret("ccd-vm-admin-name", "CCD_VM_ADMIN_NAME"),
+            secret("ccd-ELASTIC-SEARCH-PRIVATE-KEY", "CCD_VM_SSH_PRIVATE_KEY")
+        ]) {
+            env.CCD_VM_ADMIN_NAME = "${CCD_VM_ADMIN_NAME}"
+            env.CCD_VM_SSH_PRIVATE_KEY = "${CCD_VM_SSH_PRIVATE_KEY}"
+        }
+}
+
+def supportsUpgradeFlags(String targetEnv) {
+    ["demo", "ithc", "perftest"].contains(targetEnv)
+}
+
+def runAnsible(String targetEnv) {
+    setupSecret(targetEnv)
+
+    echo "ANSIBLE Dry run: ${params.RUN_ANSIBLE_DRY}"
+    echo "ANSIBLE Apply run: ${params.RUN_ANSIBLE_APPLY}"
+    echo "Rolling upgrade: ${params.ROLLING_UPGRADE}"
+    echo "Upgrade ES: ${params.UPGRADE_ES}"
+    echo "Reindex: ${params.REINDEX}"
+
+    def checkRunAnsible = params.RUN_ANSIBLE_APPLY ? "" : "--check"
+    def buildTag = (env.BUILD_TAG ?: "local").replaceAll("[^A-Za-z0-9_.-]", "-")
+    def venvPath = "/tmp/ansible-venv-${buildTag}"
+    def keyPath = "/tmp/ccdadmin_key_${buildTag}"
+
+    def upgradeEnabled = supportsUpgradeFlags(targetEnv)
+    def rollingUpgrade = (upgradeEnabled && params.ROLLING_UPGRADE) ? "true" : "false"
+    def reindex = (upgradeEnabled && params.REINDEX) ? "true" : "false"
+    def upgradeEs = (upgradeEnabled && params.UPGRADE_ES) ? "true" : "false"
+    def clusterName = "ccd-elastic-search-${targetEnv.replace("_", "-")}"
+
+    try {
+        writeFile file: keyPath, text: env.CCD_VM_SSH_PRIVATE_KEY
+        sh "chmod 600 ${keyPath}"
+
+        sh """
+            python3 -m venv ${venvPath}
+            ${venvPath}/bin/pip install --upgrade pip
+            ${venvPath}/bin/pip install ansible==13.0.0
+            ${venvPath}/bin/ansible --version
+        """
+
+        sh """
+            ANSIBLE_HOST_KEY_CHECKING=False ${venvPath}/bin/ansible-playbook \
+              -i ${WORKSPACE}/ansible/inventory.ini \
+              ansible/diskmount.yml \
+              -u ${CCD_VM_ADMIN_NAME} \
+              --private-key=${keyPath} \
+              --limit ${targetEnv} \
+              ${checkRunAnsible}
+
+            ANSIBLE_HOST_KEY_CHECKING=False ${venvPath}/bin/ansible-playbook \
+              -i ${WORKSPACE}/ansible/inventory.ini \
+              ansible/main.yml \
+              -u ${CCD_VM_ADMIN_NAME} \
+              --private-key=${keyPath} \
+              --limit ${targetEnv} \
+              --extra-vars 'elastic_clustername=${clusterName} rolling_upgrade=${rollingUpgrade} reindex=${reindex} upgrade_es=${upgradeEs}' \
+              ${checkRunAnsible}
+        """
+    } finally {
+        sh "rm -rf ${venvPath} ${keyPath}"
     }
 }
 
-def runAnsible() {
-
-    setupSecret()
-    echo "ANSIBLE Dry run: " + params.RUN_ANSIBLE_DRY
-    echo "ANSIBLE Apply run: " + params.RUN_ANSIBLE_APPLY
-    echo "Rolling upgrade (demo-int only): " + params.ROLLING_UPGRADE
-    echo "Upgrade ES (demo-int only): " + params.UPGRADE_ES
-    echo "Reindex (demo-int only): " + params.REINDEX
-    sh "echo 'Running Ansible Playbook for Sandbox'"
-
-    // Install regular Ansible for normal environments
-    sh "sudo apt update && sudo apt install -y ansible python3-venv"
-    sh "ansible --version"
-    sh "echo 'environment ${env.ENV}'"
-
-    writeFile file: '/tmp/ccdadmin_key', text: "${CCD_VM_SSH_PRIVATE_KEY}"
-    sh "chmod 600 /tmp/ccdadmin_key"
-    def checkRunAnsible = "--check"
-    if (params.RUN_ANSIBLE_APPLY == true) {
-        checkRunAnsible = ""
-    }
-    def rollingUpgradeDemoInt = params.ROLLING_UPGRADE ? "true" : "false"
-    def reindex = params.REINDEX ? "true" : "false"
-    def upgradeEs = params.UPGRADE_ES ? "true" : "false"
-
-    // Run regular demo environment with standard Ansible
-    // Temporarily disabled to save time during demo-int builds
-    // sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/diskmount.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} ${checkRunAnsible}"
-
-    // sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${WORKSPACE}/ansible/inventory.ini ansible/main.yml -u ${CCD_VM_ADMIN_NAME} --private-key=/tmp/ccdadmin_key --limit ${env.ENV} --extra-vars 'elastic_clustername=ccd-elastic-search-${env.ENV}' ${checkRunAnsible}"
-
-    // For demo-int only: use Ansible 2.9 with Python 3.9 in virtualenv (supports Python 3.5 targets)
-    if (env.ENV == 'demo') {
-        // def tfvars = readFile("${WORKSPACE}/demo.tfvars")
-
-        // def targets = []
-        // if (tfvars.contains('demo_int'))  { targets << 'demo_int' }
-        // if (tfvars.contains('demo_int2')) { targets << 'demo_int2' }
-
-        // if (targets.size() == 0) {
-        //     echo "No demo_int/demo_int2 clusters found in demo.tfvars; skipping Ansible."
-        //     return
-        // }
-
-        sh """
-            python3 -m venv /tmp/ansible-venv
-            /tmp/ansible-venv/bin/pip install --upgrade pip
-            /tmp/ansible-venv/bin/pip install ansible==13.0.0
-            /tmp/ansible-venv/bin/ansible --version
-        """
-
-        // for (t in targets) {
-            def t = 'demo_int'
-            def clusterName = "ccd-elastic-search-${t.replace('_','-')}"
-            def rollingUpgrade = (t == 'demo_int' && params.ROLLING_UPGRADE) ? "true" : "false"
-            def reindexFlag    = (t == 'demo_int' && params.REINDEX) ? "true" : "false"
-            def upgradeFlag    = (t == 'demo_int' && params.UPGRADE_ES) ? "true" : "false"
-
-            sh """
-                ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible-venv/bin/ansible-playbook \
-                  -i ${WORKSPACE}/ansible/inventory.ini \
-                  ansible/diskmount.yml \
-                  -u ${CCD_VM_ADMIN_NAME} \
-                  --private-key=/tmp/ccdadmin_key \
-                  --limit ${t} \
-                  ${checkRunAnsible}
-
-                ANSIBLE_HOST_KEY_CHECKING=False /tmp/ansible-venv/bin/ansible-playbook \
-                  -i ${WORKSPACE}/ansible/inventory.ini \
-                  ansible/main.yml \
-                  -u ${CCD_VM_ADMIN_NAME} \
-                  --private-key=/tmp/ccdadmin_key \
-                  --limit ${t} \
-                  --extra-vars 'elastic_clustername=${clusterName} rolling_upgrade=${rollingUpgrade} reindex=${reindexFlag} upgrade_es=${upgradeFlag}' \
-                  ${checkRunAnsible}
-            """
-        // }
-
-        sh "rm -rf /tmp/ansible-venv"
-    }
+def parseTargets() {
+    params.ANSIBLE_TARGETS
+        .split(",")
+        .collect { it.trim() }
+        .findAll { it }
+        .toSet()
 }
 
 static Map<String, Object> secret(String secretName, String envVariable) {
-  [
-    $class     : 'AzureKeyVaultSecret',
-    secretType : 'Secret',
-    name       : secretName,
-    envVariable: envVariable
-  ]
+    [
+        $class: "AzureKeyVaultSecret",
+        secretType: "Secret",
+        name: secretName,
+        envVariable: envVariable
+    ]
 }
 
-if (params.DEPLOY_ES_CLUSTER == true) {
-   withInfraPipeline(params.PRODUCT_NAME) {
-     onMaster {
-           enableSlackNotifications('#ccd-master-builds')
-       }
-       onDemo {
-           enableSlackNotifications('#ccd-demo-builds')
-       }
+withInfraPipeline(params.PRODUCT_NAME, null, !params.DEPLOY_ES_CLUSTER) {
+    onMaster {
+        enableSlackNotifications("#ccd-master-builds")
+    }
+    onDemo {
+        enableSlackNotifications("#ccd-demo-builds")
+    }
 
-       // TODO: Healthcheck per env
-//        afterAlways('buildinfra:aat') {
-//            echo 'Healthcheck in AAT'
-//            healthCheckStage('nonprod', 'aat')
-//        }
-//        afterAlways('buildinfra:prod') {
-//            echo 'Healthcheck in PROD'
-//            healthCheckStage('prod', 'prod')
-//        }
-//        afterAlways('buildinfra:perftest') {
-//            echo 'Healthcheck in Perftest'
-//            healthCheckStage('qa', 'perftest')
-//        }
-//        afterAlways('buildinfra:demo') {
-//            echo 'Healthcheck in Perftest'
-//            healthCheckStage('nonprod', 'demo')
-//        }
-//        afterAlways('buildinfra:ithc') {
-//            echo 'Healthcheck in Perftest'
-//            healthCheckStage('qa', 'ithc')
-//        }
+    afterAlways("buildinfra:aat") {
+        echo "Healthcheck in AAT"
+        healthCheckStage("nonprod", "aat")
+    }
+    afterAlways("buildinfra:prod") {
+        echo "Healthcheck in PROD"
+        healthCheckStage("prod", "prod")
+    }
+    afterAlways("buildinfra:perftest") {
+        echo "Healthcheck in Perftest"
+        healthCheckStage("qa", "perftest")
+    }
+    afterAlways("buildinfra:demo") {
+        echo "Healthcheck in Demo"
+        healthCheckStage("nonprod", "demo")
+    }
+    afterAlways("buildinfra:ithc") {
+        echo "Healthcheck in ITHC"
+        healthCheckStage("qa", "ithc")
+    }
 
-   if (params.RUN_ANSIBLE_DRY == true || params.RUN_ANSIBLE_APPLY == true) {
+    if (params.RUN_ANSIBLE_DRY || params.RUN_ANSIBLE_APPLY) {
+        def targets = parseTargets()
 
-        afterSuccess('buildinfra:demo') {
-            echo 'running Ansible in Demo '
-            env.ENV = 'demo'
-            runAnsible()
+        afterSuccess("buildinfra:demo") {
+            if (targets.contains("demo")) {
+                echo "Running Ansible in demo"
+                runAnsible("demo")
+            } else {
+                echo "Skipping demo Ansible: demo not in ANSIBLE_TARGETS=${params.ANSIBLE_TARGETS}"
+            }
         }
 
-        afterSuccess('buildinfra:ithc') {
-            echo 'running Ansible in ITHC '
-            env.ENV = 'ithc'
-            runAnsible()
+        afterSuccess("buildinfra:ithc") {
+            if (targets.contains("ithc")) {
+                echo "Running Ansible in ithc"
+                runAnsible("ithc")
+            } else {
+                echo "Skipping ithc Ansible: ithc not in ANSIBLE_TARGETS=${params.ANSIBLE_TARGETS}"
+            }
         }
-   }
- }
+
+        afterSuccess("buildinfra:perftest") {
+            if (targets.contains("perftest")) {
+                echo "Running Ansible in perftest"
+                runAnsible("perftest")
+            } else {
+                echo "Skipping perftest Ansible: perftest not in ANSIBLE_TARGETS=${params.ANSIBLE_TARGETS}"
+            }
+        }
+    }
 }
 
-def healthCheckStage(subscription, environmentName) {
-    stage('HealthCheck') {
+def healthCheckStage(String subscription, String environmentName) {
+    stage("HealthCheck") {
         def healthChecker = new HealthChecker(this)
         healthChecker.check(healthCheckUrl(subscription, environmentName), 10, 40) { response ->
             if (response.content.contains("yellow")) {
@@ -181,9 +179,9 @@ def healthCheckStage(subscription, environmentName) {
     }
 }
 
-def healthCheckUrl(subscription, environmentName) {
-    KeyVault keyVault = new KeyVault(this, subscription, "ccd-$environmentName")
-    es_url = keyVault.find("ccd-ELASTIC-SEARCH-URL").trim()
-    echo "retrieved ES URL: ${es_url}"
-    "http://" + es_url + ":9200/_cluster/health"
+def healthCheckUrl(String subscription, String environmentName) {
+    KeyVault keyVault = new KeyVault(this, subscription, "ccd-${environmentName}")
+    def esUrl = keyVault.find("ccd-ELASTIC-SEARCH-URL").trim()
+    echo "retrieved ES URL: ${esUrl}"
+    "http://${esUrl}:9200/_cluster/health"
 }
