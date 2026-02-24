@@ -108,9 +108,9 @@ module "storageaccount" {
   resource_group_name  = var.resource_group_name
   location             = var.location
   account_kind         = var.account_kind
-  containers           = [{
+  containers = [{
     name        = "es-snapshots"
     access_type = "private"
   }]
-  common_tags          = var.common_tags
+  common_tags = var.common_tags
 }
