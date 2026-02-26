@@ -271,3 +271,9 @@ variable "resource_group_name" {
   type        = string
   default     = ""
 }
+
+variable "sa_subnets" {
+  description = "Subnet IDs allowed to access the storage account"
+  type        = list(string)
+  default     = []
+}

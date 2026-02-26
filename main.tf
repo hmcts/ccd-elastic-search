@@ -108,6 +108,7 @@ module "storageaccount" {
   resource_group_name  = var.resource_group_name
   location             = var.location
   account_kind         = var.account_kind
+  sa_subnets           = var.sa_subnets
   containers = [{
     name        = "es-snapshots"
     access_type = "private"
