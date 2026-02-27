@@ -21,9 +21,12 @@ cluster.routing.allocation.awareness.attributes: fault_domain,update_domain
 
 action.auto_create_index: .security*,.monitoring*,.kibana*,.watches,.triggered_watches,.watcher-history*,.logstash_dead_letter,.ml*
 xpack.security.enabled: false
+xpack.watcher.enabled: false
+xpack.ml.enabled: false
+xpack.monitoring.collection.enabled: false
 
 script.allowed_types: inline
-script.allowed_contexts: template, ingest, watcher_condition, processor_conditional
+script.allowed_contexts: template, ingest
 
 ingest.geoip.downloader.enabled: false
 bootstrap.memory_lock: true
