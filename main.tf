@@ -101,7 +101,6 @@ resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra_clust
 
 module "storageaccount" {
   source = "git@github.com:hmcts/cnp-module-storage-account?ref=4.x"
-  count  = var.env == "perftest" ? 1 : 0
 
   env                  = var.env
   storage_account_name = var.storage_account_name
