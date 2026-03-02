@@ -253,3 +253,27 @@ variable "vm_privateip_allocation" {
   type        = string
   default     = "Static"
 }
+
+variable "account_kind" {
+  description = "The kind of storage account"
+  type        = string
+  default     = "StorageV2"
+}
+
+variable "storage_account_name" {
+  description = "Blob storage account name"
+  type        = string
+  default     = ""
+}
+
+variable "resource_group_name" {
+  description = "Resource group name"
+  type        = string
+  default     = ""
+}
+
+variable "sa_subnets" {
+  description = "Subnet IDs allowed to access the storage account"
+  type        = list(string)
+  default     = []
+}

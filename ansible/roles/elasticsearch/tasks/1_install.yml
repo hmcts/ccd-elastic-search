@@ -7,15 +7,6 @@
         {{ elasticsearch_package }}
       {%- endif -%}
 
-- name: Determine Elasticsearch config template based on cluster type
-  ansible.builtin.set_fact:
-    es_config_template: >-
-      {%- if group_names | select('search', '_upgrade$') | list | length > 0 -%}
-        elasticsearch-demo-int.yml.j2
-      {%- else -%}
-        {{ elasticsearch_config }}
-      {%- endif -%}
-
 - name: Download Elasticsearch package
   ansible.builtin.get_url:
     url: "{{ elasticsearch_url_base }}/{{ elasticsearch_package }}"
@@ -24,13 +15,21 @@
     checksum: "sha512:{{ lookup('url', checksum_url).split()[0] }}"
   check_mode: no
 
+- name: Create Elasticsearch config directory
+  ansible.builtin.file:
+    path: /etc/elasticsearch/jvm.options.d
+    state: directory
+    owner: root
+    group: elasticsearch
+    mode: "2750"
+
 - name: Configure Elasticsearch settings
   ansible.builtin.template:
-    src: "{{ es_config_template }}"
+    src: "{{ elasticsearch_config }}"
     dest: "/etc/elasticsearch/elasticsearch.yml"
     mode: "0644"
     owner: root
-    group: root
+    group: elasticsearch
   register: es_config
 
 - name: Create systemd override directory for Elasticsearch
@@ -56,6 +55,13 @@
     group: root
   when: not ansible_check_mode
   register: es_jvm_opts
+
+- name: Remove java security manager options
+  ansible.builtin.lineinfile:
+    path: /etc/elasticsearch/jvm.options
+    regexp: '^-Djava\.security\.(manager|policy)'
+    state: absent
+    backup: yes
 
 - name: Disable shard allocation
   ansible.builtin.uri:
@@ -103,7 +109,6 @@
     daemon_reload: yes
   when:
     - not ansible_check_mode
-    - es_systemd_override is changed
 
 - name: Restart Elasticsearch to apply changes
   ansible.builtin.systemd:

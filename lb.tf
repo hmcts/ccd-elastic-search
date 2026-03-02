@@ -14,10 +14,10 @@ locals {
 
   legacy_lb_config = length(var.vms) > 0 ? {
     legacy = {
-      name                   = "ccd-internal-${var.env}-lb"
-      resource_group_name    = "ccd-elastic-search-${var.env}"
-      lb_private_ip_address  = var.lb_private_ip_address
-      vms                    = var.vms
+      name                  = "ccd-internal-${var.env}-lb"
+      resource_group_name   = "ccd-elastic-search-${var.env}"
+      lb_private_ip_address = var.lb_private_ip_address
+      vms                   = var.vms
     }
   } : {}
 
@@ -26,7 +26,7 @@ locals {
 
 module "load_balancers" {
   for_each = local.all_load_balancers
-  source = "./modules/load-balancer"
+  source   = "./modules/load-balancer"
 
   name                = each.value.name
   location            = var.location

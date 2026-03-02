@@ -4,7 +4,50 @@ vmDataDiskCount        = "2"
 dynatrace_instance     = "yrk32651"
 dynatrace_hostgroup    = "PERF_CFT"
 availability_set_name  = "CCD-DATA-0-AV-SET"
+ipconfig_name          = "ipconfig1"
 lb_private_ip_address  = "10.112.153.253"
+vm_publisher_name      = "Canonical"
+vm_offer               = "UbuntuServer"
+vm_sku                 = "16.04.0-LTS"
+vm_version             = "latest"
+soc_vault_name         = "soc-prod"
+soc_vault_rg           = "soc-core-infra-prod-rg"
+storage_account_name   = "ccdelasticsnapshotperf"
+resource_group_name    = "ccd-elastic-search-perftest"
+sa_subnets = [
+  "/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/aks-infra-cftptl-intsvc-rg/providers/Microsoft.Network/virtualNetworks/core-cftptl-intsvc-vnet/subnets/aks-00",
+  "/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/aks-infra-cftptl-intsvc-rg/providers/Microsoft.Network/virtualNetworks/core-cftptl-intsvc-vnet/subnets/aks-01",
+  "/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/aks-infra-cftptl-intsvc-rg/providers/Microsoft.Network/virtualNetworks/core-cftptl-intsvc-vnet/subnets/aks-appgw",
+  "/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/aks-infra-cftptl-intsvc-rg/providers/Microsoft.Network/virtualNetworks/core-cftptl-intsvc-vnet/subnets/iaas",
+  "/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/cft-ptl-network-rg/providers/Microsoft.Network/virtualNetworks/cft-ptl-vnet/subnets/aks-00",
+  "/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/cft-ptl-network-rg/providers/Microsoft.Network/virtualNetworks/cft-ptl-vnet/subnets/aks-01",
+  "/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/cft-ptl-network-rg/providers/Microsoft.Network/virtualNetworks/cft-ptl-vnet/subnets/aks-appgw",
+  "/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/cft-ptl-network-rg/providers/Microsoft.Network/virtualNetworks/cft-ptl-vnet/subnets/iaas",
+  "/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/cft-ptl-network-rg/providers/Microsoft.Network/virtualNetworks/cft-ptl-vnet/subnets/postgres-expanded",
+  "/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/cft-ptl-network-rg/providers/Microsoft.Network/virtualNetworks/cft-ptl-vnet/subnets/postgresql",
+  "/subscriptions/1baf5470-1c3e-40d3-a6f7-74bfbce4b348/resourceGroups/cft-ptl-network-rg/providers/Microsoft.Network/virtualNetworks/cft-ptl-vnet/subnets/private-endpoints",
+  "/subscriptions/7a4e3bd5-ae3a-4d0c-b441-2188fee3ff1c/resourceGroups/core-infra-perftest/providers/Microsoft.Network/virtualNetworks/core-infra-vnet-perftest/subnets/elasticsearch"
+]
+
+
+
+elastic_search_clusters = {
+  default = {
+    instance_count          = 4
+    name_template           = "ccd-data-%d"
+    data_disks              = 2
+    resource_group_name     = "ccd-elastic-search-perftest"
+    enable_availability_set = true
+    private_ip_allocation = {
+      0 = "10.112.153.7"
+      1 = "10.112.153.6"
+      2 = "10.112.153.9"
+      3 = "10.112.153.5"
+    }
+    lb_private_ip_address = "10.112.153.253"
+    storage_account_type  = "StandardSSD_LRS"
+  }
+}
 
 nsg_security_rules = {
 

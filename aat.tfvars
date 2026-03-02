@@ -14,6 +14,9 @@ lb_private_ip_address = "10.96.149.253"
 soc_vault_name        = "soc-prod"
 soc_vault_rg          = "soc-core-infra-prod-rg"
 
+storage_account_name = "ccdelasticsnapshotaat"
+resource_group_name  = "ccd-elastic-search-aat"
+
 ipconfig_name = "ipconfig1"
 
 vms = {
