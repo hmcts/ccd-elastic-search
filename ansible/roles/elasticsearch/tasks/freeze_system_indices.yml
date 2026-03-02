@@ -1,0 +1,15 @@
+- include_tasks: get_index_version.yml
+
+- name: Block write on system indices if needed
+  block:
+    - name: Apply write block to system indices (freeze for upgrade) {{ index_name }}
+      uri:
+        url: "{{ es_url }}/{{ index_name }}/_block/write"
+        method: PUT
+        status_code: [200]
+
+    - name: Verify write block on system indices {{ index_name }}
+      uri:
+        url: "{{ es_url }}/{{ index_name }}/_settings?include_defaults=false"
+        status_code: [200]
+  when: index_version < elasticsearch_major_version

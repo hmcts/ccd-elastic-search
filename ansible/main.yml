@@ -1,6 +1,19 @@
 ---
+# 1) Run elasticsearch upgrade tasks on all nodes
 - hosts: all
   become: true
-  gather_facts: false
+  gather_facts: true
+  serial: "{{ rolling_upgrade | default(false) | ternary(1, '100%') }}"
   roles:
-    - elasticsearch
+    - role: elasticsearch
+      vars:
+        elasticsearch_task_phase: "upgrade"
+
+# 2) Run elasticsearch reindex tasks only once
+- hosts: all
+  gather_facts: false
+  run_once: true
+  roles:
+    - role: elasticsearch
+      vars:
+        elasticsearch_task_phase: "reindex"
