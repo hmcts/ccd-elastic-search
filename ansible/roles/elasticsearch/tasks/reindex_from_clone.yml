@@ -1,0 +1,167 @@
+- name: Delete original index before reindex
+  uri:
+    url: "{{ es_url }}/{{ index_name }}"
+    method: DELETE
+    status_code: [200, 404]  # allow success if index doesn't exist
+
+## Reindex
+- name: Get settings and mappings from cloned index
+  uri:
+    url: "{{ es_url }}/{{ index_name }}{{ clone_suffix }}"
+    method: GET
+  register: cloned_index_def
+
+
+- name: Re-create original index with settings and mappings
+  uri:
+    url: "{{ es_url }}/{{ index_name }}"
+    method: PUT
+    body_format: json
+    body: "{{ cloned_index_def.json | filter_readonly_parts }}"
+    status_code: [200]
+
+
+- name: Wait for rebuilt original index health to be green
+  uri:
+    url: "{{ es_url }}/_cluster/health/{{ index_name }}?wait_for_status=green&timeout=60s&level=shards"
+    method: GET
+    return_content: yes
+    status_code: [200, 504]
+  register: original_health
+  until: >
+    original_health.json.status == 'green'
+    and (original_health.json.unassigned_shards | default(0) == 0)
+  retries: 12
+  delay: 10
+
+
+## Copy aliases back
+- name: Get aliases from cloned index
+  uri:
+    url: "{{ es_url }}/{{ index_name }}{{ clone_suffix }}/_alias"
+    method: GET
+  register: original_aliases_raw
+
+
+- name: Apply aliases to freshly created index
+  uri:
+    url: "{{ es_url }}/_aliases"
+    method: POST
+    body_format: json
+    body:
+      actions: "{{ original_aliases_raw.json[index_name + clone_suffix].aliases | aliases_to_actions(index_name) }}"
+    status_code: [200]
+  when:
+    - original_aliases_raw.json[index_name + clone_suffix].aliases | length > 0
+
+
+- name: Get expected doc count from clone
+  uri:
+    url: "{{ es_url }}/{{ index_name }}{{ clone_suffix }}/_stats/docs"
+    method: GET
+    return_content: yes
+    status_code: [200]
+  register: clone_stats
+
+
+- name: Set expected doc count fact
+  ansible.builtin.set_fact:
+    expected_docs: "{{ clone_stats.json._all.primaries.docs.count | int }}"
+
+
+- name: Print doc count before reindex
+  debug:
+    var: expected_docs
+
+
+- name: Reindex {{ index_name}} from cloned index back into original
+  uri:
+    url: "{{ es_url }}/_reindex?refresh=false&wait_for_completion=false"
+    method: POST
+    timeout: 60
+    body_format: json
+    body:
+      source:
+        index: "{{ index_name }}{{ clone_suffix }}"
+        size: 1000 # 1000 is default, but might be too big for large docs
+      dest:
+        index: "{{ index_name }}"
+    status_code: [200]
+  register: reindex_start
+
+
+- name: Fail if no task id returned from reindex start
+  fail:
+    msg: "Reindex did not return a task id: {{ reindex_start }}"
+  when: reindex_start.json is not defined or reindex_start.json.task is not defined
+
+
+- name: Poll reindex task until completed
+  uri:
+    url: "{{ es_url }}/_tasks/{{ reindex_start.json.task }}"
+    method: GET
+    return_content: yes
+    status_code: [200]
+  register: reindex_task_status
+  retries: 180 # 180 retries with 30s delay = 5400s = 1.5hr for timeout
+  delay: 30
+  until: reindex_task_status.json.completed == true
+
+
+- name: Debug reindex task status
+  debug:
+    msg:
+      - "url - {{reindex_task_status.url}}"
+      - "error? - {{reindex_task_status.json.error | default('no error')}}"
+      - "description - {{reindex_task_status.json.task.description | default('description missing') }}"
+
+
+- name: Check reindex for failures and fail if any
+  fail:
+    msg: "Reindex had failures: {{ reindex_task_status.json.response.failures | default([]) }}"
+  when: reindex_task_status.json.response is defined and (reindex_task_status.json.response.failures | length) > 0
+
+- name: Refresh user indices after reindex
+  uri:
+    url: "{{ es_url }}/{{ index_name }}/_refresh"
+    method: POST
+
+
+- name: Grab destination doc count after reindex
+  uri:
+    url: "{{ es_url }}/{{ index_name }}/_stats/docs"
+    method: GET
+    return_content: yes
+    status_code: [200]
+  register: dest_stats
+
+
+- name: Print doc count after reindex
+  debug:
+    msg: "Destination doc count after reindex: {{ dest_stats.json._all.primaries.docs.count }}"
+
+
+- name: Fail if destination docs fewer than expected
+  fail:
+    msg: "Reindex failed/partial: dest={{ dest_stats.json._all.primaries.docs.count }} expected={{ expected_docs }}"
+  when: dest_stats.json._all.primaries.docs.count | int < expected_docs | int
+
+
+## Optimise user indices
+# usually takes a long time and very IO heavy, so skip
+# - name: Force merge user indices to 3 segment (optional)
+#   uri:
+#     url: "{{ es_url }}/{{ index_name }}/_forcemerge?max_num_segments=3"
+#     method: POST
+#   when: do_forcemerge
+
+
+## Delete cloned index
+- name: Delete cloned index after reindex
+  uri:
+    url: "{{ es_url }}/{{ index_name }}{{ clone_suffix }}"
+    method: DELETE
+    status_code: [200, 404]  # allow success if index doesn't exist
+  when:
+    - delete_clones
+    - dest_stats.json._all.primaries.docs.count | int == expected_docs | int
