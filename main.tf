@@ -82,7 +82,7 @@ data "azurerm_monitor_data_collection_rule" "linux_data_collection_rule" {
 }
 
 resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra" {
-  for_each = var.vms
+  for_each = length(var.elastic_search_clusters) > 0 ? {} : var.vms
 
   name                    = "vm-${each.value.name}-${var.env}-dcra"
   target_resource_id      = module.elastic2[each.key].vm_id
@@ -90,12 +90,11 @@ resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra" {
   description             = "Association between the ELK linux VMs and the appropriate data collection rule."
 }
 
-# Demo-int environment DCRA
-resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra_demo_int" {
-  for_each = var.enable_demo_int ? var.vms_demo_int : {}
+resource "azurerm_monitor_data_collection_rule_association" "linux_vm_dcra_cluster" {
+  for_each = local.use_new_structure ? local.flattened_vms : {}
 
-  name                    = "vm-${each.value.name}-demo-int-dcra"
-  target_resource_id      = module.elastic2_demo_int[each.key].vm_id
+  name                    = "vm-${each.value.name}-${var.env}-dcra"
+  target_resource_id      = module.elastic2_cluster[each.key].vm_id
   data_collection_rule_id = data.azurerm_monitor_data_collection_rule.linux_data_collection_rule.id
-  description             = "Association between the ELK demo-int linux VMs and the appropriate data collection rule."
+  description             = "Association between the ELK linux VMs and the appropriate data collection rule."
 }

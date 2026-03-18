@@ -1,3 +1,22 @@
 ---
+- name: Show variables
+  debug:
+    msg:
+      elasticsearch_package: "{{ elasticsearch_package }}"
+      group_name: "{{ group_names[0] }}"
+      jvm_custom_options: "{{ jvm_custom_options }}"
+      rolling_upgrade: "{{ rolling_upgrade }}"
+      reindex: "{{ reindex }}"
+      upgrade_es: "{{ upgrade_es }}"
 
-- import_tasks: 1_install.yml
+- name: Upgrade ansible
+  import_tasks: 1_install.yml
+  when:
+    - elasticsearch_task_phase == "upgrade"
+    - upgrade_es | bool
+
+- name: Reindex to new version
+  import_tasks: 2_reindex.yml
+  when:
+    - elasticsearch_task_phase == "reindex"
+    - reindex | bool

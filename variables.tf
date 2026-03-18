@@ -123,48 +123,39 @@ variable "vms" {
       attachment_create_option = optional(string, "Empty")
     }))
   }))
-  default = {
-  }
+  default     = {}
+  description = "DEPRECATED: Use elastic_search_clusters instead. VM configuration for backward compatibility."
 }
 
-variable "vms_demo_int" {
+variable "elastic_search_clusters" {
   type = map(object({
-    name = optional(string)
-    ip   = optional(string)
-    managed_disks = map(object({
-      name                     = string,
-      resource_group_name      = string,
-      storage_account_type     = optional(string, "StandardSSD_LRS"),
-      disk_lun                 = string
-      attachment_create_option = optional(string, "Empty")
-    }))
+    instance_count           = number
+    name_template            = string
+    data_disks               = number
+    private_ip_allocation    = optional(map(string), {})
+    resource_group_name      = optional(string)
+    vm_publisher_name        = optional(string)
+    vm_offer                 = optional(string)
+    vm_sku                   = optional(string)
+    vm_version               = optional(string)
+    vm_size                  = optional(string)
+    availability_set_name    = optional(string)
+    enable_availability_set  = optional(bool)
+    availability_zones       = optional(list(string))
+    lb_private_ip_address    = optional(string)
+    storage_account_type     = optional(string, "StandardSSD_LRS")
+    attachment_create_option = optional(string, "Empty")
+    privateip_allocation     = optional(string)
   }))
-  default = {
-  }
-  description = "VM configuration for demo-int env"
+  default     = {}
+  description = "Configuration for Elasticsearch clusters. Each cluster will create multiple VMs based on instance_count. Use availability_zones to enable zone support (mutually exclusive with availability sets)."
 }
 
-variable "enable_demo_int" {
-  description = "Enable demo-int flag"
-  type        = bool
-  default     = false
-}
 
-variable "demo_int_rg_name" {
-  description = "Demo-int RG"
-  type        = string
-  default     = "demo-int"
-}
 
 variable "lb_private_ip_address" {
   description = "The private IP address for the load balancer."
   type        = string
-}
-
-variable "lb_private_ip_address_demo_int" {
-  description = "The private IP address for the demo-int load balancer."
-  type        = string
-  default     = null
 }
 
 variable "soc_vault_name" {
@@ -189,7 +180,7 @@ variable "nsg_security_rules" {
     access                                     = string,
     protocol                                   = string,
     source_port_range                          = string,
-    destination_port_range                     = string,
+    destination_port_range                     = optional(string, null),
     source_address_prefix                      = string,
     destination_address_prefix                 = string,
     source_application_security_group_ids      = optional(string, null),
@@ -229,26 +220,6 @@ variable "vm_version" {
   default = "latest"
 }
 
-variable "vm_publisher_name_int" {
-  type    = string
-  default = "Canonical"
-}
-
-variable "vm_offer_int" {
-  type    = string
-  default = "0001-com-ubuntu-server-focal"
-}
-
-variable "vm_sku_int" {
-  type    = string
-  default = "20_04-lts"
-}
-
-variable "vm_version_int" {
-  type    = string
-  default = "latest"
-}
-
 variable "vm_size" {
   type    = string
   default = "Standard_D4s_v3"
@@ -262,12 +233,6 @@ variable "enable_availability_set" {
 
 variable "availability_set_name" {
   description = "Name of the availability set"
-  type        = string
-  default     = ""
-}
-
-variable "availability_set_name_demo_int" {
-  description = "Name of the availability set for demo-int environment"
   type        = string
   default     = ""
 }

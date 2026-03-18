@@ -1,0 +1,9 @@
+- name: Get index settings
+  uri:
+    url: "{{ es_url }}/{{ index_name }}/_settings"
+    method: GET
+  register: index_settings_raw
+
+- name: Extract index version {{ index_name }} - {{ index_settings_raw.json[index_name].settings.index.version.created[0] | int }}
+  set_fact:
+    index_version: "{{ index_settings_raw.json[index_name].settings.index.version.created[0] | int }}"

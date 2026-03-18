@@ -13,72 +13,57 @@ soc_vault_name        = "soc-prod"
 soc_vault_rg          = "soc-core-infra-prod-rg"
 
 ipconfig_name = "ipconfig1"
-vms = {
-  ccd-data-0 = {
-    name = "ccd-data-0"
-    ip   = "10.112.53.5"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-0-datadisk1"
-        resource_group_name = "ccd-elastic-search-ithc"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-0-datadisk2"
-        resource_group_name = "ccd-elastic-search-ithc"
-        disk_lun            = "1"
-      }
+
+elastic_search_clusters = {
+  default = {
+    instance_count = 4
+    name_template  = "ccd-data-%d"
+    data_disks     = 2
+    private_ip_allocation = {
+      0 = "10.112.53.5"
+      1 = "10.112.53.9"
+      2 = "10.112.53.6"
+      3 = "10.112.53.7"
     }
+    lb_private_ip_address = "10.112.53.252"
+    storage_account_type  = "StandardSSD_LRS"
   }
-  ccd-data-1 = {
-    name = "ccd-data-1"
-    ip   = "10.112.53.9"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-1-datadisk1"
-        resource_group_name = "ccd-elastic-search-ithc"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-1-datadisk2"
-        resource_group_name = "ccd-elastic-search-ithc"
-        disk_lun            = "1"
-      }
+  upgrade = {
+    instance_count = 4
+    name_template  = "ccd-data-upgrade-%d"
+    data_disks     = 2
+    private_ip_allocation = {
+      0 = "10.112.53.100"
+      1 = "10.112.53.101"
+      2 = "10.112.53.102"
+      3 = "10.112.53.103"
     }
+    lb_private_ip_address = "10.112.53.253"
+    storage_account_type  = "StandardSSD_LRS"
+    # Use Ubuntu 24.04 LTS for upgrade cluster (different from default cluster's 16.04)
+    vm_publisher_name        = "Canonical"
+    vm_offer                 = "ubuntu-24_04-lts"
+    vm_sku                   = "server"
+    vm_version               = "latest"
+    vm_size                  = "Standard_D4ds_v5" # New VM size to meet SKU requirements https://github.com/hmcts/azure-policy/blob/master/policies/allowed_vm_sku/README.md
+    attachment_create_option = "Attach"
+    privateip_allocation     = "Static"
   }
-  ccd-data-2 = {
-    name = "ccd-data-2"
-    ip   = "10.112.53.6"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-2-datadisk1"
-        resource_group_name = "ccd-elastic-search-ithc"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-2-datadisk2"
-        resource_group_name = "ccd-elastic-search-ithc"
-        disk_lun            = "1"
-      }
-    }
-  }
-  ccd-data-3 = {
-    name = "ccd-data-3"
-    ip   = "10.112.53.7"
-    managed_disks = {
-      disk1 = {
-        name                = "ccd-data-3-datadisk1"
-        resource_group_name = "ccd-elastic-search-ithc"
-        disk_lun            = "0"
-      }
-      disk2 = {
-        name                = "ccd-data-3-datadisk2"
-        resource_group_name = "ccd-elastic-search-ithc"
-        disk_lun            = "1"
-      }
-    }
-  }
+  # Example: Add additional cluster for upgrade testing
+  # upgrade = {
+  #   instance_count = 4
+  #   name_template  = "ccd-data-upgrade-%d"
+  #   data_disks     = 2
+  #   private_ip_allocation = {
+  #     0 = "10.100.157.20"
+  #     1 = "10.100.157.21"
+  #     2 = "10.100.157.22"
+  #     3 = "10.100.157.23"
+  #   }
+  #   lb_private_ip_address = "10.100.157.253"
+  # }
 }
+
 
 nsg_security_rules = {
   SSH = {
@@ -171,7 +156,7 @@ nsg_security_rules = {
     access                                     = "Allow"
     protocol                                   = "Tcp"
     source_port_range                          = "*"
-    destination_port_range                     = "9200"
+    destination_port_ranges                    = ["9200", "22"]
     source_address_prefix                      = "10.10.76.0/23"
     destination_address_prefix                 = null
     destination_application_security_group_ids = "id"
