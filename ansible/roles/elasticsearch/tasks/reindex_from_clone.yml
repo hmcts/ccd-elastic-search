@@ -23,16 +23,16 @@
 
 - name: Wait for rebuilt original index health to be green
   uri:
-    url: "{{ es_url }}/_cluster/health/{{ index_name }}?wait_for_status=green&timeout=60s&level=shards"
+    url: "{{ es_url }}/_cluster/health/{{ index_name }}?level=shards"
     method: GET
     return_content: yes
-    status_code: [200, 504]
+    status_code: [200]
   register: original_health
   until: >
     original_health.json.status == 'green'
     and (original_health.json.unassigned_shards | default(0) == 0)
-  retries: 12
-  delay: 10
+  retries: 120
+  delay: 15
 
 
 ## Copy aliases back
