@@ -103,7 +103,7 @@
     return_content: yes
     status_code: [200]
   register: reindex_task_status
-  retries: 180 # 180 retries with 30s delay = 5400s = 1.5hr for timeout
+  retries: 720 # 720 retries with 30s delay = 21600s = 6hr for timeout
   delay: 30
   until: reindex_task_status.json.completed == true
 
