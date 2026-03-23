@@ -12,8 +12,8 @@ lb_private_ip_address = "10.112.53.252"
 soc_vault_name        = "soc-prod"
 soc_vault_rg          = "soc-core-infra-prod-rg"
 
-storage_account_name   = "ccdelasticsnapshotithc"
-resource_group_name    = "ccd-elastic-search-ithc"
+storage_account_name = "ccdelasticsnapshotithc"
+resource_group_name  = "ccd-elastic-search-ithc"
 
 ipconfig_name = "ipconfig1"
 
@@ -45,6 +45,18 @@ elastic_search_clusters = {
     }
     lb_private_ip_address = "10.112.53.252"
     storage_account_type  = "StandardSSD_LRS"
+    managed_disks = {
+      disk1 = {
+        name                = "ccd-data-%d-datadisk1"
+        resource_group_name = "ccd-elastic-search-ithc"
+        disk_lun            = "0"
+      }
+      disk2 = {
+        name                = "ccd-data-%d-datadisk2"
+        resource_group_name = "ccd-elastic-search-ithc"
+        disk_lun            = "1"
+      }
+    }
   }
   #upgrade = {
   #  instance_count = 4

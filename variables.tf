@@ -146,6 +146,18 @@ variable "elastic_search_clusters" {
     storage_account_type     = optional(string, "StandardSSD_LRS")
     attachment_create_option = optional(string, "Empty")
     privateip_allocation     = optional(string)
+    managed_disks = optional(map(object({
+      name                     = string
+      resource_group_name      = string
+      storage_account_type     = optional(string, "StandardSSD_LRS")
+      disk_lun                 = string
+      attachment_create_option = optional(string, "Empty")
+      location                 = optional(string, "UK South")
+      disk_size_gb             = optional(string, "1024")
+      disk_caching             = optional(string, "None")
+      disk_create_option       = optional(string, "Empty")
+      disk_zone                = optional(string)
+    })), {})
   }))
   default     = {}
   description = "Configuration for Elasticsearch clusters. Each cluster will create multiple VMs based on instance_count. Use availability_zones to enable zone support (mutually exclusive with availability sets)."
