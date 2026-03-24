@@ -1,3 +1,27 @@
+- name: Get index doc counts before reindex
+  uri:
+    url: "{{ es_url }}/_cat/indices?v"
+    method: GET
+    return_content: yes
+  register: pre_reindex_indices
+
+
+- name: Print indices before reindex
+  debug:
+    msg: "{{ pre_reindex_indices.content }}"
+
+
+- name: Delete indices if any specified
+  uri:
+    url: "{{ es_url }}/{{ item }}"
+    method: DELETE
+    status_code: [200, 404]  # allow success if index doesn't exist
+  loop: "{{ indices_to_delete }}"
+  loop_control:
+    label: "Deleting index -> {{ item }}"
+  when: index_deletion_enabled | default(false) | bool
+
+
 - name: Get all indices
   uri:
     url: "{{ es_url }}/_cat/indices?expand_wildcards=all&h=index&format=json"
@@ -47,12 +71,26 @@
       user_indices: "{{ user_indices }}"
 
 
-- name: Process each user index one by one
-  include_tasks: process_index.yml
-  loop: "{{ user_indices }}"
-  loop_control:
-    loop_var: index_name
-    label: "Processing -> {{ index_name }}"
+- block:
+    - name: Process each user index one by one
+      include_tasks: process_index.yml
+      loop: "{{ user_indices }}"
+      loop_control:
+        loop_var: index_name
+        label: "Processing -> {{ index_name }}"
+
+  always:
+    - name: Get index doc counts after reindex
+      uri:
+        url: "{{ es_url }}/_cat/indices?v"
+        method: GET
+        return_content: yes
+      register: post_reindex_indices
+
+    - name: Print indices after reindex
+      debug:
+        msg: "{{ post_reindex_indices.content }}"
+
 
 - name: Get DS indices
   uri:
