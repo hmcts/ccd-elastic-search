@@ -4,6 +4,7 @@
 # on different environments
 elasticsearch_version: 9.3.0
 
+indices_to_delete: []
 
 # Elasticsearch default vars
 elasticsearch_url_base: "https://artifacts.elastic.co/downloads/elasticsearch"
