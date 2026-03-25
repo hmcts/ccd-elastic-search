@@ -48,14 +48,16 @@ elastic_search_clusters = {
     storage_account_type  = "StandardSSD_LRS"
     managed_disks = {
       disk1 = {
-        name                = "ccd-data-%d-datadisk1"
-        resource_group_name = "ccd-elastic-search-ithc"
-        disk_lun            = "0"
+        name                     = "ccd-data-%d-datadisk1"
+        resource_group_name      = "ccd-elastic-search-ithc"
+        disk_lun                 = "0"
+        attachment_create_option = "Attach"
       }
       disk2 = {
-        name                = "ccd-data-%d-datadisk2"
-        resource_group_name = "ccd-elastic-search-ithc"
-        disk_lun            = "1"
+        name                     = "ccd-data-%d-datadisk2"
+        resource_group_name      = "ccd-elastic-search-ithc"
+        disk_lun                 = "1"
+        attachment_create_option = "Attach"
       }
     }
   }
