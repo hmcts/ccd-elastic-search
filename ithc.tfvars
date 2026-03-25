@@ -34,9 +34,10 @@ sa_subnets = [
 
 elastic_search_clusters = {
   default = {
-    instance_count = 4
-    name_template  = "ccd-data-%d"
-    data_disks     = 2
+    instance_count           = 4
+    name_template            = "ccd-data-%d"
+    data_disks               = 2
+    attachment_create_option = "Attach"
     private_ip_allocation = {
       0 = "10.112.53.5"
       1 = "10.112.53.9"
