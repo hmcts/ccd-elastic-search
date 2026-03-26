@@ -69,14 +69,14 @@ def runAnsible(String environmentName) {
 
         sh """
             ANSIBLE_HOST_KEY_CHECKING=False ${venvPath}/bin/ansible-playbook \
-              -i ${WORKSPACE}/ansible/inventories/${environmentName}/hosts.yml \
+              -i ${WORKSPACE}/ansible/inventories/${environmentName} \
               ansible/diskmount.yml \
               -u ${CCD_VM_ADMIN_NAME} \
               --private-key=${keyPath} \
               ${checkRunAnsible}
 
             ANSIBLE_HOST_KEY_CHECKING=False ${venvPath}/bin/ansible-playbook \
-              -i ${WORKSPACE}/ansible/inventories/${environmentName}/hosts.yml \
+              -i ${WORKSPACE}/ansible/inventories/${environmentName} \
               ansible/main.yml \
               -u ${CCD_VM_ADMIN_NAME} \
               --private-key=${keyPath} \
