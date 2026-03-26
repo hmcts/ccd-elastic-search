@@ -15,7 +15,6 @@ properties([
                 booleanParam(name: "UPGRADE_ES", defaultValue: true, description: "Whether to run ES version upgrade steps (deb packages re-deploy)"),
                 booleanParam(name: "ROLLING_UPGRADE", defaultValue: false, description: "Run Ansible with rolling upgrade steps"),
                 booleanParam(name: "REINDEX", defaultValue: false, description: "Whether to re-index after version upgrade"),
-                booleanParam(name: "INDEX_DELETION_ENABLED", defaultValue: false, description: "Whether to enable optional index deletion before reindexing"),
                 string(name: "ANSIBLE_TARGETS", defaultValue: "demo,ithc", description: "Comma-separated environments for Ansible runs")
         ])
 ])
@@ -45,7 +44,6 @@ def runAnsible(String targetEnv) {
     echo "Rolling upgrade: ${params.ROLLING_UPGRADE}"
     echo "Upgrade ES: ${params.UPGRADE_ES}"
     echo "Reindex: ${params.REINDEX}"
-    echo "Index deletion enabled: ${params.INDEX_DELETION_ENABLED}"
 
     def checkRunAnsible = params.RUN_ANSIBLE_APPLY ? "" : "--check"
     def buildTag = (env.BUILD_TAG ?: "local").replaceAll("[^A-Za-z0-9_.-]", "-")
@@ -57,7 +55,6 @@ def runAnsible(String targetEnv) {
     def reindex = (upgradeEnabled && params.REINDEX) ? "true" : "false"
     def upgradeEs = (upgradeEnabled && params.UPGRADE_ES) ? "true" : "false"
     def clusterName = "ccd-elastic-search-${targetEnv.replace("_", "-")}"
-    def enableIndexDeletion = params.INDEX_DELETION_ENABLED ? "true" : "false"
 
     try {
         writeFile file: keyPath, text: env.CCD_VM_SSH_PRIVATE_KEY
@@ -83,7 +80,7 @@ def runAnsible(String targetEnv) {
               ansible/main.yml \
               -u ${CCD_VM_ADMIN_NAME} \
               --private-key=${keyPath} \
-              --extra-vars 'elastic_clustername=${clusterName} rolling_upgrade=${rollingUpgrade} reindex=${reindex} upgrade_es=${upgradeEs} \
+              --extra-vars 'elastic_clustername=${clusterName} rolling_upgrade=${rollingUpgrade} reindex=${reindex} upgrade_es=${upgradeEs}' \
               ${checkRunAnsible}
         """
     } finally {
