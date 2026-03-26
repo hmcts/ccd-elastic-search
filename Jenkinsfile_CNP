@@ -36,8 +36,8 @@ def supportsUpgradeFlags(String targetEnv) {
     ["demo", "ithc", "perftest"].contains(targetEnv)
 }
 
-def runAnsible(String targetEnv) {
-    setupSecret(targetEnv)
+def runAnsible(String environmentName) {
+    setupSecret(environmentName)
 
     echo "ANSIBLE Dry run: ${params.RUN_ANSIBLE_DRY}"
     echo "ANSIBLE Apply run: ${params.RUN_ANSIBLE_APPLY}"
@@ -50,11 +50,11 @@ def runAnsible(String targetEnv) {
     def venvPath = "/tmp/ansible-venv-${buildTag}"
     def keyPath = "/tmp/ccdadmin_key_${buildTag}"
 
-    def upgradeEnabled = supportsUpgradeFlags(targetEnv)
+    def upgradeEnabled = supportsUpgradeFlags(environmentName)
     def rollingUpgrade = (upgradeEnabled && params.ROLLING_UPGRADE) ? "true" : "false"
     def reindex = (upgradeEnabled && params.REINDEX) ? "true" : "false"
     def upgradeEs = (upgradeEnabled && params.UPGRADE_ES) ? "true" : "false"
-    def clusterName = "ccd-elastic-search-${targetEnv.replace("_", "-")}"
+    def clusterName = "ccd-elastic-search-${environmentName.replace("_", "-")}"
 
     try {
         writeFile file: keyPath, text: env.CCD_VM_SSH_PRIVATE_KEY
@@ -69,14 +69,14 @@ def runAnsible(String targetEnv) {
 
         sh """
             ANSIBLE_HOST_KEY_CHECKING=False ${venvPath}/bin/ansible-playbook \
-              -i ${WORKSPACE}/ansible/inventories/${environmentName} \
+              -i ${WORKSPACE}/ansible/inventories/${environmentName}/hosts.yml \
               ansible/diskmount.yml \
               -u ${CCD_VM_ADMIN_NAME} \
               --private-key=${keyPath} \
               ${checkRunAnsible}
 
             ANSIBLE_HOST_KEY_CHECKING=False ${venvPath}/bin/ansible-playbook \
-              -i ${WORKSPACE}/ansible/inventories/${environmentName} \
+              -i ${WORKSPACE}/ansible/inventories/${environmentName}/hosts.yml \
               ansible/main.yml \
               -u ${CCD_VM_ADMIN_NAME} \
               --private-key=${keyPath} \
