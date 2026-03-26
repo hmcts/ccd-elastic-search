@@ -101,11 +101,11 @@
       url: "{{ es_url }}/_tasks/{{ reindex_start.json.task }}"
       method: GET
       return_content: yes
-      status_code: [200]
+      status_code: [200, 404]
     register: reindex_task_status
     retries: 720 # 720 retries with 30s delay = 21600s = 6hr for timeout
     delay: 30
-    until: reindex_task_status.json.completed == true
+    until: reindex_task_status.status == 404 or (reindex_task_status.json.completed | default(false))
 
   rescue:
     - name: Print reindex task output on failure
@@ -120,9 +120,9 @@
 - name: Debug reindex task status
   debug:
     msg:
-      - "url - {{reindex_task_status.url}}"
-      - "error? - {{reindex_task_status.json.error | default('no error')}}"
-      - "description - {{reindex_task_status.json.task.description | default('description missing') }}"
+      - "url - {{ reindex_task_status.url }}"
+      - "error? - {{ reindex_task_status.json.error | default('no error') }}"
+      - "description - {{ reindex_task_status.json.task.description | default('description missing') }}"
 
 
 - name: Check reindex for failures and fail if any
