@@ -9,8 +9,8 @@ lb_private_ip_address = "10.96.216.253"
 soc_vault_name = "soc-prod"
 soc_vault_rg   = "soc-core-infra-prod-rg"
 
-storage_account_name   = "ccdelasticsnapshotdemo"
-resource_group_name    = "ccd-elastic-search-demo"
+storage_account_name = "ccdelasticsnapshotdemo"
+resource_group_name  = "ccd-elastic-search-demo"
 
 ipconfig_name = "ipconfig1"
 
