@@ -1,6 +1,6 @@
 vm_publisher_name     = "Canonical"
-vm_offer              = "0001-com-ubuntu-server-noble"
-vm_sku                = "24_04-lts-gen2"
+vm_offer              = "ubuntu-24_04-lts"
+vm_sku                = "server"
 vm_version            = "latest"
 availability_set_name = "CCD-DATA-0-AV-SET"
 
