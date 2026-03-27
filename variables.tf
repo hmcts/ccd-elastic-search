@@ -123,8 +123,28 @@ variable "vms" {
       attachment_create_option = optional(string, "Empty")
     }))
   }))
-  default = {
-  }
+  default     = {}
+  description = "DEPRECATED: Use elastic_search_clusters instead. VM configuration for backward compatibility."
+}
+
+variable "elastic_search_clusters" {
+  type = map(object({
+    instance_count        = number
+    name_template         = string
+    data_disks            = number
+    private_ip_allocation = optional(map(string), {})
+    resource_group_name   = optional(string)
+    vm_publisher_name     = optional(string)
+    vm_offer              = optional(string)
+    vm_sku                = optional(string)
+    vm_version            = optional(string)
+    vm_size               = optional(string)
+    availability_set_name = optional(string)
+    lb_private_ip_address = optional(string)
+    storage_account_type  = optional(string, "StandardSSD_LRS")
+  }))
+  default     = {}
+  description = "Configuration for Elasticsearch clusters. Each cluster will create multiple VMs based on instance_count."
 }
 
 variable "vms_demo_int" {
@@ -139,9 +159,8 @@ variable "vms_demo_int" {
       attachment_create_option = optional(string, "Empty")
     }))
   }))
-  default = {
-  }
-  description = "VM configuration for demo-int env"
+  default     = {}
+  description = "DEPRECATED: Use elastic_search_clusters instead. VM configuration for demo-int env for backward compatibility."
 }
 
 variable "enable_demo_int" {

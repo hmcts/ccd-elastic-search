@@ -1,5 +1,65 @@
+locals {
+  linux        = "linux"
+  expiresAfter = "3000-01-01"
+
+  # Flatten elastic_search_clusters into individual VM configurations
+  flattened_vms = merge([
+    for cluster_key, cluster in var.elastic_search_clusters : {
+      for instance_idx in range(cluster.instance_count) :
+      "${cluster_key}-${instance_idx}" => {
+        cluster_key         = cluster_key
+        instance_idx        = instance_idx
+        name                = format(cluster.name_template, instance_idx)
+        ip                  = try(cluster.private_ip_allocation[instance_idx], null)
+        resource_group_name = coalesce(cluster.resource_group_name, "ccd-elastic-search-${var.env}")
+        managed_disks = {
+          for disk_idx in range(cluster.data_disks) :
+          "disk${disk_idx + 1}" => {
+            name                 = "${format(cluster.name_template, instance_idx)}-datadisk${disk_idx + 1}"
+            resource_group_name  = coalesce(cluster.resource_group_name, "ccd-elastic-search-${var.env}")
+            storage_account_type = coalesce(cluster.storage_account_type, "StandardSSD_LRS")
+            disk_lun             = tostring(disk_idx)
+          }
+        }
+        vm_publisher_name     = cluster.vm_publisher_name
+        vm_offer              = cluster.vm_offer
+        vm_sku                = cluster.vm_sku
+        vm_version            = cluster.vm_version
+        vm_size               = cluster.vm_size
+        availability_set_name = cluster.availability_set_name
+        lb_private_ip_address = cluster.lb_private_ip_address
+      }
+    }
+  ]...)
+
+  # Combine legacy vms with flattened cluster VMs
+  all_vms = merge(var.vms, local.flattened_vms)
+
+  # Group VMs by cluster for load balancer configuration
+  vms_by_cluster = {
+    for cluster_key, cluster in var.elastic_search_clusters :
+    cluster_key => {
+      for vm_key, vm in local.flattened_vms :
+      vm_key => vm
+      if vm.cluster_key == cluster_key
+    }
+  }
+
+  # Extract load balancer configurations from clusters
+  cluster_load_balancers = {
+    for cluster_key, cluster in var.elastic_search_clusters :
+    cluster_key => {
+      name                  = "ccd-internal-${var.env}-${cluster_key}-lb"
+      resource_group_name   = coalesce(cluster.resource_group_name, "ccd-elastic-search-${var.env}")
+      lb_private_ip_address = cluster.lb_private_ip_address
+      vms                   = local.vms_by_cluster[cluster_key]
+    }
+    if cluster.lb_private_ip_address != null
+  }
+}
+
 module "elastic2" {
-  for_each = var.vms
+  for_each = local.all_vms
 
   providers = {
     azurerm     = azurerm
@@ -10,7 +70,7 @@ module "elastic2" {
   source                       = "github.com/hmcts/ccd-module-elastic-search.git?ref=main"
   env                          = var.env
   vm_name                      = each.value.name
-  vm_resource_group            = azurerm_resource_group.this.name
+  vm_resource_group            = try(each.value.resource_group_name, azurerm_resource_group.this.name)
   vm_admin_password            = null
   vm_admin_name                = var.vm_admin_name
   vm_subnet_id                 = data.azurerm_subnet.elastic-subnet.id
@@ -21,13 +81,13 @@ module "elastic2" {
   soc_vault_name               = var.soc_vault_name
   soc_vault_rg                 = var.soc_vault_rg
   vm_admin_ssh_key             = data.azurerm_key_vault_secret.ssh_public_key.value
-  vm_publisher_name            = var.vm_publisher_name
-  vm_offer                     = var.vm_offer
-  vm_sku                       = var.vm_sku
-  vm_version                   = var.vm_version
-  vm_size                      = var.vm_size
+  vm_publisher_name            = coalesce(try(each.value.vm_publisher_name, null), var.vm_publisher_name)
+  vm_offer                     = coalesce(try(each.value.vm_offer, null), var.vm_offer)
+  vm_sku                       = coalesce(try(each.value.vm_sku, null), var.vm_sku)
+  vm_version                   = coalesce(try(each.value.vm_version, null), var.vm_version)
+  vm_size                      = coalesce(try(each.value.vm_size, null), var.vm_size)
   enable_availability_set      = var.enable_availability_set
-  availability_set_name        = var.availability_set_name
+  availability_set_name        = coalesce(try(each.value.availability_set_name, null), var.availability_set_name)
   platform_update_domain_count = var.platform_update_domain_count
   ipconfig_name                = var.ipconfig_name
 }
@@ -65,11 +125,6 @@ module "elastic2_demo_int" {
   platform_update_domain_count = var.platform_update_domain_count
   ipconfig_name                = var.ipconfig_name
   privateip_allocation         = var.vm_privateip_allocation
-}
-
-locals {
-  linux        = "linux"
-  expiresAfter = "3000-01-01"
 }
 
 module "ctags" {
