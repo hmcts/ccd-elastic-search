@@ -8,7 +8,7 @@ storageAccountType     = "Default"
 dataStorageAccountType = "Standard"
 vmDataDiskCount        = "2"
 
-lb_private_ip_address = "10.112.53.252"
+lb_private_ip_address = null
 soc_vault_name        = "soc-prod"
 soc_vault_rg          = "soc-core-infra-prod-rg"
 
@@ -44,7 +44,7 @@ elastic_search_clusters = {
       2 = "10.112.53.6"
       3 = "10.112.53.7"
     }
-    lb_private_ip_address = "10.112.53.252"
+    lb_private_ip_address = null
     storage_account_type  = "StandardSSD_LRS"
     managed_disks = {
       disk1 = {
