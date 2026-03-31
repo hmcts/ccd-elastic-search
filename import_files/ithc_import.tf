@@ -7,7 +7,7 @@ locals {
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb"
-  to       = azurerm_lb.this["${each.key}"]
+  to       = module.load_balancers["default"].azurerm_lb.this
 }
 
 import {
@@ -53,19 +53,19 @@ import {
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE"
-  to       = azurerm_lb_backend_address_pool.this["${each.key}"]
+  to       = module.load_balancers["default"].azurerm_lb_backend_address_pool.this
 }
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/probes/es-probe-http-internal"
-  to       = azurerm_lb_probe.this["http"]
+  to       = module.load_balancers["default"].azurerm_lb_probe.this["http"]
 }
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/probes/es-probe-transport-internal"
-  to       = azurerm_lb_probe.this["transport"]
+  to       = module.load_balancers["default"].azurerm_lb_probe.this["transport"]
 }
 
 #ASG & NSG
@@ -114,25 +114,25 @@ import {
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-0"
-  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-0"]
+  to       = module.load_balancers["default"].azurerm_lb_backend_address_pool_address.this["ccd-data-0"]
 }
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-1"
-  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-1"]
+  to       = module.load_balancers["default"].azurerm_lb_backend_address_pool_address.this["ccd-data-1"]
 }
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-2"
-  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-2"]
+  to       = module.load_balancers["default"].azurerm_lb_backend_address_pool_address.this["ccd-data-2"]
 }
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/backendAddressPools/LBBE/addresses/ccd-data-3"
-  to       = azurerm_lb_backend_address_pool_address.elastic_vm["ccd-data-3"]
+  to       = module.load_balancers["default"].azurerm_lb_backend_address_pool_address.this["ccd-data-3"]
 }
 
 #LB Rules
@@ -140,13 +140,13 @@ import {
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/loadBalancingRules/es-transport-internal"
-  to       = azurerm_lb_rule.this["transport"]
+  to       = module.load_balancers["default"].azurerm_lb_rule.this["transport"]
 }
 
 import {
   for_each = { for k, v in local.env_subs : k => v if k == "ithc" }
   id       = "/subscriptions/${each.value}/resourceGroups/ccd-elastic-search-${each.key}/providers/Microsoft.Network/loadBalancers/ccd-internal-${each.key}-lb/loadBalancingRules/es-http-internal"
-  to       = azurerm_lb_rule.this["http"]
+  to       = module.load_balancers["default"].azurerm_lb_rule.this["http"]
 }
 
 #NSG Rules
