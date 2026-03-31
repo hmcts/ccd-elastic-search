@@ -12,7 +12,7 @@ locals {
     }
   }
 
-  legacy_lb_config = length(var.vms) > 0 ? {
+  legacy_lb_config = length(var.vms) > 0 && var.lb_private_ip_address != null ? {
     legacy = {
       name                  = "ccd-internal-${var.env}-lb"
       resource_group_name   = "ccd-elastic-search-${var.env}"
