@@ -3,7 +3,7 @@
 - hosts: all
   become: true
   gather_facts: true
-  serial: "{{ rolling_upgrade | default(false) | ternary(1, '100%') }}"
+  serial: "{{ rolling_upgrade | default(false) | bool | ternary(1, '100%') }}"
   roles:
     - role: elasticsearch
       vars:
