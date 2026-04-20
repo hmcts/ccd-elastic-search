@@ -19,7 +19,7 @@ node.attr.fault_domain: {{ fault_domain }}
 node.attr.update_domain: {{ update_domain }}
 cluster.routing.allocation.awareness.attributes: fault_domain,update_domain
 
-action.auto_create_index: .security*,.monitoring*,.kibana*,.watches,.triggered_watches,.watcher-history*,.logstash_dead_letter,.ml*
+action.auto_create_index: .security*,.monitoring*,.kibana*,.watches,.triggered_watches,.watcher-history*,.logstash_dead_letter,.ml*,ccd-logstash-dead-letter
 xpack.security.enabled: false
 xpack.watcher.enabled: false
 xpack.ml.enabled: false
