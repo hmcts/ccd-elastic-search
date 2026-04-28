@@ -1,5 +1,5 @@
 #!groovy
-@Library('Infrastructure@allow-plan-only')
+@Library('Infrastructure@ccd-es-prod-plan-only')
 
 import uk.gov.hmcts.contino.Environment
 import uk.gov.hmcts.contino.HealthChecker
@@ -98,8 +98,7 @@ withInfraPipeline(params.PRODUCT_NAME, null, !params.DEPLOY_ES_CLUSTER) {
         healthCheckStage('nonprod', 'aat')
     }
     afterAlways('buildinfra:prod') {
-        echo 'Healthcheck in PROD'
-        healthCheckStage('prod', 'prod')
+        echo 'Skipping PROD healthcheck: prod infrastructure is plan-only with Infrastructure@ccd-es-prod-plan-only'
     }
     afterAlways('buildinfra:perftest') {
         echo 'Healthcheck in Perftest'
