@@ -106,6 +106,9 @@ static Map<String, Object> secret(String secretName, String envVariable) {
 }
 
 withInfraPipeline(params.PRODUCT_NAME, null) {
+    def branchesToSync = []
+    syncBranchesWithMaster(branchesToSync)
+
     onMaster {
         enableSlackNotifications("#ccd-master-builds")
     }
