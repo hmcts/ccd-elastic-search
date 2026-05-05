@@ -119,6 +119,11 @@
         dev: "{{ raid_device }}"
       when: filesystem_check.rc != 0
 
+    - name: Get UUID of RAID device
+      command: blkid -s UUID -o value {{ raid_device }}
+      register: raid_uuid
+      changed_when: false
+
     - name: Create mount point
       file:
         path: "{{ mount_point }}"
@@ -134,7 +139,7 @@
     - name: Mount RAID device
       mount:
         path: "{{ mount_point }}"
-        src: "{{ raid_device }}"
+        src: "UUID={{ raid_uuid.stdout }}"
         fstype: "{{ filesystem }}"
         opts: defaults
         state: mounted
@@ -143,7 +148,7 @@
     - name: Ensure fstab entry for RAID device
       mount:
         path: "{{ mount_point }}"
-        src: "{{ raid_device }}"
+        src: "UUID={{ raid_uuid.stdout }}"
         fstype: "{{ filesystem }}"
         opts: defaults
         state: present
@@ -152,7 +157,6 @@
       group:
         name: elasticsearch
         state: present
-      when: "'demo-int' in group_names"
 
     - name: Create elasticsearch user
       user:
@@ -163,7 +167,6 @@
         home: /usr/share/elasticsearch
         createhome: no
         state: present
-      when: "'demo-int' in group_names"
 
     - name: Set ownership to elasticsearch
       file:
