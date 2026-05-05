@@ -2,3 +2,5 @@
 .terraform/
 .terraform.lock.hcl
 .vscode/
+
+__pycache__/

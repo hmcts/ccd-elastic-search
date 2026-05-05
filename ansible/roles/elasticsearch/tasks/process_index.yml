@@ -1,0 +1,70 @@
+# sets "index_version" fact for the given "index_name"
+- include_tasks: get_index_version.yml
+
+- name: Process index only if upgrade needed
+  when:
+    - index_version < elasticsearch_major_version
+  block:
+    - name: Determine if current index is a clone
+      ansible.builtin.set_fact:
+        is_clone: "{{ index_name.endswith(clone_suffix) }}"
+        original_index: "{{ (index_name | regex_replace(clone_suffix + '$', '')) if index_name.endswith(clone_suffix) else index_name }}"
+
+
+    - name: Create a clone index of {{ index_name }}
+      when: not is_clone
+      block:
+        ## Make readonly for cloning
+        - name: Add write block to user index before cloning
+          uri:
+            url: "{{ es_url }}/{{ index_name }}/_block/write"
+            method: PUT
+            status_code: [200]
+
+
+        - name: Clone user index {{ index_name }} -> {{ index_name }}{{ clone_suffix }}
+          uri:
+            url: "{{ es_url }}/{{ index_name }}/_clone/{{ index_name }}{{ clone_suffix }}"
+            method: POST
+            body_format: json
+            body: {}
+            status_code: [200]
+
+
+        - name: Wait for cloned index health to be green
+          uri:
+            url: "{{ es_url }}/_cluster/health/{{ index_name }}{{ clone_suffix }}?format=json"
+            timeout: 30
+            return_content: yes
+          register: cloned_health
+          until: >
+            cloned_health.json.status == 'green'
+            and (cloned_health.json.unassigned_shards | default(0) == 0)
+          retries: 120 # 120 retries with 30s delay = 3600s = 1hr for timeout
+          delay: 30
+
+
+        ## Copy aliases
+        - name: Get aliases from original index
+          uri:
+            url: "{{ es_url }}/{{ index_name }}/_alias"
+            method: GET
+          register: original_aliases_raw
+
+
+        - name: Apply aliases to cloned index
+          uri:
+            url: "{{ es_url }}/_aliases"
+            method: POST
+            body_format: json
+            body:
+              actions: "{{ original_aliases_raw.json[index_name].aliases | aliases_to_actions(index_name + clone_suffix) }}"
+            status_code: [200]
+          when:
+            - original_aliases_raw.json[index_name].aliases | length > 0
+
+
+    - name: Reindex from clone back into original index
+      include_tasks: reindex_from_clone.yml
+      vars:
+        index_name: "{{ original_index }}"
