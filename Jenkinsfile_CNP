@@ -15,7 +15,7 @@ properties([
                 booleanParam(name: "UPGRADE_ES", defaultValue: true, description: "Whether to run ES version upgrade steps (deb packages re-deploy)"),
                 booleanParam(name: "ROLLING_UPGRADE", defaultValue: false, description: "Run Ansible with rolling upgrade steps"),
                 booleanParam(name: "REINDEX", defaultValue: false, description: "Whether to re-index after version upgrade"),
-                string(name: "ANSIBLE_TARGETS", defaultValue: "demo,ithc", description: "Comma-separated environments for Ansible runs")
+                string(name: "ANSIBLE_TARGETS", defaultValue: "", description: "Comma-separated environments for Ansible runs")
         ])
 ])
 
@@ -33,7 +33,7 @@ def setupSecret(String targetEnv) {
 }
 
 def supportsUpgradeFlags(String targetEnv) {
-    ["demo", "ithc", "perftest"].contains(targetEnv)
+    ["demo", "ithc", "perftest", "aat"].contains(targetEnv)
 }
 
 def runAnsible(String environmentName) {
@@ -160,6 +160,15 @@ withInfraPipeline(params.PRODUCT_NAME, null) {
                 runAnsible("perftest")
             } else {
                 echo "Skipping perftest Ansible: perftest not in ANSIBLE_TARGETS=${params.ANSIBLE_TARGETS}"
+            }
+        }
+
+        afterSuccess("buildinfra:aat") {
+            if (targets.contains("aat")) {
+                echo "Running Ansible in aat"
+                runAnsible("aat")
+            } else {
+                echo "Skipping aat Ansible: aat not in ANSIBLE_TARGETS=${params.ANSIBLE_TARGETS}"
             }
         }
     }
