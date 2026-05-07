@@ -121,7 +121,8 @@ withInfraPipeline(params.PRODUCT_NAME, null) {
         healthCheckStage("nonprod", "aat")
     }
     afterAlways("buildinfra:prod") {
-        echo 'Skipping PROD healthcheck: prod infrastructure is plan-only with Infrastructure@ccd-es-prod-plan-only'
+        echo 'Healthcheck in PROD'
+        healthCheckStage('prod', 'prod')
     }
     afterAlways("buildinfra:perftest") {
         echo "Healthcheck in Perftest"
@@ -172,6 +173,15 @@ withInfraPipeline(params.PRODUCT_NAME, null) {
                 runAnsible("aat")
             } else {
                 echo "Skipping aat Ansible: aat not in ANSIBLE_TARGETS=${params.ANSIBLE_TARGETS}"
+            }
+        }
+
+        afterSuccess("buildinfra:prod") {
+            if (targets.contains("prod")) {
+                echo "Running Ansible in prod"
+                runAnsible("prod")
+            } else {
+                echo "Skipping prod Ansible: prod not in ANSIBLE_TARGETS=${params.ANSIBLE_TARGETS}"
             }
         }
     }
