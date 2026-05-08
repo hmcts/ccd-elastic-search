@@ -33,7 +33,7 @@ def setupSecret(String targetEnv) {
 }
 
 def supportsUpgradeFlags(String targetEnv) {
-    ["demo", "ithc", "perftest", "aat"].contains(targetEnv)
+    ["demo", "ithc", "perftest", "aat", "prod"].contains(targetEnv)
 }
 
 def runAnsible(String environmentName) {
