@@ -1,6 +1,6 @@
 #!groovy
 
-@Library('Infrastructure@ccd-es-prod-plan-only')
+@Library("Infrastructure")
 
 import uk.gov.hmcts.contino.Environment
 import uk.gov.hmcts.contino.HealthChecker
