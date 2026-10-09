@@ -129,6 +129,24 @@
     - not ansible_check_mode
     - (es_install is changed) or (es_config is changed) or (es_systemd_override is changed) or (es_jvm_opts is changed)
 
+- name: Wait for Elasticsearch node to rejoin cluster safely
+  ansible.builtin.uri:
+    url: "http://localhost:9200/_cluster/health"
+    method: GET
+    return_content: yes
+  register: cluster_health
+  until:
+    - cluster_health.status == 200
+    - cluster_health.json.number_of_nodes == groups[group_names[0]] | length
+    - cluster_health.json.unassigned_primary_shards == 0
+    - cluster_health.json.initializing_shards == 0
+  retries: 30
+  delay: 10
+  when:
+    - rolling_upgrade | bool
+    - not ansible_check_mode
+
+# this cannot be re-enabled after each node as it can't put shards from newer version to older
 - name: Re-enable shard allocation
   ansible.builtin.uri:
     url: "http://localhost:9200/_cluster/settings"
@@ -143,6 +161,7 @@
     - not ansible_check_mode
     - inventory_hostname == (groups[group_names[0]] | last)
 
+# mid upgrade this will never become green due to shard allocation being disabled
 - name: Wait for cluster to become green
   ansible.builtin.uri:
     url: "http://localhost:9200/_cluster/health"

@@ -158,6 +158,12 @@
         name: elasticsearch
         state: present
 
+    - name: Check whether elasticsearch user already exists
+      command: getent passwd elasticsearch
+      register: elasticsearch_user_lookup
+      failed_when: false
+      changed_when: false
+
     - name: Create elasticsearch user
       user:
         name: elasticsearch
@@ -167,6 +173,7 @@
         home: /usr/share/elasticsearch
         createhome: no
         state: present
+      when: elasticsearch_user_lookup.rc != 0
 
     - name: Set ownership to elasticsearch
       file:
