@@ -24,9 +24,14 @@ xpack.security.enabled: false
 xpack.watcher.enabled: false
 xpack.ml.enabled: false
 xpack.monitoring.collection.enabled: false
+xpack.apm_data.enabled: false
 
 script.allowed_types: inline
-script.allowed_contexts: template, ingest
+script.allowed_contexts:
+- template
+- ingest
+- processor_conditional
+- ingest_template
 
 ingest.geoip.downloader.enabled: false
 bootstrap.memory_lock: true

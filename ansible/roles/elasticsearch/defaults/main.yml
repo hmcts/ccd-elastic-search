@@ -2,7 +2,7 @@
 # Override this variable in ansible/group_vars/group_name.yml file
 # where group_name is the inventory group to set different version
 # on different environments
-elasticsearch_version: 9.5.4
+elasticsearch_version: 9.5.5
 
 indices_to_delete: []
 
@@ -14,7 +14,7 @@ checksum_url: "{{ elasticsearch_url_base }}/{{ elasticsearch_package }}.sha512"
 elasticsearch_config: "elasticsearch.yml.j2"
 
 
-elasticsearch_version_upgrade: "elasticsearch-9.2.2-amd64.deb"
+elasticsearch_version_upgrade: "elasticsearch-9.5.5-amd64.deb"
 
 # version that we are upgrading to
 elasticsearch_major_version: "{{ elasticsearch_version.split('.') | first | int }}"
