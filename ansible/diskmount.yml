@@ -4,7 +4,7 @@
   become: true
 
   vars:
-    raid_device: /dev/md0
+    raid_device: /dev/md127
     mount_point: /datadisks/disk1
     filesystem: ext4
 
